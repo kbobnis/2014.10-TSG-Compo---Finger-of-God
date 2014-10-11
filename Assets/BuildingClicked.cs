@@ -8,6 +8,8 @@ public class BuildingClicked : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
+
+		try{
 		//gameObject.GetComponent<Button> ().onClick.AddListener (ButtonClickedEvent);
 
 		EventTrigger et = gameObject.GetComponent<EventTrigger> ();
@@ -19,11 +21,18 @@ public class BuildingClicked : MonoBehaviour {
 			new UnityEngine.Events.UnityAction<BaseEventData> (EnterEventMethod);
 		entry.callback.AddListener (callback);
 		et.delegates.Add (entry);
+		} catch(System.Exception e){
+			Debug.Log("exception: " + e);
+		}
 	}
 
 	public void EnterEventMethod(UnityEngine.EventSystems.BaseEventData baseEvent) {
-		Debug.Log(baseEvent.selectedObject.name + " triggered an event!");
+		try{
+		UnityEngine.EventSystems.PointerEventData p = baseEvent as PointerEventData;
 		ButtonClickedEvent ();
+		} catch(System.Exception e){
+			Debug.Log("exception2: " + e);
+		}
 	}
 
 	// Update is called once per frame
@@ -32,7 +41,11 @@ public class BuildingClicked : MonoBehaviour {
 	}
 
 	public void ButtonClickedEvent(){
-		//GameObject.Find ("Game").GetComponent<Game> ().ButtonClicked (gameObject);
+		try {
+			Game.Me.ButtonTouched (gameObject);
+		} catch(System.Exception e){
+			Debug.Log("exception3: " + e);
+		}
 	}
 
 }

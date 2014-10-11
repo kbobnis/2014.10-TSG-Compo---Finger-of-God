@@ -1,54 +1,66 @@
-﻿using UnityEngine;
+using UnityEngine;
 using System.Collections;
 using UnityEngine.UI;
 using System.Collections.Generic;
 
-public enum ModeType{
+public enum Cataclysm{
 	Fire, Whirlwind, Crush, Strike
 }
 public static class ModeTypeHelper{
 
-	public static ModeType ModeTypeFromString(string text){
+	public static Cataclysm ModeTypeFromString(string text){
 		switch (text) {
-			case "fire": return ModeType.Fire;
-			case "whirlwind": return ModeType.Whirlwind;
-			case "crush": return ModeType.Crush;
-			case "strike": return ModeType.Strike;
+			case "fire": return Cataclysm.Fire;
+			case "whirlwind": return Cataclysm.Whirlwind;
+			case "crush": return Cataclysm.Crush;
+			case "strike": return Cataclysm.Strike;
 		}
 		throw new UnityException ("There is no mode type for text " + text);
 	}
 
-	public static AudioClip GetSound(this ModeType mt){
+	public static AudioClip GetSound(this Cataclysm mt){
 		switch (mt) {
-		case ModeType.Crush: return SoundManager.Crush;
-		case ModeType.Fire: return SoundManager.Fire;
-		case ModeType.Whirlwind: return SoundManager.Huracaine;
-		case ModeType.Strike: return SoundManager.Lightning;
+		case Cataclysm.Crush: return SoundManager.Crush;
+		case Cataclysm.Fire: return SoundManager.Fire;
+		case Cataclysm.Whirlwind: return SoundManager.Huracaine;
+		case Cataclysm.Strike: return SoundManager.Lightning;
 		default: throw new UnityException("there is no sound for mode type: " + mt);
 
 		}
 	}
 
+
 }
 
 public class Game : MonoBehaviour {
 
-	public ModeType ModeType = ModeType.Crush;
+	public Cataclysm ModeType = Cataclysm.Crush;
 	public bool HasModeChanged = true;
 	public GameObject ButtonCrush, ButtonFire, ButtonWhirlwind, ButtonStrike;
 	public GameObject ScrollableListBuildings;
 
+	public static Game Me;
+
 	// Use this for initialization
 	void Start () {
+		Me = this;
 
 		ScrollableList sl = ScrollableListBuildings.GetComponent<ScrollableList> ();
 
 		List<GameObject> buildings = new List<GameObject> ();
-		for (int i=0; i < 80; i++) {
+		for (int i=0; i < 42; i++) {
 			GameObject newItem = Instantiate(sl.itemPrefab) as GameObject;
 			Building b = newItem.AddComponent<Building>();
-			b.BuildingType = BuildingTypeMethod.GetRandom();
+
+			int ticket = Mathf.RoundToInt( Random.Range(1,3));
+			switch(ticket){
+			case 1: b.CreateWood1(); break;
+			case 2: b.CreateStone1(); break;
+			default: throw new UnityException("Please initiate building");
+			}
+
 			buildings.Add(newItem);
+
 		}
 		sl.columnCount = 6;
 		sl.ElementsToPut = buildings;
@@ -63,10 +75,10 @@ public class Game : MonoBehaviour {
 
 			Image image = null;
 			switch(ModeType){
-				case ModeType.Crush: image =  ButtonCrush.GetComponent<Image>(); break;
-				case ModeType.Fire: image = ButtonFire.GetComponent<Image>(); break;
-				case ModeType.Whirlwind: image = ButtonWhirlwind.GetComponent<Image>(); break;
-				case ModeType.Strike: image = ButtonStrike.GetComponent<Image>(); break;
+				case Cataclysm.Crush: image =  ButtonCrush.GetComponent<Image>(); break;
+				case Cataclysm.Fire: image = ButtonFire.GetComponent<Image>(); break;
+				case Cataclysm.Whirlwind: image = ButtonWhirlwind.GetComponent<Image>(); break;
+				case Cataclysm.Strike: image = ButtonStrike.GetComponent<Image>(); break;
 			}
 			if (image != null){
 				image.color = Color.white;
@@ -82,15 +94,22 @@ public class Game : MonoBehaviour {
 
 	public void PointerEnter(UnityEngine.EventSystems.BaseEventData baseEvent) {
 
+		//UnityEngine.EventSystems.BaseEventData p = baseEvent;
 		UnityEngine.EventSystems.PointerEventData p = baseEvent as UnityEngine.EventSystems.PointerEventData;
-		GameObject go = p.pointerEnter;
-		Debug.Log(" triggered an event! " + go!=null?go.GetType().ToString():"null");
-		if (go != null){
-			if (go.GetComponent<Building>() != null){
-				go.GetComponent<Building>().DestroyWith(ModeType);
-			}
+		if (p != null){
+			GameObject go = p.pointerEnter;
+			ButtonTouched(go);
 		}
+	}
 
+	public void ButtonTouched(GameObject go){
+		try{
+			if (go != null && go.GetComponent<Building>() != null){
+				go.GetComponent<Building>().TreatWith(ModeType);
+			}
+		} catch(System.Exception e){
+			Debug.Log("exception4: " + e);
+		}
 	}
 
 }
