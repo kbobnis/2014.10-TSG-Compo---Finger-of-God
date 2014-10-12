@@ -8,6 +8,7 @@ public class ScrollableList : MonoBehaviour
 {
     public GameObject itemPrefab;
     public int columnCount = 1;
+	public int ElementSize = 10;
 	public List<GameObject> ElementsToPut = new List<GameObject>();
 	public bool FitToSize;
 

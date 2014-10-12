@@ -184,12 +184,12 @@ public class Building : MonoBehaviour{
 
 		EffectDamage.Add (Element.Crush, 0.00f);
 		EffectDamage.Add (Element.SmallCrush, 0.00f);
-		EffectDamage.Add (Element.Electricity, 0.5f);
+		EffectDamage.Add (Element.Electricity, 0.6f);
 
 		EffectTime.Add (Element.SmokeAfterFire, 2f);
 		EffectTime.Add (Element.Crush, 1f);
-		EffectTime.Add (Element.SmallCrush, 5f);
-		EffectTime.Add (Element.Electricity, 0.8f);
+		EffectTime.Add (Element.SmallCrush, 50f);
+		EffectTime.Add (Element.Electricity, 1f);
 		EffectTime.Add (Element.Water, 5f);
 
 		FillSpeed.Add (Element.Electricity, 0.05f);
@@ -225,10 +225,10 @@ public class Building : MonoBehaviour{
 
 
 	public void CreateWood1(){
-		StrikeDamage.Add (Element.Crush, 0.4f);
+		StrikeDamage.Add (Element.Crush, 1f);
 
-		EffectDamage.Add (Element.Fire, 0.25f);
-		EffectDamage.Add (Element.Water, 0.02f);
+		EffectDamage.Add (Element.Fire, 0.4f);
+		EffectDamage.Add (Element.Water, 0.2f);
 
 		EffectTime.Add (Element.Fire, 5f);
 
@@ -255,10 +255,10 @@ public class Building : MonoBehaviour{
 	}
 
 	public void CreateStone1(){
-		StrikeDamage.Add (Element.Crush, 0.5f);
+		StrikeDamage.Add (Element.Crush, 1f);
 
-		EffectDamage.Add (Element.Fire, 0.15f);
-		EffectDamage.Add (Element.Water, 0.15f);
+		EffectDamage.Add (Element.Fire, 0.4f);
+		EffectDamage.Add (Element.Water, 0.3f);
 
 		EffectTime.Add (Element.Fire, 2f);
 
@@ -271,8 +271,8 @@ public class Building : MonoBehaviour{
 	public void CreateGasStation(){
 		StrikeDamage.Add (Element.Crush, 1f);
 
-		EffectDamage.Add (Element.Fire, 0f);
-		EffectDamage.Add (Element.Water, 0f);
+		EffectDamage.Add (Element.Fire, 0.5f);
+		EffectDamage.Add (Element.Water, 0.3f);
 
 		EffectTime.Add (Element.Fire, 2f);
 
@@ -288,8 +288,8 @@ public class Building : MonoBehaviour{
 	public void CreateWaterSilo(){
 		StrikeDamage.Add (Element.Crush, 1f);
 
-		EffectDamage.Add (Element.Fire, 0f);
-		EffectDamage.Add (Element.Water, 0f);
+		EffectDamage.Add (Element.Fire, 0.5f);
+		EffectDamage.Add (Element.Water, 0.3f);
 
 		EffectTime.Add (Element.Fire, 2f);
 
@@ -304,8 +304,8 @@ public class Building : MonoBehaviour{
 	public void CreateElectricityTower(){
 		StrikeDamage.Add (Element.Crush, 1f);
 
-		EffectDamage.Add (Element.Fire, 0f);
-		EffectDamage.Add (Element.Water, 0f);
+		EffectDamage.Add (Element.Fire, 0.5f);
+		EffectDamage.Add (Element.Water, 0.3f);
 		
 		EffectTime.Add (Element.Fire, 3f);
 

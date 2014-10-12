@@ -63,11 +63,11 @@ public class Game : MonoBehaviour {
 		Me = this;
 
 		ScrollableList sl = PanelMainScreen.GetComponentInChildren<ScrollableList> ();
-		int columns = sl.columnCount = 6;
+		int columns = sl.columnCount;
 
 		sl.ElementsToPut.Clear ();
 		List<GameObject> buildingsRow = new List<GameObject>();
-		for (int i=0; i < 48; i++) {
+		for (int i=0; i < sl.ElementSize; i++) {
 
 			if (i % columns == 0 && i > 0){
 				Buildings.Add(buildingsRow);
@@ -78,7 +78,7 @@ public class Game : MonoBehaviour {
 			newItem.SetActive(true);
 			Building b = newItem.GetComponent<Building>();
 
-			int ticket = Mathf.RoundToInt( Random.value * 7 );
+			int ticket = Mathf.RoundToInt( Random.value * 5 );
 
 			if (ticket == 0){
 				b.CreateGasStation();
@@ -92,11 +92,11 @@ public class Game : MonoBehaviour {
 				b.CreateElectricityTower();
 			} 
 
-			if (ticket > 2 && ticket <= 5){
+			if (ticket > 2 && ticket <= 4){
 				b.CreateStone1(); 
 			} 
 
-			if (ticket > 5 && ticket < 8){
+			if (ticket > 4 && ticket < 6){
 				b.CreateWood1();
 			}
 
