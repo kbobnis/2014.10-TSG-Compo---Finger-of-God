@@ -10,6 +10,7 @@ public class SpriteManager{
 	public static Sprite[] BuildingSpritesDestroyed;
 	public static Sprite[] Explosions;
 	public static Sprite[] Fires;
+	public static Sprite[] GroundLevels;
 
 	static SpriteManager() {
 
@@ -17,5 +18,6 @@ public class SpriteManager{
 		BuildingSpritesDestroyed = Resources.LoadAll<Sprite>("Images/buildings_vert_destroyed");
 		Explosions = Resources.LoadAll<Sprite> ("Images/explosion");
 		Fires = Resources.LoadAll<Sprite> ("Images/fire");
+		GroundLevels = Resources.LoadAll<Sprite> ("Images/groundLevels");
 	}
 }

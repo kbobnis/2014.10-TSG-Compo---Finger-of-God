@@ -32,7 +32,7 @@ public class Building : MonoBehaviour{
 	private float Health = 1f;
 	private int ImageNumberFromAtlas;
 
-	public GameObject GameObjectExplosion, GameObjectFire;
+	public GameObject GameObjectExplosion, GameObjectFire, GameObjectGroundLevel, GameObjectWaterLevel, GameObjectBuilding;
 
 	public int PopulationDelta{
 		get {
@@ -48,6 +48,7 @@ public class Building : MonoBehaviour{
 			UpdateImage();
 		}
 
+		bool isSmallCrush=false, isBigCrush=false;
 		List<Element> bss = StatusesProgress.Keys.ToList();
 		foreach (Element status in bss) {
 			float value = StatusesProgress[status];
@@ -71,8 +72,23 @@ public class Building : MonoBehaviour{
 					i.enabled = true;
 					i.sprite = SpriteManager.Fires[(int)(progress * SpriteManager.Fires.Length -1)];
 				}
+				if (status == Element.Crush){
+					isBigCrush = true;
+				}
+				if (status == Element.SmallCrush){
+					isSmallCrush = true;
+				}
 			}
 		}
+
+		Sprite groundLevel = SpriteManager.GroundLevels [0];
+		if (isBigCrush) {
+			groundLevel = SpriteManager.GroundLevels[2];
+		} else if(!isBigCrush && isSmallCrush){
+			groundLevel = SpriteManager.GroundLevels[1];
+		}
+		GameObjectGroundLevel.GetComponent<Image>().sprite = groundLevel;
+
 
 		string text = "";
 		bss = StatusesProgress.Keys.ToList();
@@ -126,10 +142,14 @@ public class Building : MonoBehaviour{
 		EffectDamage.Add (Element.Fire, 0.1f);
 		EffectDamage.Add (Element.Electricity, 0.1f);
 		EffectDamage.Add (Element.Water, 0.01f);
-		
+		EffectDamage.Add (Element.Crush, 0.00f);
+		EffectDamage.Add (Element.SmallCrush, 0.00f);
+
 		EffectTime.Add (Element.Fire, 5f);
 		EffectTime.Add (Element.Electricity, 1f);
 		EffectTime.Add (Element.Water, 10f);
+		EffectTime.Add (Element.Crush, 25f);
+		EffectTime.Add (Element.SmallCrush, 15f);
 
 		ImageNumberFromAtlas = 1;
 		UpdateImage ();
@@ -141,8 +161,7 @@ public class Building : MonoBehaviour{
 		if (Health <= 0){
 			s = SpriteManager.BuildingSpritesDestroyed[ImageNumberFromAtlas];
 		}
-
-		GetComponent<Image> ().sprite = s;
+		GameObjectBuilding.GetComponent<Image> ().sprite = s;
 	}
 
 	public void CreateStone1(){
@@ -154,10 +173,14 @@ public class Building : MonoBehaviour{
 		EffectDamage.Add (Element.Fire, 0.1f);
 		EffectDamage.Add (Element.Electricity, 0.1f);
 		EffectDamage.Add (Element.Water, 0.05f);
+		EffectDamage.Add (Element.Crush, 0.00f);
+		EffectDamage.Add (Element.SmallCrush, 0.00f);
 		
 		EffectTime.Add (Element.Fire, 2f);
 		EffectTime.Add (Element.Electricity, 1f);
 		EffectTime.Add (Element.Water, 20f);
+		EffectTime.Add (Element.Crush, 25f);
+		EffectTime.Add (Element.SmallCrush, 15f);
 		
 		ImageNumberFromAtlas = 2;
 		UpdateImage ();
@@ -173,10 +196,14 @@ public class Building : MonoBehaviour{
 		EffectDamage.Add (Element.Fire, 0.1f);
 		EffectDamage.Add (Element.Electricity, 0.1f);
 		EffectDamage.Add (Element.Water, 0.05f);
-		
+		EffectDamage.Add (Element.Crush, 0.00f);
+		EffectDamage.Add (Element.SmallCrush, 0.00f);
+
 		EffectTime.Add (Element.Fire, 2f);
 		EffectTime.Add (Element.Electricity, 1f);
 		EffectTime.Add (Element.Water, 20f);
+		EffectTime.Add (Element.Crush, 25f);
+		EffectTime.Add (Element.SmallCrush, 15f);
 		
 		ImageNumberFromAtlas = 3;
 		UpdateImage ();

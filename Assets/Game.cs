@@ -100,24 +100,29 @@ public class Game : MonoBehaviour {
 	}
 
 	private GameObject GetNeighbour(GameObject g, Side s){
-
-		int myX=0, myY=0;
-		int i = 0;
-		foreach (List<GameObject> rows in Buildings) {
-			int j=0;
-			foreach(GameObject b in rows){
-				if (b == g){
-					myX = j;
-					myY = i;
-				}
-				j++;
-			}
-			i++;
-		}
 		GameObject tmp = null;
+		try{
+			int myX=0, myY=0;
+			int i = 0;
+			foreach (List<GameObject> rows in Buildings) {
+				int j=0;
+				foreach(GameObject b in rows){
+					if (b == g){
+						myX = j;
+						myY = i;
+					}
+					j++;
+				}
+				i++;
+			}
 
-		if (Buildings.Count > (s.DeltaY() + myY) && Buildings[s.DeltaY() + myY].Count > (s.DeltaX() + myX)){
-		 tmp = Buildings [s.DeltaY () + myY] [s.DeltaX () + myX];
+
+			if (s.DeltaY() + myY > 0 && s.DeltaY() + myX > 0 && Buildings.Count > (s.DeltaY() + myY) && Buildings[s.DeltaY() + myY].Count > (s.DeltaX() + myX)){
+			 tmp = Buildings [s.DeltaY () + myY] [s.DeltaX () + myX];
+			}
+
+		} catch(System.Exception e){
+			Debug.Log("[GetNeightbour] " + e);
 		}
 		return tmp;
 	}
