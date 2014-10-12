@@ -23,7 +23,7 @@ public class PlaySingleSound : MonoBehaviour
 			go.transform.position = position;
 
 			AudioSource audio = go.AddComponent<AudioSource>();
-			audio.volume = 0f;//volume;
+			audio.volume = volume;
 			audio.clip = clip;
 			//audio.rolloffMode = AudioRolloffMode.Linear;
 			audio.Play();

@@ -4,7 +4,7 @@ using UnityEngine.UI;
 using System.Collections.Generic;
 
 public enum Side{
-	Up, Down, Left, Right
+	Up, Down, Left, Right, Center
 }
 
 public static class SideMethods{
@@ -54,10 +54,11 @@ public class Game : MonoBehaviour {
 			newItem.SetActive(true);
 			Building b = newItem.GetComponent<Building>();
 
-			int ticket = Mathf.RoundToInt( Random.Range(1,3));
+			int ticket = Mathf.RoundToInt( Random.Range(1,4));
 			switch(ticket){
 				case 1: b.CreateWood1(); break;
 				case 2: b.CreateStone1(); break;
+				case 3: b.CreateGasStation(); break;
 				default: throw new UnityException("Please initiate building");
 			}
 
@@ -80,7 +81,7 @@ public class Game : MonoBehaviour {
 			
 		for(int y=0; y < maxY; y++){
 			for (int x=0; x < maxX; x++) {
-				Debug.Log("x: " + x + ", y: " + y + ", building: " + Buildings[x][y].name);
+				//Debug.Log("x: " + x + ", y: " + y + ", building: " + Buildings[x][y].name);
 			}
 		}
 	}
@@ -127,29 +128,39 @@ public class Game : MonoBehaviour {
 		return tmp;
 	}
 
-	public void ButtonTouched(GameObject go){
+	public void CataclysmTo(Element el, GameObject g, Side s){
+		GameObject tmp = GetNeighbour (g, s);
+		if (tmp != null) {
+			tmp.GetComponent<Building>().TreatWith(el);
+		}
+	}
 
-		try{
-		go.GetComponent<Building>().TreatWith(Element.Crush);
-
+	public void TreatNeighboursWith(GameObject go, Element e){
 		GameObject left = GetNeighbour (go, Side.Left);
 		if (left != null){
-			left.GetComponent<Building> ().TreatWith (Element.SmallCrush);
+			left.GetComponent<Building> ().TreatWith (e);
 		}
 		GameObject right = GetNeighbour (go, Side.Right);
 		if (right != null){
-			right.GetComponent<Building> ().TreatWith (Element.SmallCrush);
+			right.GetComponent<Building> ().TreatWith (e);
 		}
-
+		
 		GameObject up = GetNeighbour (go, Side.Up);
 		if (up != null){
-			up.GetComponent<Building> ().TreatWith (Element.SmallCrush);
+			up.GetComponent<Building> ().TreatWith (e);
 		}
-
+		
 		GameObject down = GetNeighbour (go, Side.Down);
 		if (down != null){ 
-			down.GetComponent<Building> ().TreatWith (Element.SmallCrush);
+			down.GetComponent<Building> ().TreatWith (e);
 		}
+	}
+
+	public void ButtonTouched(GameObject go){
+
+		try{
+			go.GetComponent<Building>().TreatWith(Element.Crush);
+			TreatNeighboursWith(go, Element.SmallCrush);
 		}catch(System.Exception e){
 			Debug.Log("[ButtonTouched] exception: " + e);
 		}

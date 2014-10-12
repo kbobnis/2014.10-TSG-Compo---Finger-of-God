@@ -15,7 +15,7 @@ public class BuildingClicked : MonoBehaviour {
 		EventTrigger et = gameObject.GetComponent<EventTrigger> ();
 
 		EventTrigger.Entry entry = new EventTrigger.Entry();
-		entry.eventID = EventTriggerType.PointerEnter;
+		entry.eventID = EventTriggerType.PointerDown;
 		entry.callback = new EventTrigger.TriggerEvent();
 		UnityEngine.Events.UnityAction<BaseEventData> callback = 
 			new UnityEngine.Events.UnityAction<BaseEventData> (EnterEventMethod);
