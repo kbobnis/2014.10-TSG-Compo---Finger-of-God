@@ -218,7 +218,7 @@ public class Building : MonoBehaviour{
 
 		EffectDamage.Add (Element.Fire, 0.1f);
 		EffectDamage.Add (Element.Electricity, 0.1f);
-		EffectDamage.Add (Element.Water, 0.05f);
+		EffectDamage.Add (Element.Water, 0.1f);
 
 		EffectTime.Add (Element.Fire, 2f);
 		EffectTime.Add (Element.Electricity, 1f);
@@ -273,11 +273,16 @@ public class Building : MonoBehaviour{
 	}
 
 	public void TreatWith(Element e){
+		if (Statuses.ContainsKey (e) && Statuses [e] == 0) {
+			return ; //no need to treat with it
+		}
 
 		//if filling with water, check the ground level, only on crater water fills
 		if (e == Element.Water && (Statuses.ContainsKey(Element.Crush) || Statuses.ContainsKey(Element.SmallCrush)) && (!Statuses.ContainsKey(Element.Water) || Statuses[Element.Water] > 0) )  {
 			AddStatus(Element.Water);
-			//Game.Me.TreatNeighboursWith(gameObject, Element.Water);
+			Game.Me.TreatNeighboursWith(gameObject, Element.Water, delegate(GameObject go){
+				return go.GetComponent<Building>().Statuses.ContainsKey(Element.Crush) || go.GetComponent<Building>().Statuses.ContainsKey(Element.SmallCrush);
+			});
 		}
 
 		if (StrikeDamage.ContainsKey(e)) {
