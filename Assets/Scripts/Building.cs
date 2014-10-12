@@ -33,6 +33,11 @@ public class Building : MonoBehaviour{
 	private int ImageNumberFromAtlas;
 
 	public GameObject GameObjectExplosion, GameObjectFire, GameObjectGroundLevel, GameObjectWaterLevel, GameObjectBuilding;
+	private Vector3 startingPos;
+
+	void Start(){
+		startingPos = GameObjectBuilding.GetComponent<RectTransform>().localPosition;
+	}
 
 	public int PopulationDelta{
 		get {
@@ -82,11 +87,15 @@ public class Building : MonoBehaviour{
 		}
 
 		Sprite groundLevel = SpriteManager.GroundLevels [0];
+		float posY = 0;
 		if (isBigCrush) {
 			groundLevel = SpriteManager.GroundLevels[2];
+			posY = -15f;
 		} else if(!isBigCrush && isSmallCrush){
 			groundLevel = SpriteManager.GroundLevels[1];
+			posY = -7.5f;
 		}
+		GameObjectBuilding.GetComponent<RectTransform>().localPosition = new Vector3(startingPos.x, startingPos.y + posY, 0);
 		GameObjectGroundLevel.GetComponent<Image>().sprite = groundLevel;
 
 
@@ -211,14 +220,15 @@ public class Building : MonoBehaviour{
 	}
 
 	public void TreatWith(Element e){
-		if (Health > 0){
-			PlaySingleSound.SpawnSound (e.GetSound (), gameObject.transform.position);
-			if (StrikeDamage.ContainsKey(e)) {
+		PlaySingleSound.SpawnSound (e.GetSound (), gameObject.transform.position);
+		if (StrikeDamage.ContainsKey(e)) {
 
-				Health -= StrikeDamage [e];
-				if (EffectDamage.ContainsKey(e) && !StatusesProgress.ContainsKey(e)){
-					StatusesProgress.Add(e, 0);
-				}
+			Health -= StrikeDamage [e];
+			if (Health < 0){
+				Health = 0;
+			}
+			if (EffectDamage.ContainsKey(e) && !StatusesProgress.ContainsKey(e)){
+				StatusesProgress.Add(e, 0);
 			}
 		}
 	}

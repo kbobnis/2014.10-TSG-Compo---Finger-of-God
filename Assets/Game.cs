@@ -69,19 +69,19 @@ public class Game : MonoBehaviour {
 
 			buildingsRow.Add(newItem);
 		}
+		Buildings.Add (buildingsRow);
 
 		sl.Prepare ();
 
 		sl.itemPrefab.SetActive (false);
 
-		int x=0; 
-		foreach (List<GameObject> bsTmp in Buildings) {
-			int y=0; 
-			foreach(GameObject  bTmp in bsTmp){
-				Debug.Log("x: " + x + ", y: " + y + ", building: " + Buildings[x][y]);
-				y++;
+		int maxX = Buildings.Count;
+		int maxY = Buildings [0].Count;
+			
+		for(int y=0; y < maxY; y++){
+			for (int x=0; x < maxX; x++) {
+				Debug.Log("x: " + x + ", y: " + y + ", building: " + Buildings[x][y].name);
 			}
-			y++;
 		}
 	}
 	
@@ -104,9 +104,9 @@ public class Game : MonoBehaviour {
 		try{
 			int myX=0, myY=0;
 			int i = 0;
-			foreach (List<GameObject> rows in Buildings) {
+			foreach (List<GameObject> cols in Buildings) {
 				int j=0;
-				foreach(GameObject b in rows){
+				foreach(GameObject b in cols){
 					if (b == g){
 						myX = j;
 						myY = i;
@@ -117,7 +117,7 @@ public class Game : MonoBehaviour {
 			}
 
 
-			if (s.DeltaY() + myY > 0 && s.DeltaY() + myX > 0 && Buildings.Count > (s.DeltaY() + myY) && Buildings[s.DeltaY() + myY].Count > (s.DeltaX() + myX)){
+			if (s.DeltaY() + myY >= 0 && s.DeltaX() + myX >= 0 && Buildings.Count > (s.DeltaY() + myY) && Buildings[s.DeltaY() + myY].Count > (s.DeltaX() + myX)){
 			 tmp = Buildings [s.DeltaY () + myY] [s.DeltaX () + myX];
 			}
 
@@ -136,7 +136,6 @@ public class Game : MonoBehaviour {
 		if (left != null){
 			left.GetComponent<Building> ().TreatWith (Element.SmallCrush);
 		}
-
 		GameObject right = GetNeighbour (go, Side.Right);
 		if (right != null){
 			right.GetComponent<Building> ().TreatWith (Element.SmallCrush);
