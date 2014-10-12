@@ -51,7 +51,8 @@ public class Game : MonoBehaviour {
 		List<GameObject> buildings = new List<GameObject> ();
 		for (int i=0; i < 42; i++) {
 			GameObject newItem = Instantiate(sl.itemPrefab) as GameObject;
-			Building b = newItem.AddComponent<Building>();
+			newItem.SetActive(true);
+			Building b = newItem.GetComponent<Building>();
 
 			int ticket = Mathf.RoundToInt( Random.Range(1,3));
 			switch(ticket){
@@ -71,6 +72,8 @@ public class Game : MonoBehaviour {
 		sl.columnCount = 6;
 		sl.ElementsToPut = buildings;
 		sl.Prepare ();
+
+		sl.itemPrefab.SetActive (false);
 	}
 	
 	// Update is called once per frame
@@ -109,12 +112,8 @@ public class Game : MonoBehaviour {
 	}
 
 	public void ButtonTouched(GameObject go){
-		try{
-			if (go != null && go.GetComponent<Building>() != null){
-				go.GetComponent<Building>().TreatWith(ModeType);
-			}
-		} catch(System.Exception e){
-			Debug.Log("exception4: " + e);
+		if (go != null && go.GetComponent<Building>() != null){
+			go.GetComponent<Building>().TreatWith(ModeType);
 		}
 	}
 

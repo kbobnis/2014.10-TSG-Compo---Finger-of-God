@@ -41,11 +41,7 @@ public class BuildingClicked : MonoBehaviour {
 	}
 
 	public void ButtonClickedEvent(){
-		try {
-			Game.Me.ButtonTouched (gameObject);
-		} catch(System.Exception e){
-			Debug.Log("exception3: " + e);
-		}
+		Game.Me.ButtonTouched (gameObject);
 	}
 
 }

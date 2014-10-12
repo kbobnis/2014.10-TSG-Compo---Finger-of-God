@@ -17,6 +17,8 @@ public class Building : MonoBehaviour{
 	private float Health = 1f;
 	private int ImageNumberFromAtlas;
 
+	public GameObject GameObjectExplosion, GameObjectFire;
+
 	public int PopulationDelta{
 		get {
 			int delta = _Population - LastCheckedPopulation;
@@ -29,10 +31,7 @@ public class Building : MonoBehaviour{
 
 		if (Health <= 0) {
 			UpdateImage();
-			GetComponentInChildren<Text>().gameObject.SetActive(false);
-			return;
 		}
-
 
 		List<Cataclysm> bss = StatusesProgress.Keys.ToList();
 		foreach (Cataclysm status in bss) {
@@ -42,7 +41,21 @@ public class Building : MonoBehaviour{
 				if (Health < 0){
 					Health = 0;
 				}
-				StatusesProgress[status] += 1 / EffectTime[status] * Time.deltaTime;
+				float progress = StatusesProgress[status] += 1 / EffectTime[status] * Time.deltaTime;
+				if (progress > 1){
+					progress = 1;
+				}
+
+				if (status == Cataclysm.Strike){
+					Image i = GameObjectExplosion.GetComponent<Image>();
+					i.enabled = true;
+					i.sprite = SpriteManager.Explosions[(int)(progress * 14)]; // 0 - 14
+				}
+				if (status == Cataclysm.Fire){
+					Image i = GameObjectFire.GetComponent<Image>();
+					i.enabled = true;
+					i.sprite = SpriteManager.Fires[(int)(progress * SpriteManager.Fires.Length -1)];
+				}
 			}
 		}
 
@@ -52,6 +65,12 @@ public class Building : MonoBehaviour{
 			float value = StatusesProgress[status];
 			if (value >= 1) {
 				StatusesProgress.Remove(status);
+				if (status == Cataclysm.Strike){
+					GameObjectExplosion.GetComponent<Image>().enabled = false;
+				}
+				if (status == Cataclysm.Fire){
+					GameObjectFire.GetComponent<Image>().enabled = false;
+				}
 			} else {
 				text += status.ToString()+", " + value+". ";
 			}
@@ -96,7 +115,7 @@ public class Building : MonoBehaviour{
 		EffectDamage.Add (Cataclysm.Whirlwind, 0.1f);
 		
 		EffectTime.Add (Cataclysm.Crush, 0.5f);
-		EffectTime.Add (Cataclysm.Fire, 1f);
+		EffectTime.Add (Cataclysm.Fire, 3f);
 		EffectTime.Add (Cataclysm.Strike, 1f);
 		EffectTime.Add (Cataclysm.Whirlwind, 1f);
 		
@@ -128,7 +147,7 @@ public class Building : MonoBehaviour{
 		
 		EffectTime.Add (Cataclysm.Crush, 0.5f);
 		EffectTime.Add (Cataclysm.Fire, 1f);
-		EffectTime.Add (Cataclysm.Strike, 0.1f);
+		EffectTime.Add (Cataclysm.Strike, 1f);
 		EffectTime.Add (Cataclysm.Whirlwind, 1f);
 		
 		ImageNumberFromAtlas = 2;
@@ -162,7 +181,7 @@ public class Building : MonoBehaviour{
 		if (Health > 0){
 			PlaySingleSound.SpawnSound (cataclysm.GetSound (), gameObject.transform.position);
 			if (!StrikeDamage.ContainsKey(cataclysm)) {
-				throw new UnityException("THere is no " + cataclysm + ", in strike damage ");
+				throw new UnityException("There is no " + cataclysm + ", in strike damage. health: " + Health + ", name: " + gameObject.name);
 			}
 			Health -= StrikeDamage [cataclysm];
 			if (!StatusesProgress.ContainsKey(cataclysm)){
