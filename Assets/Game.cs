@@ -54,7 +54,7 @@ public class Game : MonoBehaviour {
 	public void Prepare(){
 		Clean ();
 		Preparing = true;
-		TextPopulation.GetComponent<NumberShower> ().Number = 0;
+		TextInterventions.GetComponent<NumberShower> ().Number = 0;
 		PanelMainScreen.SetActive (true);
 		PanelStartGame.SetActive (false);
 

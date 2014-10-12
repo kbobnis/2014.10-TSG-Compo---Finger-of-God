@@ -26,7 +26,7 @@ public class Building : MonoBehaviour{
 	private int ImageNumberFromAtlas;
 
 	public GameObject GameObjectGroundLevel, GameObjectBuilding;
-	public GameObject GameObjectFire, GameObjectWaterLevel, GameObjectSmokeAfterFire, GameObjectElectricity, GameObjectCrush;
+	public GameObject GameObjectFire, GameObjectWaterLevel, GameObjectSmokeAfterFire, GameObjectElectricity, GameObjectCrush, GameObjectHealthBar;
 
 	private Dictionary<Element, GameObject> ElGO = new Dictionary<Element, GameObject> ();
 	private Vector3 startingPos;
@@ -106,10 +106,6 @@ public class Building : MonoBehaviour{
 
 	void Update(){
 
-		if (Health <= 0) {
-			UpdateImage();
-		}
-
 		ExtinguishFireCheck();
 
 		List<Element> bss = Statuses.Keys.ToList();
@@ -168,6 +164,8 @@ public class Building : MonoBehaviour{
 			}
 		}
 
+		UpdateImage();
+
 	}
 
 	public void Inform(){
@@ -178,15 +176,6 @@ public class Building : MonoBehaviour{
 				l.Inform((object)d);
 			}
 		}
-	}
-
-	private void Clean(){
-		StrikeDamage.Clear ();
-		EffectDamage.Clear ();
-		EffectTime.Clear ();
-		Health = 1f;
-		Statuses.Clear ();
-		_Population = 0;
 	}
 
 	private void AddConstants(){ 
@@ -236,7 +225,6 @@ public class Building : MonoBehaviour{
 
 
 	public void CreateWood1(){
-		Clean ();
 		StrikeDamage.Add (Element.Crush, 0.4f);
 
 		EffectDamage.Add (Element.Fire, 0.25f);
@@ -255,11 +243,18 @@ public class Building : MonoBehaviour{
 		if (Health <= 0){
 			s = SpriteManager.BuildingSpritesDestroyed[ImageNumberFromAtlas];
 		}
-		GameObjectBuilding.GetComponent<Image> ().sprite = s;
+		Sprite actualSprite = GameObjectBuilding.GetComponent<Image> ().sprite;
+		if (actualSprite != s){
+			GameObjectBuilding.GetComponent<Image> ().sprite = s;
+		}
+
+		//update health bar
+		GameObjectHealthBar.GetComponent<Image> ().fillAmount = Health;
+
+		GameObjectHealthBar.transform.parent.gameObject.SetActive (Health > 0);
 	}
 
 	public void CreateStone1(){
-		Clean ();
 		StrikeDamage.Add (Element.Crush, 0.5f);
 
 		EffectDamage.Add (Element.Fire, 0.15f);
@@ -274,7 +269,6 @@ public class Building : MonoBehaviour{
 	}
 
 	public void CreateGasStation(){
-		Clean ();
 		StrikeDamage.Add (Element.Crush, 1f);
 
 		EffectDamage.Add (Element.Fire, 0f);
@@ -288,10 +282,10 @@ public class Building : MonoBehaviour{
 		ImageNumberFromAtlas = 39;
 		UpdateImage ();
 		StartingPopulation = _Population = 10;
+		gameObject.name = "Gas station";
 	}
 
 	public void CreateWaterSilo(){
-		Clean ();
 		StrikeDamage.Add (Element.Crush, 1f);
 
 		EffectDamage.Add (Element.Fire, 0f);
@@ -308,7 +302,6 @@ public class Building : MonoBehaviour{
 	}
 
 	public void CreateElectricityTower(){
-		Clean ();
 		StrikeDamage.Add (Element.Crush, 1f);
 
 		EffectDamage.Add (Element.Fire, 0f);

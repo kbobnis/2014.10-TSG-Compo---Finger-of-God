@@ -61,9 +61,7 @@ public class ScrollableList : MonoBehaviour
 			} else {
 				newItem = Instantiate(itemPrefab) as GameObject;
 			}
-			if (j == 8){
-				int rzecz = 2;
-			}
+
 			newItem.name = gameObject.name + " item at (" + i + "," + j + ")";
 			newItem.transform.parent = gameObject.transform;
 			
