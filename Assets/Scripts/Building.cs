@@ -21,6 +21,8 @@ public class Building : MonoBehaviour{
 	private int StartingPopulation, _Population, LastCheckedPopulation;
 	private float _Health = 1f;
 	private int ImageNumberFromAtlas;
+	private const float WaterFillSpeed = 0.3f;
+	private float LastWaterFill;
 
 	public GameObject GameObjectGroundLevel, GameObjectBuilding;
 	public GameObject GameObjectFire, GameObjectWaterLevel, GameObjectSmokeAfterFire;
@@ -59,18 +61,31 @@ public class Building : MonoBehaviour{
 		}
 	}
 
-	private void AddStatus(Element e){
+	private void AddStatus(Element e, float startingValue=0){
 		if (!Statuses.ContainsKey(e)){
-			Statuses.Add(e, 0);
-		} else {
-			Statuses[e] = 0;
+			Statuses.Add(e, startingValue);
+			if (e == Element.Water){
+				LastWaterFill = Time.time;
+			}
+			if (SoundManager.Clips.ContainsKey (e)) {
+				PlaySingleSound.SpawnSound(SoundManager.Clips[e]);
+			} else {
+				Debug.Log("There is no sound for " + e);
+			}
+
+		} else if (Statuses[e] > startingValue) {
+			Statuses[e] = startingValue;
+			if (e == Element.Water){
+				LastWaterFill = Time.time;
+			}
+			if (SoundManager.Clips.ContainsKey (e)) {
+				PlaySingleSound.SpawnSound(SoundManager.Clips[e]);
+			} else {
+				Debug.Log("There is no sound for " + e);
+			}
+
 		}
 
-		if (SoundManager.Clips.ContainsKey (e)) {
-			PlaySingleSound.SpawnSound(SoundManager.Clips[e]);
-		} else {
-			Debug.Log("There is no sound for " + e);
-		}
 	}
 
 	private void Die(){
@@ -150,6 +165,27 @@ public class Building : MonoBehaviour{
 		GetComponentInChildren<Text> ().enabled = false;
 
 		Inform ();
+
+		//if filling with water, check the ground level, only on crater water fills
+
+		if (Statuses.ContainsKey(Element.Water) && Time.time - LastWaterFill > WaterFillSpeed)  {
+			LastWaterFill = Time.time;
+			Game.Me.TreatNeighboursWith(gameObject, Element.Water, Statuses[Element.Water], delegate(GameObject go){
+				Building b = go.GetComponent<Building>();
+				return 
+					(
+						b.Statuses.ContainsKey(Element.Crush) 
+						|| 
+						b.Statuses.ContainsKey(Element.SmallCrush)
+					) 
+					&&
+					(
+						!b.Statuses.ContainsKey(Element.Water) 
+						|| 
+						b.Statuses[Element.Water] >  Statuses[Element.Water]
+					);
+			});
+		}
 
 	}
 
@@ -272,17 +308,9 @@ public class Building : MonoBehaviour{
 		StartingPopulation = _Population = 4000;
 	}
 
-	public void TreatWith(Element e){
-		if (Statuses.ContainsKey (e) && Statuses [e] == 0) {
+	public void TreatWith(Element e, float startingValue=0){
+		if (Statuses.ContainsKey (e) && Statuses [e] <= startingValue) {
 			return ; //no need to treat with it
-		}
-
-		//if filling with water, check the ground level, only on crater water fills
-		if (e == Element.Water && (Statuses.ContainsKey(Element.Crush) || Statuses.ContainsKey(Element.SmallCrush)) && (!Statuses.ContainsKey(Element.Water) || Statuses[Element.Water] > 0) )  {
-			AddStatus(Element.Water);
-			Game.Me.TreatNeighboursWith(gameObject, Element.Water, delegate(GameObject go){
-				return go.GetComponent<Building>().Statuses.ContainsKey(Element.Crush) || go.GetComponent<Building>().Statuses.ContainsKey(Element.SmallCrush);
-			});
 		}
 
 		if (StrikeDamage.ContainsKey(e)) {
@@ -298,11 +326,11 @@ public class Building : MonoBehaviour{
 				}
 			}
 		}
-		if (EffectDamage.ContainsKey(e) && !Statuses.ContainsKey(e)){
+		if (EffectDamage.ContainsKey(e) && (!Statuses.ContainsKey(e) || Statuses[e] > startingValue)){
 			if ( e == Element.Fire && Health == 0){
 				//dont start fire on dead buildings
 			} else {
-				AddStatus(e);
+				AddStatus(e, startingValue);
 			}
 		}
 		if (StrikeDamage.ContainsKey(e)){

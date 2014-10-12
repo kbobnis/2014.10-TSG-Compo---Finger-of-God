@@ -119,24 +119,24 @@ public class Game : MonoBehaviour {
 	public delegate bool GoQuestion(GameObject go);
 
 
-	public void TreatNeighboursWith(GameObject go, Element e, GoQuestion goq=null){
+	public void TreatNeighboursWith(GameObject go, Element e, float startingValue=0, GoQuestion goq=null){
 		GameObject left = GetNeighbour (go, Side.Left);
 		if (left != null && (goq == null || goq(left))){
-			left.GetComponent<Building> ().TreatWith (e);
+			left.GetComponent<Building> ().TreatWith (e, startingValue);
 		}
 		GameObject right = GetNeighbour (go, Side.Right);
 		if (right != null && (goq == null || goq(right))){
-			right.GetComponent<Building> ().TreatWith (e);
+			right.GetComponent<Building> ().TreatWith (e, startingValue);
 		}
 		
 		GameObject up = GetNeighbour (go, Side.Up);
 		if (up != null && (goq == null || goq(up))){
-			up.GetComponent<Building> ().TreatWith (e);
+			up.GetComponent<Building> ().TreatWith (e, startingValue);
 		}
 		
 		GameObject down = GetNeighbour (go, Side.Down);
 		if (down != null && (goq == null || goq(down))){
-			down.GetComponent<Building> ().TreatWith (e);
+			down.GetComponent<Building> ().TreatWith (e, startingValue);
 		}
 	}
 
