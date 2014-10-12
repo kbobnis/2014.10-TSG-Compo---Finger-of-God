@@ -23,7 +23,6 @@ public class NumberShower : MonoBehaviour, Listener {
 	}
 
 	public void AddNumber(int number){
-		Debug.Log ("adding number: "+(Minus?"-":"+")+"" + number);
 		Number += (Minus?-1:1) * number;
 	}
 }

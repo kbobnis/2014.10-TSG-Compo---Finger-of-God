@@ -14,8 +14,8 @@ public class Building : MonoBehaviour{
 	public List<Listener> Listeners = new List<Listener>();
 
 	private int StartingPopulation, _Population, LastCheckedPopulation;
-	private Sprite Sprite;
 	private float Health = 1f;
+	private int ImageNumberFromAtlas;
 
 	public int PopulationDelta{
 		get {
@@ -26,6 +26,13 @@ public class Building : MonoBehaviour{
 	}
 
 	void Update(){
+
+		if (Health <= 0) {
+			UpdateImage();
+			GetComponentInChildren<Text>().gameObject.SetActive(false);
+			return;
+		}
+
 
 		List<Cataclysm> bss = StatusesProgress.Keys.ToList();
 		foreach (Cataclysm status in bss) {
@@ -54,9 +61,6 @@ public class Building : MonoBehaviour{
 
 		Inform ();
 
-		if (Health <= 0) {
-			Destroy(gameObject);
-		}
 	}
 
 	public void Inform(){
@@ -96,9 +100,18 @@ public class Building : MonoBehaviour{
 		EffectTime.Add (Cataclysm.Strike, 1f);
 		EffectTime.Add (Cataclysm.Whirlwind, 1f);
 		
-		Sprite = SpriteManager.BuildingSprites [1];
-		GetComponent<Image> ().sprite = Sprite;
+		ImageNumberFromAtlas = 1;
+		UpdateImage ();
 		StartingPopulation = _Population = 1000;
+	}
+
+	private void UpdateImage(){
+		Sprite s = SpriteManager.BuildingSprites [ImageNumberFromAtlas];
+		if (Health <= 0){
+			s = SpriteManager.BuildingSpritesDestroyed[ImageNumberFromAtlas];
+		}
+
+		GetComponent<Image> ().sprite = s;
 	}
 
 	public void CreateStone1(){
@@ -118,8 +131,8 @@ public class Building : MonoBehaviour{
 		EffectTime.Add (Cataclysm.Strike, 0.1f);
 		EffectTime.Add (Cataclysm.Whirlwind, 1f);
 		
-		Sprite = SpriteManager.BuildingSprites [2];
-		GetComponent<Image> ().sprite = Sprite;
+		ImageNumberFromAtlas = 2;
+		UpdateImage ();
 		StartingPopulation = _Population = 2000;
 	}
 
@@ -140,19 +153,21 @@ public class Building : MonoBehaviour{
 		EffectTime.Add (Cataclysm.Strike, 0.1f);
 		EffectTime.Add (Cataclysm.Whirlwind, 0.1f);
 		
-		Sprite = SpriteManager.BuildingSprites [2];
-		GetComponent<Image> ().sprite = Sprite;
+		ImageNumberFromAtlas = 3;
+		UpdateImage ();
 		StartingPopulation = _Population = 4000;
 	}
 
 	public void TreatWith(Cataclysm cataclysm){
-		PlaySingleSound.SpawnSound (cataclysm.GetSound (), gameObject.transform.position);
-		if (!StrikeDamage.ContainsKey(cataclysm)) {
-			throw new UnityException("THere is no " + cataclysm + ", in strike damage ");
-		}
-		Health -= StrikeDamage [cataclysm];
-		if (!StatusesProgress.ContainsKey(cataclysm)){
-			StatusesProgress.Add(cataclysm, 0);
+		if (Health > 0){
+			PlaySingleSound.SpawnSound (cataclysm.GetSound (), gameObject.transform.position);
+			if (!StrikeDamage.ContainsKey(cataclysm)) {
+				throw new UnityException("THere is no " + cataclysm + ", in strike damage ");
+			}
+			Health -= StrikeDamage [cataclysm];
+			if (!StatusesProgress.ContainsKey(cataclysm)){
+				StatusesProgress.Add(cataclysm, 0);
+			}
 		}
 	}
 
