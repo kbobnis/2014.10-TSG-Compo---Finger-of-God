@@ -38,11 +38,12 @@ public class ScrollableList : MonoBehaviour
 
 			height = prefabH * rowCount;
 
-		}
+		} else {
 
-		//adjust the height of the container so that it will just barely fit all its children
-		panelRect.offsetMin = new Vector2(-width/2, -height/2);
-		panelRect.offsetMax = new Vector2(width/2, height/2);
+			//adjust the height of the container so that it will just barely fit all its children
+			panelRect.offsetMin = new Vector2(-width/2, -height/2);
+			panelRect.offsetMax = new Vector2(width/2, height/2);
+		}
 
 		int j = -1;
 		int i = 0;
@@ -59,6 +60,9 @@ public class ScrollableList : MonoBehaviour
 				newItem = ElementsToPut[x2];
 			} else {
 				newItem = Instantiate(itemPrefab) as GameObject;
+			}
+			if (j == 8){
+				int rzecz = 2;
 			}
 			newItem.name = gameObject.name + " item at (" + i + "," + j + ")";
 			newItem.transform.parent = gameObject.transform;

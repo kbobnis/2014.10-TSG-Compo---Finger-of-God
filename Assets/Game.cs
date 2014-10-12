@@ -26,24 +26,46 @@ public static class SideMethods{
 	}
 }
 
+public delegate bool GoQuestion(GameObject go);
+
 public class Game : MonoBehaviour {
 
-	public GameObject ScrollableListBuildings;
 	public GameObject TextPopulation, TextInterventions;
+	public GameObject PanelStartGame, PanelMainScreen, PanelMainScreenPrefab;
+	private bool Preparing;
 
 	private List<List<GameObject>> Buildings = new List<List<GameObject>> ();
 
 	public static Game Me;
 
+	private void Clean(){
+
+		foreach(List<GameObject> l in Buildings){
+			foreach(GameObject go in l){
+				Destroy(go);
+			}
+		}
+	}
+
+	public void Start(){
+	}
+
 	// Use this for initialization
-	void Start () {
+	public void Prepare(){
+		Clean ();
+		Preparing = true;
+		TextPopulation.GetComponent<NumberShower> ().Number = 0;
+		PanelMainScreen.SetActive (true);
+		PanelStartGame.SetActive (false);
+
 		PlaySingleSound.SpawnSound (SoundManager.Ambient, 1);
 
 		Me = this;
 
-		ScrollableList sl = ScrollableListBuildings.GetComponent<ScrollableList> ();
+		ScrollableList sl = PanelMainScreen.GetComponentInChildren<ScrollableList> ();
 		int columns = sl.columnCount = 6;
 
+		sl.ElementsToPut.Clear ();
 		List<GameObject> buildingsRow = new List<GameObject>();
 		for (int i=0; i < 48; i++) {
 
@@ -56,24 +78,46 @@ public class Game : MonoBehaviour {
 			newItem.SetActive(true);
 			Building b = newItem.GetComponent<Building>();
 
-			int ticket = Mathf.RoundToInt( Random.Range(1,6));
-			switch(ticket){
-				case 1: b.CreateWood1(); break;
-				case 2: b.CreateStone1(); break;
-				case 3: b.CreateGasStation(); break;
-				case 4: b.CreateWaterSilo(); break;
-				case 5: b.CreateElectricityTower(); break;
-				default: throw new UnityException("Please initiate building");
+			int ticket = Mathf.RoundToInt( Random.value * 7 );
+
+			if (ticket == 0){
+				b.CreateGasStation();
 			}
+
+			if (ticket == 1){
+				b.CreateWaterSilo();
+			} 
+
+			if (ticket == 2){
+				b.CreateElectricityTower();
+			} 
+
+			if (ticket > 2 && ticket <= 5){
+				b.CreateStone1(); 
+			} 
+
+			if (ticket > 5 && ticket < 8){
+				b.CreateWood1();
+			}
+
 
 			b.Listeners.Add(TextPopulation.GetComponent<NumberShower>());
 			sl.ElementsToPut.Add(newItem);
+			b.Inform();
 
 			buildingsRow.Add(newItem);
 		}
 		Buildings.Add (buildingsRow);
 		sl.Prepare ();
 		sl.itemPrefab.SetActive (false);
+		Preparing = false;
+	}
+
+	void Update(){
+		if (TextPopulation.GetComponent<NumberShower> ().Number == 0 && !Preparing) {
+			PanelStartGame.SetActive(true);
+			PanelMainScreen.SetActive (false);
+		}
 	}
 	
 	public void PointerEnter(UnityEngine.EventSystems.BaseEventData baseEvent) {
@@ -119,10 +163,14 @@ public class Game : MonoBehaviour {
 		}
 	}
 
-	public delegate bool GoQuestion(GameObject go);
+
 
 
 	public void TreatNeighboursWith(GameObject go, Element e, float startingValue=0, GoQuestion goq=null){
+		if (startingValue >= 1) {
+			return ; //we don't want to waste time for dead startingValue
+		}
+
 		GameObject left = GetNeighbour (go, Side.Left);
 		if (left != null && (goq == null || goq(left))){
 			left.GetComponent<Building> ().TreatWith (e, startingValue);

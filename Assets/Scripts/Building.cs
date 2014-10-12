@@ -15,20 +15,18 @@ public class Building : MonoBehaviour{
 	private Dictionary<Element, float> EffectTime = new Dictionary<Element, float>();
 	private Dictionary<Element, Side> AfterHit = new Dictionary<Element, Side> ();
 	private Dictionary<Element, float> Statuses = new Dictionary<Element, float>();
+	private Dictionary<Element, float> FillSpeed = new Dictionary<Element, float> ();
+	private Dictionary<Element, float> LastFill = new Dictionary<Element, float> ();
+	private Dictionary<Element, GoQuestion> FillRequirement = new Dictionary<Element, GoQuestion>();
 
 	public List<Listener> Listeners = new List<Listener>();
 
 	private int StartingPopulation, _Population, LastCheckedPopulation;
 	private float _Health = 1f;
 	private int ImageNumberFromAtlas;
-	private const float WaterFillSpeed = 0.3f;
-	private float LastWaterFill;
-
-	private const float ElectricFillSpeed = 0.01f;
-	private float LastElectrictFill;
 
 	public GameObject GameObjectGroundLevel, GameObjectBuilding;
-	public GameObject GameObjectFire, GameObjectWaterLevel, GameObjectSmokeAfterFire, GameObjectElectricity;
+	public GameObject GameObjectFire, GameObjectWaterLevel, GameObjectSmokeAfterFire, GameObjectElectricity, GameObjectCrush;
 
 	private Dictionary<Element, GameObject> ElGO = new Dictionary<Element, GameObject> ();
 	private Vector3 startingPos;
@@ -40,6 +38,7 @@ public class Building : MonoBehaviour{
 		ElGO.Add (Element.Water, GameObjectWaterLevel);
 		ElGO.Add (Element.SmokeAfterFire, GameObjectSmokeAfterFire);
 		ElGO.Add (Element.Electricity, GameObjectElectricity);
+		ElGO.Add (Element.Crush, GameObjectCrush);
 
 	}
 
@@ -68,26 +67,17 @@ public class Building : MonoBehaviour{
 	private void AddStatus(Element e, float startingValue=0){
 		if (!Statuses.ContainsKey(e)){
 			Statuses.Add(e, startingValue);
-			if (e == Element.Water){
-				LastWaterFill = Time.time;
-			}
+			LastFill[e] = Time.time;
 			if (SoundManager.Clips.ContainsKey (e)) {
 				PlaySingleSound.SpawnSound(SoundManager.Clips[e]);
-			} else {
-				Debug.Log("There is no sound for " + e);
 			}
 
 		} else if (Statuses[e] > startingValue) {
 			Statuses[e] = startingValue;
-			if (e == Element.Water){
-				LastWaterFill = Time.time;
-			}
+			LastFill[e] = Time.time;
 			if (SoundManager.Clips.ContainsKey (e) && e != Element.Water) {
 				PlaySingleSound.SpawnSound(SoundManager.Clips[e]);
-			} else {
-				Debug.Log("There is no sound for " + e);
 			}
-
 		}
 
 	}
@@ -171,32 +161,11 @@ public class Building : MonoBehaviour{
 		Inform ();
 
 		//if filling with water, check the ground level, only on crater water fills
-
-		if (Statuses.ContainsKey(Element.Water) && Time.time - LastWaterFill > WaterFillSpeed)  {
-			LastWaterFill = Time.time;
-			Game.Me.TreatNeighboursWith(gameObject, Element.Water, Statuses[Element.Water], delegate(GameObject go){
-				Building b = go.GetComponent<Building>();
-				return 
-					(
-						b.Statuses.ContainsKey(Element.Crush) 
-						|| 
-						b.Statuses.ContainsKey(Element.SmallCrush)
-					) 
-					&&
-					(
-						!b.Statuses.ContainsKey(Element.Water) 
-						|| 
-						b.Statuses[Element.Water] >  Statuses[Element.Water]
-					);
-			});
-		}
-
-		if (Statuses.ContainsKey(Element.Electricity) && Time.time - LastElectrictFill > ElectricFillSpeed)  {
-			LastElectrictFill = Time.time;
-			Game.Me.TreatNeighboursWith(gameObject, Element.Electricity, Statuses[Element.Electricity], delegate(GameObject go){
-				Building b = go.GetComponent<Building>();
-				return  b.Statuses.ContainsKey(Element.Water);
-			});
+		foreach (Element e in FillRequirement.Keys.ToList ()) {
+			if (Statuses.ContainsKey(e) && Time.time - LastFill[e] > FillSpeed[e] )  {
+				LastFill[e] = Time.time;
+				Game.Me.TreatNeighboursWith(gameObject, e, Statuses[e], FillRequirement[e]);
+			}
 		}
 
 	}
@@ -222,25 +191,56 @@ public class Building : MonoBehaviour{
 
 	private void AddConstants(){ 
 
+		StrikeDamage.Add (Element.SmallCrush, 0f);
+
 		EffectDamage.Add (Element.Crush, 0.00f);
 		EffectDamage.Add (Element.SmallCrush, 0.00f);
 		EffectDamage.Add (Element.Electricity, 0.5f);
 
 		EffectTime.Add (Element.SmokeAfterFire, 2f);
-		EffectTime.Add (Element.Crush, 10f);
+		EffectTime.Add (Element.Crush, 1f);
 		EffectTime.Add (Element.SmallCrush, 5f);
-		EffectTime.Add (Element.Electricity, 0.5f);
+		EffectTime.Add (Element.Electricity, 0.8f);
 		EffectTime.Add (Element.Water, 5f);
+
+		FillSpeed.Add (Element.Electricity, 0.05f);
+		FillSpeed.Add (Element.Water, 0.3f);
+		FillSpeed.Add (Element.Fire, 1f);
+
+		FillRequirement.Add(Element.Electricity, delegate(GameObject go){
+			return  go.GetComponent<Building>().Statuses.ContainsKey(Element.Water);
+		});
+
+		FillRequirement.Add(Element.Water, delegate(GameObject go){
+			Building b = go.GetComponent<Building>();
+			return 
+				(
+					b.Statuses.ContainsKey(Element.Crush) 
+					|| 
+					b.Statuses.ContainsKey(Element.SmallCrush)
+					) 
+					&&
+					(
+						!b.Statuses.ContainsKey(Element.Water) 
+						|| 
+						b.Statuses[Element.Water] >  Statuses[Element.Water]
+						);
+		});
+
+		FillRequirement.Add (Element.Fire, delegate(GameObject go) {
+			return go.GetComponent<Building>().EffectDamage[Element.Fire] >= 0.1f;
+		});
+
+
 	}
 
 
 	public void CreateWood1(){
 		Clean ();
-		StrikeDamage.Add (Element.Crush, 0.1f);
-		StrikeDamage.Add (Element.SmallCrush, 0.06f);
+		StrikeDamage.Add (Element.Crush, 0.4f);
 
-		EffectDamage.Add (Element.Fire, 0.1f);
-		EffectDamage.Add (Element.Water, 0.01f);
+		EffectDamage.Add (Element.Fire, 0.25f);
+		EffectDamage.Add (Element.Water, 0.02f);
 
 		EffectTime.Add (Element.Fire, 5f);
 
@@ -260,11 +260,10 @@ public class Building : MonoBehaviour{
 
 	public void CreateStone1(){
 		Clean ();
-		StrikeDamage.Add (Element.Crush, 0.1f);
-		StrikeDamage.Add (Element.SmallCrush, 0.06f);
+		StrikeDamage.Add (Element.Crush, 0.5f);
 
-		EffectDamage.Add (Element.Fire, 0.1f);
-		EffectDamage.Add (Element.Water, 0.1f);
+		EffectDamage.Add (Element.Fire, 0.15f);
+		EffectDamage.Add (Element.Water, 0.15f);
 
 		EffectTime.Add (Element.Fire, 2f);
 
@@ -276,11 +275,10 @@ public class Building : MonoBehaviour{
 
 	public void CreateGasStation(){
 		Clean ();
-		StrikeDamage.Add (Element.Crush, 0.6f);
-		StrikeDamage.Add (Element.SmallCrush, 0.06f);
+		StrikeDamage.Add (Element.Crush, 1f);
 
-		EffectDamage.Add (Element.Fire, 0.1f);
-		EffectDamage.Add (Element.Water, 0.05f);
+		EffectDamage.Add (Element.Fire, 0f);
+		EffectDamage.Add (Element.Water, 0f);
 
 		EffectTime.Add (Element.Fire, 2f);
 
@@ -289,16 +287,15 @@ public class Building : MonoBehaviour{
 		AddConstants ();
 		ImageNumberFromAtlas = 39;
 		UpdateImage ();
-		StartingPopulation = _Population = 4000;
+		StartingPopulation = _Population = 10;
 	}
 
 	public void CreateWaterSilo(){
 		Clean ();
-		StrikeDamage.Add (Element.Crush, 0.6f);
-		StrikeDamage.Add (Element.SmallCrush, 0.06f);
-		
-		EffectDamage.Add (Element.Fire, 0.1f);
-		EffectDamage.Add (Element.Water, 0.05f);
+		StrikeDamage.Add (Element.Crush, 1f);
+
+		EffectDamage.Add (Element.Fire, 0f);
+		EffectDamage.Add (Element.Water, 0f);
 
 		EffectTime.Add (Element.Fire, 2f);
 
@@ -307,18 +304,17 @@ public class Building : MonoBehaviour{
 		AddConstants ();
 		ImageNumberFromAtlas = 40;
 		UpdateImage ();
-		StartingPopulation = _Population = 4000;
+		StartingPopulation = _Population = 10;
 	}
 
 	public void CreateElectricityTower(){
 		Clean ();
 		StrikeDamage.Add (Element.Crush, 1f);
-		StrikeDamage.Add (Element.SmallCrush, 0.5f);
-		
-		EffectDamage.Add (Element.Fire, 0.3f);
+
+		EffectDamage.Add (Element.Fire, 0f);
 		EffectDamage.Add (Element.Water, 0f);
 		
-		EffectTime.Add (Element.Fire, 1f);
+		EffectTime.Add (Element.Fire, 3f);
 
 		AfterHit.Add (Element.Electricity, Side.Center);
 		

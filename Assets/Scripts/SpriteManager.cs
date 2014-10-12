@@ -32,5 +32,7 @@ public class SpriteManager{
 		ElementSprites.Add (Element.SmokeAfterFire, Resources.LoadAll<Sprite> ("Images/smokeAfterFire"));
 		ElementSprites.Add (Element.Electricity, Resources.LoadAll<Sprite> ("Images/electric"));
 
+		ElementSprites.Add (Element.Crush, Resources.LoadAll<Sprite> ("Images/explosion"));
+
 	}
 }
