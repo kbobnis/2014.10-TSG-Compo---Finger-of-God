@@ -58,8 +58,6 @@ public class Game : MonoBehaviour {
 		PanelMainScreen.SetActive (true);
 		PanelStartGame.SetActive (false);
 
-		PlaySingleSound.SpawnSound (SoundManager.Ambient, 1);
-
 		Me = this;
 
 		ScrollableList sl = PanelMainScreen.GetComponentInChildren<ScrollableList> ();
@@ -78,7 +76,7 @@ public class Game : MonoBehaviour {
 			newItem.SetActive(true);
 			Building b = newItem.GetComponent<Building>();
 
-			int ticket = Mathf.RoundToInt( Random.value * 5 );
+			int ticket = Mathf.RoundToInt( Random.value * 8 );
 
 			if (ticket == 0){
 				b.CreateGasStation();
@@ -92,11 +90,11 @@ public class Game : MonoBehaviour {
 				b.CreateElectricityTower();
 			} 
 
-			if (ticket > 2 && ticket <= 4){
+			if (ticket > 2 && ticket <= 5){
 				b.CreateStone1(); 
 			} 
 
-			if (ticket > 4 && ticket < 6){
+			if (ticket > 5 && ticket < 9){
 				b.CreateWood1();
 			}
 
@@ -128,7 +126,7 @@ public class Game : MonoBehaviour {
 		}
 	}
 
-	private GameObject GetNeighbour(GameObject g, Side s){
+	public GameObject GetNeighbour(GameObject g, Side s){
 		GameObject tmp = null;
 		try{
 			int myX=0, myY=0;
