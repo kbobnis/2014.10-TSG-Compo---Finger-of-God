@@ -16,11 +16,10 @@ public class PlaySingleSound : MonoBehaviour
 		}
 	}
 
-	public static void SpawnSound( AudioClip clip, Vector3 position, float volume=1f )
+	public static void SpawnSound( AudioClip clip, float volume=1f )
 	{
 		if (clip != null){
 			GameObject go = new GameObject( "sound clip: " + clip.name );
-			go.transform.position = position;
 
 			AudioSource audio = go.AddComponent<AudioSource>();
 			audio.volume = volume;

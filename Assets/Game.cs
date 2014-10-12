@@ -29,7 +29,7 @@ public static class SideMethods{
 public class Game : MonoBehaviour {
 
 	public GameObject ScrollableListBuildings;
-	public GameObject TextPopulation, TextCasualties;
+	public GameObject TextPopulation, TextInterventions;
 
 	private List<List<GameObject>> Buildings = new List<List<GameObject>> ();
 
@@ -54,45 +54,26 @@ public class Game : MonoBehaviour {
 			newItem.SetActive(true);
 			Building b = newItem.GetComponent<Building>();
 
-			int ticket = Mathf.RoundToInt( Random.Range(1,4));
+			int ticket = Mathf.RoundToInt( Random.Range(1,5));
 			switch(ticket){
 				case 1: b.CreateWood1(); break;
 				case 2: b.CreateStone1(); break;
 				case 3: b.CreateGasStation(); break;
+				case 4: b.CreateWaterSilo(); break;
 				default: throw new UnityException("Please initiate building");
 			}
 
-			//TextPopulation.GetComponent<NumberShower>().AddNumber(b.PopulationDelta);
 			b.Listeners.Add(TextPopulation.GetComponent<NumberShower>());
-			b.Inform();
-			b.Listeners.Add(TextCasualties.GetComponent<NumberShower>());
 			sl.ElementsToPut.Add(newItem);
 
 			buildingsRow.Add(newItem);
 		}
 		Buildings.Add (buildingsRow);
-
 		sl.Prepare ();
-
 		sl.itemPrefab.SetActive (false);
-
-		int maxX = Buildings.Count;
-		int maxY = Buildings [0].Count;
-			
-		for(int y=0; y < maxY; y++){
-			for (int x=0; x < maxX; x++) {
-				//Debug.Log("x: " + x + ", y: " + y + ", building: " + Buildings[x][y].name);
-			}
-		}
 	}
 	
-	// Update is called once per frame
-	void Update () {
-	}
-
 	public void PointerEnter(UnityEngine.EventSystems.BaseEventData baseEvent) {
-
-		//UnityEngine.EventSystems.BaseEventData p = baseEvent;
 		UnityEngine.EventSystems.PointerEventData p = baseEvent as UnityEngine.EventSystems.PointerEventData;
 		if (p != null){
 			GameObject go = p.pointerEnter;
@@ -157,6 +138,7 @@ public class Game : MonoBehaviour {
 	}
 
 	public void ButtonTouched(GameObject go){
+		TextInterventions.GetComponent<NumberShower> ().AddNumber (1);
 
 		try{
 			go.GetComponent<Building>().TreatWith(Element.Crush);
