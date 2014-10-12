@@ -11,8 +11,19 @@ public class Building : MonoBehaviour{
 	private Dictionary<Cataclysm, float> EffectTime = new Dictionary<Cataclysm, float>();
 	private Dictionary<Cataclysm, float> StatusesProgress = new Dictionary<Cataclysm, float>();
 
+	public List<Listener> Listeners = new List<Listener>();
+
+	private int StartingPopulation, _Population, LastCheckedPopulation;
 	private Sprite Sprite;
 	private float Health = 1f;
+
+	public int PopulationDelta{
+		get {
+			int delta = _Population - LastCheckedPopulation;
+			LastCheckedPopulation = _Population;
+			return delta;
+		}
+	}
 
 	void Update(){
 
@@ -21,7 +32,10 @@ public class Building : MonoBehaviour{
 			float value = StatusesProgress[status];
 			if (value < 1){
 				Health -= EffectDamage[status] * Time.deltaTime;
-				StatusesProgress[status] += EffectTime[status] * Time.deltaTime;
+				if (Health < 0){
+					Health = 0;
+				}
+				StatusesProgress[status] += 1 / EffectTime[status] * Time.deltaTime;
 			}
 		}
 
@@ -38,9 +52,20 @@ public class Building : MonoBehaviour{
 		text = "health: " + Health +". "+ text;
 		GetComponentInChildren<Text> ().text = text;
 
+		Inform ();
 
 		if (Health <= 0) {
 			Destroy(gameObject);
+		}
+	}
+
+	public void Inform(){
+		_Population = (int)(Health * StartingPopulation);
+		int d = PopulationDelta;
+		if (d != 0) {
+			foreach(Listener l in Listeners){
+				l.Inform((object)d);
+			}
 		}
 	}
 
@@ -50,28 +75,30 @@ public class Building : MonoBehaviour{
 		EffectTime.Clear ();
 		Health = 1f;
 		StatusesProgress.Clear ();
+		_Population = 0;
 	}
 
 
 	public void CreateWood1(){
 		Clean ();
-		StrikeDamage.Add (Cataclysm.Crush, 0.6f);
+		StrikeDamage.Add (Cataclysm.Crush, 0.1f);
 		StrikeDamage.Add (Cataclysm.Fire, 0.6f);
 		StrikeDamage.Add (Cataclysm.Strike, 0.6f);
 		StrikeDamage.Add (Cataclysm.Whirlwind, 0.6f);
 		
-		EffectDamage.Add (Cataclysm.Crush, 0.1f);
+		EffectDamage.Add (Cataclysm.Crush, 2f);
 		EffectDamage.Add (Cataclysm.Fire, 0.1f);
 		EffectDamage.Add (Cataclysm.Strike, 0.1f);
 		EffectDamage.Add (Cataclysm.Whirlwind, 0.1f);
 		
-		EffectTime.Add (Cataclysm.Crush, 0.2f);
+		EffectTime.Add (Cataclysm.Crush, 0.5f);
 		EffectTime.Add (Cataclysm.Fire, 1f);
-		EffectTime.Add (Cataclysm.Strike, 0.1f);
-		EffectTime.Add (Cataclysm.Whirlwind, 0.1f);
+		EffectTime.Add (Cataclysm.Strike, 1f);
+		EffectTime.Add (Cataclysm.Whirlwind, 1f);
 		
 		Sprite = SpriteManager.BuildingSprites [1];
 		GetComponent<Image> ().sprite = Sprite;
+		StartingPopulation = _Population = 1000;
 	}
 
 	public void CreateStone1(){
@@ -86,13 +113,36 @@ public class Building : MonoBehaviour{
 		EffectDamage.Add (Cataclysm.Strike, 0.1f);
 		EffectDamage.Add (Cataclysm.Whirlwind, 0.1f);
 		
+		EffectTime.Add (Cataclysm.Crush, 0.5f);
+		EffectTime.Add (Cataclysm.Fire, 1f);
+		EffectTime.Add (Cataclysm.Strike, 0.1f);
+		EffectTime.Add (Cataclysm.Whirlwind, 1f);
+		
+		Sprite = SpriteManager.BuildingSprites [2];
+		GetComponent<Image> ().sprite = Sprite;
+		StartingPopulation = _Population = 2000;
+	}
+
+	public void CreateTavern(){
+		Clean ();
+		StrikeDamage.Add (Cataclysm.Crush, 0.1f);
+		StrikeDamage.Add (Cataclysm.Fire, 0.1f);
+		StrikeDamage.Add (Cataclysm.Strike, 0.1f);
+		StrikeDamage.Add (Cataclysm.Whirlwind, 0.1f);
+		
+		EffectDamage.Add (Cataclysm.Crush, 0.1f);
+		EffectDamage.Add (Cataclysm.Fire, 0.3f);
+		EffectDamage.Add (Cataclysm.Strike, 0.1f);
+		EffectDamage.Add (Cataclysm.Whirlwind, 0.1f);
+		
 		EffectTime.Add (Cataclysm.Crush, 0.2f);
-		EffectTime.Add (Cataclysm.Fire, 0.3f);
+		EffectTime.Add (Cataclysm.Fire, 0.1f);
 		EffectTime.Add (Cataclysm.Strike, 0.1f);
 		EffectTime.Add (Cataclysm.Whirlwind, 0.1f);
 		
 		Sprite = SpriteManager.BuildingSprites [2];
 		GetComponent<Image> ().sprite = Sprite;
+		StartingPopulation = _Population = 4000;
 	}
 
 	public void TreatWith(Cataclysm cataclysm){

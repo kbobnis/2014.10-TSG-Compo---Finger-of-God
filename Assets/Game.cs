@@ -38,6 +38,7 @@ public class Game : MonoBehaviour {
 	public bool HasModeChanged = true;
 	public GameObject ButtonCrush, ButtonFire, ButtonWhirlwind, ButtonStrike;
 	public GameObject ScrollableListBuildings;
+	public GameObject TextPopulation, TextCasualties;
 
 	public static Game Me;
 
@@ -58,6 +59,11 @@ public class Game : MonoBehaviour {
 			case 2: b.CreateStone1(); break;
 			default: throw new UnityException("Please initiate building");
 			}
+
+			//TextPopulation.GetComponent<NumberShower>().AddNumber(b.PopulationDelta);
+			b.Listeners.Add(TextPopulation.GetComponent<NumberShower>());
+			b.Inform();
+			b.Listeners.Add(TextCasualties.GetComponent<NumberShower>());
 
 			buildings.Add(newItem);
 
