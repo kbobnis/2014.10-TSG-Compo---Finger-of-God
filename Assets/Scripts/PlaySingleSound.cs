@@ -16,7 +16,7 @@ public class PlaySingleSound : MonoBehaviour
 		}
 	}
 
-	public static void SpawnSound( AudioClip clip, float volume=1f )
+	public static void SpawnSound( AudioClip clip, float volume=0.06f )
 	{
 		if (clip != null){
 			GameObject go = new GameObject( "sound clip: " + clip.name );

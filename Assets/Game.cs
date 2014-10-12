@@ -37,6 +37,8 @@ public class Game : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
+		PlaySingleSound.SpawnSound (SoundManager.Ambient, 1);
+
 		Me = this;
 
 		ScrollableList sl = ScrollableListBuildings.GetComponent<ScrollableList> ();
@@ -54,12 +56,13 @@ public class Game : MonoBehaviour {
 			newItem.SetActive(true);
 			Building b = newItem.GetComponent<Building>();
 
-			int ticket = Mathf.RoundToInt( Random.Range(1,5));
+			int ticket = Mathf.RoundToInt( Random.Range(1,6));
 			switch(ticket){
 				case 1: b.CreateWood1(); break;
 				case 2: b.CreateStone1(); break;
 				case 3: b.CreateGasStation(); break;
 				case 4: b.CreateWaterSilo(); break;
+				case 5: b.CreateElectricityTower(); break;
 				default: throw new UnityException("Please initiate building");
 			}
 

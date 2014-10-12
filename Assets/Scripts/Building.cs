@@ -24,8 +24,11 @@ public class Building : MonoBehaviour{
 	private const float WaterFillSpeed = 0.3f;
 	private float LastWaterFill;
 
+	private const float ElectricFillSpeed = 0.01f;
+	private float LastElectrictFill;
+
 	public GameObject GameObjectGroundLevel, GameObjectBuilding;
-	public GameObject GameObjectFire, GameObjectWaterLevel, GameObjectSmokeAfterFire;
+	public GameObject GameObjectFire, GameObjectWaterLevel, GameObjectSmokeAfterFire, GameObjectElectricity;
 
 	private Dictionary<Element, GameObject> ElGO = new Dictionary<Element, GameObject> ();
 	private Vector3 startingPos;
@@ -36,6 +39,7 @@ public class Building : MonoBehaviour{
 		ElGO.Add (Element.Fire, GameObjectFire);
 		ElGO.Add (Element.Water, GameObjectWaterLevel);
 		ElGO.Add (Element.SmokeAfterFire, GameObjectSmokeAfterFire);
+		ElGO.Add (Element.Electricity, GameObjectElectricity);
 
 	}
 
@@ -78,7 +82,7 @@ public class Building : MonoBehaviour{
 			if (e == Element.Water){
 				LastWaterFill = Time.time;
 			}
-			if (SoundManager.Clips.ContainsKey (e)) {
+			if (SoundManager.Clips.ContainsKey (e) && e != Element.Water) {
 				PlaySingleSound.SpawnSound(SoundManager.Clips[e]);
 			} else {
 				Debug.Log("There is no sound for " + e);
@@ -187,6 +191,14 @@ public class Building : MonoBehaviour{
 			});
 		}
 
+		if (Statuses.ContainsKey(Element.Electricity) && Time.time - LastElectrictFill > ElectricFillSpeed)  {
+			LastElectrictFill = Time.time;
+			Game.Me.TreatNeighboursWith(gameObject, Element.Electricity, Statuses[Element.Electricity], delegate(GameObject go){
+				Building b = go.GetComponent<Building>();
+				return  b.Statuses.ContainsKey(Element.Water);
+			});
+		}
+
 	}
 
 	public void Inform(){
@@ -212,11 +224,13 @@ public class Building : MonoBehaviour{
 
 		EffectDamage.Add (Element.Crush, 0.00f);
 		EffectDamage.Add (Element.SmallCrush, 0.00f);
+		EffectDamage.Add (Element.Electricity, 0.5f);
 
 		EffectTime.Add (Element.SmokeAfterFire, 2f);
-
-		EffectTime.Add (Element.Crush, 25f);
-		EffectTime.Add (Element.SmallCrush, 15f);
+		EffectTime.Add (Element.Crush, 10f);
+		EffectTime.Add (Element.SmallCrush, 5f);
+		EffectTime.Add (Element.Electricity, 0.5f);
+		EffectTime.Add (Element.Water, 5f);
 	}
 
 
@@ -227,11 +241,8 @@ public class Building : MonoBehaviour{
 
 		EffectDamage.Add (Element.Fire, 0.1f);
 		EffectDamage.Add (Element.Water, 0.01f);
-		EffectDamage.Add (Element.Electricity, 0.1f);
 
 		EffectTime.Add (Element.Fire, 5f);
-		EffectTime.Add (Element.Water, 5f);
-		EffectTime.Add (Element.Electricity, 1f);
 
 		AddConstants ();
 		ImageNumberFromAtlas = 1;
@@ -253,12 +264,9 @@ public class Building : MonoBehaviour{
 		StrikeDamage.Add (Element.SmallCrush, 0.06f);
 
 		EffectDamage.Add (Element.Fire, 0.1f);
-		EffectDamage.Add (Element.Electricity, 0.1f);
 		EffectDamage.Add (Element.Water, 0.1f);
 
 		EffectTime.Add (Element.Fire, 2f);
-		EffectTime.Add (Element.Electricity, 1f);
-		EffectTime.Add (Element.Water, 5f);
 
 		AddConstants ();
 		ImageNumberFromAtlas = 2;
@@ -272,12 +280,9 @@ public class Building : MonoBehaviour{
 		StrikeDamage.Add (Element.SmallCrush, 0.06f);
 
 		EffectDamage.Add (Element.Fire, 0.1f);
-		EffectDamage.Add (Element.Electricity, 0.1f);
 		EffectDamage.Add (Element.Water, 0.05f);
 
 		EffectTime.Add (Element.Fire, 2f);
-		EffectTime.Add (Element.Electricity, 1f);
-		EffectTime.Add (Element.Water, 5f);
 
 		AfterHit.Add (Element.Fire, Side.Center);
 
@@ -293,12 +298,9 @@ public class Building : MonoBehaviour{
 		StrikeDamage.Add (Element.SmallCrush, 0.06f);
 		
 		EffectDamage.Add (Element.Fire, 0.1f);
-		EffectDamage.Add (Element.Electricity, 0.1f);
 		EffectDamage.Add (Element.Water, 0.05f);
 
 		EffectTime.Add (Element.Fire, 2f);
-		EffectTime.Add (Element.Electricity, 1f);
-		EffectTime.Add (Element.Water, 5f);
 
 		AfterHit.Add (Element.Water, Side.Center);
 
@@ -306,6 +308,24 @@ public class Building : MonoBehaviour{
 		ImageNumberFromAtlas = 40;
 		UpdateImage ();
 		StartingPopulation = _Population = 4000;
+	}
+
+	public void CreateElectricityTower(){
+		Clean ();
+		StrikeDamage.Add (Element.Crush, 1f);
+		StrikeDamage.Add (Element.SmallCrush, 0.5f);
+		
+		EffectDamage.Add (Element.Fire, 0.3f);
+		EffectDamage.Add (Element.Water, 0f);
+		
+		EffectTime.Add (Element.Fire, 1f);
+
+		AfterHit.Add (Element.Electricity, Side.Center);
+		
+		AddConstants ();
+		ImageNumberFromAtlas = 41;
+		UpdateImage ();
+		StartingPopulation = _Population = 0;
 	}
 
 	public void TreatWith(Element e, float startingValue=0){
