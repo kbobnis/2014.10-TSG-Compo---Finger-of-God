@@ -67,7 +67,7 @@ public class ScrollableList : MonoBehaviour
 			RectTransform rectTransform = newItem.GetComponent<RectTransform>();
 			
 			float x = prefabW * (i) - width/2;
-			float y = prefabH * (j) - height/2;
+			float y = - prefabH * (j) + height/2 - prefabH;
 
 			rectTransform.offsetMin = new Vector2(x, y);
 			rectTransform.offsetMax = new Vector2(x + prefabW, y + prefabH);

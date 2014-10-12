@@ -27,12 +27,8 @@ public class BuildingClicked : MonoBehaviour {
 	}
 
 	public void EnterEventMethod(UnityEngine.EventSystems.BaseEventData baseEvent) {
-		try{
 		UnityEngine.EventSystems.PointerEventData p = baseEvent as PointerEventData;
 		ButtonClickedEvent ();
-		} catch(System.Exception e){
-			Debug.Log("exception2: " + e);
-		}
 	}
 
 	// Update is called once per frame

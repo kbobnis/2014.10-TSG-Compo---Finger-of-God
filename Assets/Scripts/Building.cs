@@ -4,12 +4,27 @@ using UnityEngine.UI;
 using System.Collections.Generic;
 using System.Linq;
 
+public enum Element{
+	Crush, SmallCrush, Water, Electricity, Fire, Explosion
+}
+
+public static class ElementMethods{
+
+	public static AudioClip GetSound(this Element s){
+		switch (s) {
+			case Element.Crush: return SoundManager.Crush; break;
+			case Element.SmallCrush: return SoundManager.Huracaine; break;
+			default: Debug.Log("There is no sound for " + s); return null;
+		}
+	}
+}
+
 public class Building : MonoBehaviour{
 
-	private Dictionary<Cataclysm, float> StrikeDamage = new Dictionary<Cataclysm, float>();
-	private Dictionary<Cataclysm, float> EffectDamage = new Dictionary<Cataclysm, float>();
-	private Dictionary<Cataclysm, float> EffectTime = new Dictionary<Cataclysm, float>();
-	private Dictionary<Cataclysm, float> StatusesProgress = new Dictionary<Cataclysm, float>();
+	private Dictionary<Element, float> StrikeDamage = new Dictionary<Element, float>();
+	private Dictionary<Element, float> EffectDamage = new Dictionary<Element, float>();
+	private Dictionary<Element, float> EffectTime = new Dictionary<Element, float>();
+	private Dictionary<Element, float> StatusesProgress = new Dictionary<Element, float>();
 
 	public List<Listener> Listeners = new List<Listener>();
 
@@ -33,8 +48,8 @@ public class Building : MonoBehaviour{
 			UpdateImage();
 		}
 
-		List<Cataclysm> bss = StatusesProgress.Keys.ToList();
-		foreach (Cataclysm status in bss) {
+		List<Element> bss = StatusesProgress.Keys.ToList();
+		foreach (Element status in bss) {
 			float value = StatusesProgress[status];
 			if (value < 1){
 				Health -= EffectDamage[status] * Time.deltaTime;
@@ -46,12 +61,12 @@ public class Building : MonoBehaviour{
 					progress = 1;
 				}
 
-				if (status == Cataclysm.Strike){
+				if (status == Element.Explosion){
 					Image i = GameObjectExplosion.GetComponent<Image>();
 					i.enabled = true;
 					i.sprite = SpriteManager.Explosions[(int)(progress * 14)]; // 0 - 14
 				}
-				if (status == Cataclysm.Fire){
+				if (status == Element.Fire){
 					Image i = GameObjectFire.GetComponent<Image>();
 					i.enabled = true;
 					i.sprite = SpriteManager.Fires[(int)(progress * SpriteManager.Fires.Length -1)];
@@ -61,14 +76,14 @@ public class Building : MonoBehaviour{
 
 		string text = "";
 		bss = StatusesProgress.Keys.ToList();
-		foreach (Cataclysm status in bss) {
+		foreach (Element status in bss) {
 			float value = StatusesProgress[status];
 			if (value >= 1) {
 				StatusesProgress.Remove(status);
-				if (status == Cataclysm.Strike){
+				if (status == Element.Explosion){
 					GameObjectExplosion.GetComponent<Image>().enabled = false;
 				}
-				if (status == Cataclysm.Fire){
+				if (status == Element.Fire){
 					GameObjectFire.GetComponent<Image>().enabled = false;
 				}
 			} else {
@@ -104,21 +119,18 @@ public class Building : MonoBehaviour{
 
 	public void CreateWood1(){
 		Clean ();
-		StrikeDamage.Add (Cataclysm.Crush, 0.1f);
-		StrikeDamage.Add (Cataclysm.Fire, 0.6f);
-		StrikeDamage.Add (Cataclysm.Strike, 0.6f);
-		StrikeDamage.Add (Cataclysm.Whirlwind, 0.6f);
+		StrikeDamage.Add (Element.Crush, 0.1f);
+		StrikeDamage.Add (Element.SmallCrush, 0.06f);
+		StrikeDamage.Add (Element.Explosion, 0.2f);
+
+		EffectDamage.Add (Element.Fire, 0.1f);
+		EffectDamage.Add (Element.Electricity, 0.1f);
+		EffectDamage.Add (Element.Water, 0.01f);
 		
-		EffectDamage.Add (Cataclysm.Crush, 2f);
-		EffectDamage.Add (Cataclysm.Fire, 0.1f);
-		EffectDamage.Add (Cataclysm.Strike, 0.1f);
-		EffectDamage.Add (Cataclysm.Whirlwind, 0.1f);
-		
-		EffectTime.Add (Cataclysm.Crush, 0.5f);
-		EffectTime.Add (Cataclysm.Fire, 3f);
-		EffectTime.Add (Cataclysm.Strike, 1f);
-		EffectTime.Add (Cataclysm.Whirlwind, 1f);
-		
+		EffectTime.Add (Element.Fire, 5f);
+		EffectTime.Add (Element.Electricity, 1f);
+		EffectTime.Add (Element.Water, 10f);
+
 		ImageNumberFromAtlas = 1;
 		UpdateImage ();
 		StartingPopulation = _Population = 1000;
@@ -135,20 +147,17 @@ public class Building : MonoBehaviour{
 
 	public void CreateStone1(){
 		Clean ();
-		StrikeDamage.Add (Cataclysm.Crush, 0.6f);
-		StrikeDamage.Add (Cataclysm.Fire, 0.3f);
-		StrikeDamage.Add (Cataclysm.Strike, 0.6f);
-		StrikeDamage.Add (Cataclysm.Whirlwind, 0.6f);
+		StrikeDamage.Add (Element.Crush, 0.1f);
+		StrikeDamage.Add (Element.SmallCrush, 0.06f);
+		StrikeDamage.Add (Element.Explosion, 0.2f);
 		
-		EffectDamage.Add (Cataclysm.Crush, 0.1f);
-		EffectDamage.Add (Cataclysm.Fire, 0.05f);
-		EffectDamage.Add (Cataclysm.Strike, 0.1f);
-		EffectDamage.Add (Cataclysm.Whirlwind, 0.1f);
+		EffectDamage.Add (Element.Fire, 0.1f);
+		EffectDamage.Add (Element.Electricity, 0.1f);
+		EffectDamage.Add (Element.Water, 0.05f);
 		
-		EffectTime.Add (Cataclysm.Crush, 0.5f);
-		EffectTime.Add (Cataclysm.Fire, 1f);
-		EffectTime.Add (Cataclysm.Strike, 1f);
-		EffectTime.Add (Cataclysm.Whirlwind, 1f);
+		EffectTime.Add (Element.Fire, 2f);
+		EffectTime.Add (Element.Electricity, 1f);
+		EffectTime.Add (Element.Water, 20f);
 		
 		ImageNumberFromAtlas = 2;
 		UpdateImage ();
@@ -157,35 +166,32 @@ public class Building : MonoBehaviour{
 
 	public void CreateTavern(){
 		Clean ();
-		StrikeDamage.Add (Cataclysm.Crush, 0.1f);
-		StrikeDamage.Add (Cataclysm.Fire, 0.1f);
-		StrikeDamage.Add (Cataclysm.Strike, 0.1f);
-		StrikeDamage.Add (Cataclysm.Whirlwind, 0.1f);
+		StrikeDamage.Add (Element.Crush, 0.1f);
+		StrikeDamage.Add (Element.SmallCrush, 0.06f);
+		StrikeDamage.Add (Element.Explosion, 0.2f);
 		
-		EffectDamage.Add (Cataclysm.Crush, 0.1f);
-		EffectDamage.Add (Cataclysm.Fire, 0.3f);
-		EffectDamage.Add (Cataclysm.Strike, 0.1f);
-		EffectDamage.Add (Cataclysm.Whirlwind, 0.1f);
+		EffectDamage.Add (Element.Fire, 0.1f);
+		EffectDamage.Add (Element.Electricity, 0.1f);
+		EffectDamage.Add (Element.Water, 0.05f);
 		
-		EffectTime.Add (Cataclysm.Crush, 0.2f);
-		EffectTime.Add (Cataclysm.Fire, 0.1f);
-		EffectTime.Add (Cataclysm.Strike, 0.1f);
-		EffectTime.Add (Cataclysm.Whirlwind, 0.1f);
+		EffectTime.Add (Element.Fire, 2f);
+		EffectTime.Add (Element.Electricity, 1f);
+		EffectTime.Add (Element.Water, 20f);
 		
 		ImageNumberFromAtlas = 3;
 		UpdateImage ();
 		StartingPopulation = _Population = 4000;
 	}
 
-	public void TreatWith(Cataclysm cataclysm){
+	public void TreatWith(Element e){
 		if (Health > 0){
-			PlaySingleSound.SpawnSound (cataclysm.GetSound (), gameObject.transform.position);
-			if (!StrikeDamage.ContainsKey(cataclysm)) {
-				throw new UnityException("There is no " + cataclysm + ", in strike damage. health: " + Health + ", name: " + gameObject.name);
-			}
-			Health -= StrikeDamage [cataclysm];
-			if (!StatusesProgress.ContainsKey(cataclysm)){
-				StatusesProgress.Add(cataclysm, 0);
+			PlaySingleSound.SpawnSound (e.GetSound (), gameObject.transform.position);
+			if (StrikeDamage.ContainsKey(e)) {
+
+				Health -= StrikeDamage [e];
+				if (EffectDamage.ContainsKey(e) && !StatusesProgress.ContainsKey(e)){
+					StatusesProgress.Add(e, 0);
+				}
 			}
 		}
 	}

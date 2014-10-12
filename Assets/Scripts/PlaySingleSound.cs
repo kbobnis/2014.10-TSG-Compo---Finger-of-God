@@ -18,16 +18,17 @@ public class PlaySingleSound : MonoBehaviour
 
 	public static void SpawnSound( AudioClip clip, Vector3 position, float volume=1f )
 	{
-		GameObject go = new GameObject( "sound clip: " + clip.name );
-		go.transform.position = position;
+		if (clip != null){
+			GameObject go = new GameObject( "sound clip: " + clip.name );
+			go.transform.position = position;
 
-		AudioSource audio = go.AddComponent<AudioSource>();
-		audio.volume = volume;
-		audio.clip = clip;
-		//audio.rolloffMode = AudioRolloffMode.Linear;
-		audio.Play();
+			AudioSource audio = go.AddComponent<AudioSource>();
+			audio.volume = volume;
+			audio.clip = clip;
+			//audio.rolloffMode = AudioRolloffMode.Linear;
+			audio.Play();
 
-		PlaySingleSound play_sound = go.AddComponent<PlaySingleSound>();
-
+			PlaySingleSound play_sound = go.AddComponent<PlaySingleSound>();
+		}
 	}
 }

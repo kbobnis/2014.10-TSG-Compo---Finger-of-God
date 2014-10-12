@@ -3,42 +3,35 @@ using System.Collections;
 using UnityEngine.UI;
 using System.Collections.Generic;
 
-public enum Cataclysm{
-	Fire, Whirlwind, Crush, Strike
+public enum Side{
+	Up, Down, Left, Right
 }
-public static class ModeTypeHelper{
 
-	public static Cataclysm ModeTypeFromString(string text){
-		switch (text) {
-			case "fire": return Cataclysm.Fire;
-			case "whirlwind": return Cataclysm.Whirlwind;
-			case "crush": return Cataclysm.Crush;
-			case "strike": return Cataclysm.Strike;
-		}
-		throw new UnityException ("There is no mode type for text " + text);
-	}
+public static class SideMethods{
 
-	public static AudioClip GetSound(this Cataclysm mt){
-		switch (mt) {
-		case Cataclysm.Crush: return SoundManager.Crush;
-		case Cataclysm.Fire: return SoundManager.Fire;
-		case Cataclysm.Whirlwind: return SoundManager.Huracaine;
-		case Cataclysm.Strike: return SoundManager.Lightning;
-		default: throw new UnityException("there is no sound for mode type: " + mt);
-
+	public static int DeltaX(this Side s){
+		switch (s) {
+			case Side.Left: return -1;
+			case Side.Right: return 1;
+			default: return 0;
 		}
 	}
 
-
+	public static int DeltaY(this Side s){
+		switch (s) {
+			case Side.Up: return -1;
+			case Side.Down: return 1;
+			default: return 0;
+		}
+	}
 }
 
 public class Game : MonoBehaviour {
 
-	public Cataclysm ModeType = Cataclysm.Crush;
-	public bool HasModeChanged = true;
-	public GameObject ButtonCrush, ButtonFire, ButtonWhirlwind, ButtonStrike;
 	public GameObject ScrollableListBuildings;
 	public GameObject TextPopulation, TextCasualties;
+
+	private List<List<GameObject>> Buildings = new List<List<GameObject>> ();
 
 	public static Game Me;
 
@@ -47,58 +40,53 @@ public class Game : MonoBehaviour {
 		Me = this;
 
 		ScrollableList sl = ScrollableListBuildings.GetComponent<ScrollableList> ();
+		int columns = sl.columnCount = 6;
 
-		List<GameObject> buildings = new List<GameObject> ();
-		for (int i=0; i < 42; i++) {
+		List<GameObject> buildingsRow = new List<GameObject>();
+		for (int i=0; i < 48; i++) {
+
+			if (i % columns == 0 && i > 0){
+				Buildings.Add(buildingsRow);
+				buildingsRow = new List<GameObject>();
+			}
+
 			GameObject newItem = Instantiate(sl.itemPrefab) as GameObject;
 			newItem.SetActive(true);
 			Building b = newItem.GetComponent<Building>();
 
 			int ticket = Mathf.RoundToInt( Random.Range(1,3));
 			switch(ticket){
-			case 1: b.CreateWood1(); break;
-			case 2: b.CreateStone1(); break;
-			default: throw new UnityException("Please initiate building");
+				case 1: b.CreateWood1(); break;
+				case 2: b.CreateStone1(); break;
+				default: throw new UnityException("Please initiate building");
 			}
 
 			//TextPopulation.GetComponent<NumberShower>().AddNumber(b.PopulationDelta);
 			b.Listeners.Add(TextPopulation.GetComponent<NumberShower>());
 			b.Inform();
 			b.Listeners.Add(TextCasualties.GetComponent<NumberShower>());
+			sl.ElementsToPut.Add(newItem);
 
-			buildings.Add(newItem);
-
+			buildingsRow.Add(newItem);
 		}
-		sl.columnCount = 6;
-		sl.ElementsToPut = buildings;
+
 		sl.Prepare ();
 
 		sl.itemPrefab.SetActive (false);
+
+		int x=0; 
+		foreach (List<GameObject> bsTmp in Buildings) {
+			int y=0; 
+			foreach(GameObject  bTmp in bsTmp){
+				Debug.Log("x: " + x + ", y: " + y + ", building: " + Buildings[x][y]);
+				y++;
+			}
+			y++;
+		}
 	}
 	
 	// Update is called once per frame
 	void Update () {
-		if (HasModeChanged) {
-
-			ButtonStrike.GetComponent<Image>().color = ButtonWhirlwind.GetComponent<Image>().color = ButtonFire.GetComponent<Image>().color = ButtonCrush.GetComponent<Image>().color = Color.gray;
-
-			Image image = null;
-			switch(ModeType){
-				case Cataclysm.Crush: image =  ButtonCrush.GetComponent<Image>(); break;
-				case Cataclysm.Fire: image = ButtonFire.GetComponent<Image>(); break;
-				case Cataclysm.Whirlwind: image = ButtonWhirlwind.GetComponent<Image>(); break;
-				case Cataclysm.Strike: image = ButtonStrike.GetComponent<Image>(); break;
-			}
-			if (image != null){
-				image.color = Color.white;
-			}
-			HasModeChanged = false;
-		}
-	}
-
-	public void ModeChanged(string type){
-		ModeType = ModeTypeHelper.ModeTypeFromString (type);
-		HasModeChanged = true;
 	}
 
 	public void PointerEnter(UnityEngine.EventSystems.BaseEventData baseEvent) {
@@ -111,9 +99,55 @@ public class Game : MonoBehaviour {
 		}
 	}
 
+	private GameObject GetNeighbour(GameObject g, Side s){
+
+		int myX=0, myY=0;
+		int i = 0;
+		foreach (List<GameObject> rows in Buildings) {
+			int j=0;
+			foreach(GameObject b in rows){
+				if (b == g){
+					myX = j;
+					myY = i;
+				}
+				j++;
+			}
+			i++;
+		}
+		GameObject tmp = null;
+
+		if (Buildings.Count > (s.DeltaY() + myY) && Buildings[s.DeltaY() + myY].Count > (s.DeltaX() + myX)){
+		 tmp = Buildings [s.DeltaY () + myY] [s.DeltaX () + myX];
+		}
+		return tmp;
+	}
+
 	public void ButtonTouched(GameObject go){
-		if (go != null && go.GetComponent<Building>() != null){
-			go.GetComponent<Building>().TreatWith(ModeType);
+
+		try{
+		go.GetComponent<Building>().TreatWith(Element.Crush);
+
+		GameObject left = GetNeighbour (go, Side.Left);
+		if (left != null){
+			left.GetComponent<Building> ().TreatWith (Element.SmallCrush);
+		}
+
+		GameObject right = GetNeighbour (go, Side.Right);
+		if (right != null){
+			right.GetComponent<Building> ().TreatWith (Element.SmallCrush);
+		}
+
+		GameObject up = GetNeighbour (go, Side.Up);
+		if (up != null){
+			up.GetComponent<Building> ().TreatWith (Element.SmallCrush);
+		}
+
+		GameObject down = GetNeighbour (go, Side.Down);
+		if (down != null){ 
+			down.GetComponent<Building> ().TreatWith (Element.SmallCrush);
+		}
+		}catch(System.Exception e){
+			Debug.Log("[ButtonTouched] exception: " + e);
 		}
 	}
 
