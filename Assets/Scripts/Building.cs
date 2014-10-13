@@ -204,8 +204,9 @@ public class Building : MonoBehaviour{
 		EffectDamage.Add (Element.Crush, 0.00f);
 		EffectDamage.Add (Element.SmallCrush, 0.00f);
 		EffectDamage.Add (Element.Electricity, 0.6f);
+		EffectDamage.Add(Element.SmokeAfterFire, 0.5f);
 
-		EffectTime.Add (Element.SmokeAfterFire, 2f);
+		EffectTime.Add (Element.SmokeAfterFire, 1.5f);
 		EffectTime.Add (Element.Crush, 1f);
 		EffectTime.Add (Element.SmallCrush, 50f);
 		EffectTime.Add (Element.Electricity, 1f);
