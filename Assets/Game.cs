@@ -194,7 +194,7 @@ public class Game : MonoBehaviour {
 
 		try{
 			go.GetComponent<Building>().TreatWith(Element.Crush);
-			TreatNeighboursWith(go, Element.SmallCrush);
+			//TreatNeighboursWith(go, Element.SmallCrush);
 		}catch(System.Exception e){
 			Debug.Log("[ButtonTouched] exception: " + e);
 		}

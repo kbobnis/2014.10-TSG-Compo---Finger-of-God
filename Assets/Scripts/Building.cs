@@ -86,9 +86,15 @@ public class Building : MonoBehaviour{
 	private void Die(){
 		PlaySingleSound.SpawnSound(SoundManager.BuildingDown);
 
-		//if filling with water, check the ground level, only on crater water fills
+		
+        //if filling with water, check the ground level, only on crater water fills
 		foreach (Element e in AfterHit.Keys.ToList ()) {
-			Game.Me.TreatNeighboursWith(Game.Me.GetNeighbour(gameObject, AfterHit[e]), e);
+			TreatWith(e);
+			if (e == Element.Fire) {
+				Game.Me.TreatNeighboursWith(Game.Me.GetNeighbour(gameObject, AfterHit[e]), e, 0, delegate(GameObject go) {
+					return go.GetComponent<Building>().Health > 0;
+				});
+			}
 		}
 	}
 
@@ -96,7 +102,7 @@ public class Building : MonoBehaviour{
 		if (Statuses.ContainsKey (Element.Water) && Statuses.ContainsKey (Element.Fire)) {
 			FinishStatus(Element.Fire);
 			AddStatus(Element.SmokeAfterFire);
-		}
+		} 
 	}
 
 	private void FinishStatus(Element e){
@@ -109,6 +115,23 @@ public class Building : MonoBehaviour{
 			ElGO[e].GetComponent<Image>().enabled = false;
 		}
 	}
+
+    private void UpdateGroundLevel(){
+		GameObjectGroundLevel.SetActive(true);
+        Sprite groundLevel = SpriteManager.GroundLevels[0];
+        float posY = 0;
+        if (Statuses.ContainsKey(Element.Crush)){
+            groundLevel = SpriteManager.GroundLevels[2];
+            posY = -15f;
+        }
+        else if (!Statuses.ContainsKey(Element.Crush) && Statuses.ContainsKey(Element.SmallCrush)){
+            groundLevel = SpriteManager.GroundLevels[1];
+            posY = -7.5f;
+        }
+        GameObjectBuilding.GetComponent<RectTransform>().localPosition = new Vector3(startingPos.x, startingPos.y + posY, 0);
+        GameObjectGroundLevel.GetComponent<Image>().sprite = groundLevel;
+
+    }
 
 	void Update(){
 
@@ -137,30 +160,13 @@ public class Building : MonoBehaviour{
 			}
 		}
 
-
-		Sprite groundLevel = SpriteManager.GroundLevels [0];
-		float posY = 0;
-		if (Statuses.ContainsKey(Element.Crush)) {
-			groundLevel = SpriteManager.GroundLevels[2];
-			posY = -15f;
-		} else if(!Statuses.ContainsKey(Element.Crush) && Statuses.ContainsKey(Element.SmallCrush)){
-			groundLevel = SpriteManager.GroundLevels[1];
-			posY = -7.5f;
-		}
-		GameObjectBuilding.GetComponent<RectTransform>().localPosition = new Vector3(startingPos.x, startingPos.y + posY, 0);
-		GameObjectGroundLevel.GetComponent<Image>().sprite = groundLevel;
-
-
-		string text = "";
 		bss = Statuses.Keys.ToList();
 		foreach (Element status in bss) {
 			if (Statuses[status] >= 1) {
 				FinishStatus(status);
 			}
 		}
-		GetComponentInChildren<Text> ().enabled = false;
 
-		//if filling with water, check the ground level, only on crater water fills
 		foreach (Element e in FillRequirement.Keys.ToList ()) {
 			if (Statuses.ContainsKey(e) && Time.time - LastFill[e] > FillSpeed[e] )  {
 				LastFill[e] = Time.time;
@@ -195,8 +201,6 @@ public class Building : MonoBehaviour{
 
 	private void AddConstants(){ 
 
-		StrikeDamage.Add (Element.SmallCrush, 0f);
-
 		EffectDamage.Add (Element.Crush, 0.00f);
 		EffectDamage.Add (Element.SmallCrush, 0.00f);
 		EffectDamage.Add (Element.Electricity, 0.6f);
@@ -212,46 +216,59 @@ public class Building : MonoBehaviour{
 		FillSpeed.Add (Element.Fire, 2.5f);
 
 		FillRequirement.Add(Element.Electricity, delegate(GameObject go){
-			return  go.GetComponent<Building>().Statuses.ContainsKey(Element.Water);
+			return go.GetComponent<Building>().Statuses.ContainsKey(Element.Water) && Statuses.ContainsKey(Element.Water);
 		});
 
 		FillRequirement.Add(Element.Water, delegate(GameObject go){
 			Building b = go.GetComponent<Building>();
 			return 
 				(
-					b.Statuses.ContainsKey(Element.Crush) 
-					|| 
-					b.Statuses.ContainsKey(Element.SmallCrush)
-					) 
-					&&
+					//b.Health == 0
+					//||
 					(
-						!b.Statuses.ContainsKey(Element.Water) 
-						|| 
-						b.Statuses[Element.Water] >  Statuses[Element.Water]
-						);
+						(	 //side up check if is in water
+							Game.Me.GetNeighbour(go, Side.Up) != null &&
+							Game.Me.GetNeighbour(go, Side.Up).GetComponent<Building>().Statuses.ContainsKey(Element.Water) &&
+							Game.Me.GetNeighbour(go, Side.Up).GetComponent<Building>().Statuses[Element.Water] > 0 &&
+							Game.Me.GetNeighbour(go, Side.Up).GetComponent<Building>().Health == 0
+						)
+						||
+						(	 //side down check if is in water
+							Game.Me.GetNeighbour(go, Side.Down) != null &&
+							Game.Me.GetNeighbour(go, Side.Down).GetComponent<Building>().Statuses.ContainsKey(Element.Water) &&
+							Game.Me.GetNeighbour(go, Side.Down).GetComponent<Building>().Statuses[Element.Water] > 0 &&
+							Game.Me.GetNeighbour(go, Side.Down).GetComponent<Building>().Health == 0
+						)
+						||
+						(	 //side left check if is in water
+							Game.Me.GetNeighbour(go, Side.Left) != null &&
+							Game.Me.GetNeighbour(go, Side.Left).GetComponent<Building>().Statuses.ContainsKey(Element.Water) &&
+							Game.Me.GetNeighbour(go, Side.Left).GetComponent<Building>().Statuses[Element.Water] > 0  &&
+							Game.Me.GetNeighbour(go, Side.Left).GetComponent<Building>().Health == 0
+						)
+						||
+						(	 //side right check if is in water
+							Game.Me.GetNeighbour(go, Side.Right) != null &&
+							Game.Me.GetNeighbour(go, Side.Right).GetComponent<Building>().Statuses.ContainsKey(Element.Water) &&
+							Game.Me.GetNeighbour(go, Side.Right).GetComponent<Building>().Statuses[Element.Water] > 0 &&
+							Game.Me.GetNeighbour(go, Side.Right).GetComponent<Building>().Health == 0
+						)
+					)
+				)
+				&&
+				(
+					!b.Statuses.ContainsKey(Element.Water) 
+					|| 
+					b.Statuses[Element.Water] >  Statuses[Element.Water]
+				);
 		});
 
 		FillRequirement.Add (Element.Fire, delegate(GameObject go) {
-			return go.GetComponent<Building>().EffectDamage[Element.Fire] >= 0.1f;
+			return go.GetComponent<Building>().Health > 0;
 		});
 
 		ContaminateDelta.Add (Element.Fire, -1f);
 
-	}
-
-
-	public void CreateWood1(){
-		StrikeDamage.Add (Element.Crush, 1f);
-
-		EffectDamage.Add (Element.Fire, 0.5f);
-		EffectDamage.Add (Element.Water, 0.1f);
-
-		EffectTime.Add (Element.Fire, 2f);
-
-		AddConstants ();
-		ImageNumberFromAtlas = 1;
-		UpdateImage ();
-		StartingPopulation = _Population = 1000;
 	}
 
 	private void UpdateImage(){
@@ -270,13 +287,28 @@ public class Building : MonoBehaviour{
 		GameObjectHealthBar.transform.parent.gameObject.SetActive (Health > 0);
 	}
 
+    public void CreateWood1()
+    {
+        StrikeDamage.Add(Element.Crush, 1f);
+
+        EffectDamage.Add(Element.Fire, 0.43f);
+        EffectDamage.Add(Element.Water, 0.1f);
+
+        EffectTime.Add(Element.Fire, 2.4f);
+
+        AddConstants();
+        ImageNumberFromAtlas = 1;
+        UpdateImage();
+        StartingPopulation = _Population = 1000;
+    }
+
 	public void CreateStone1(){
 		StrikeDamage.Add (Element.Crush, 1f);
 
 		EffectDamage.Add (Element.Fire, 0.2f);
 		EffectDamage.Add (Element.Water, 0.1f);
 
-		EffectTime.Add (Element.Fire, 2f);
+		EffectTime.Add (Element.Fire, 2.4f);
 
 		AddConstants ();
 		ImageNumberFromAtlas = 2;
@@ -287,7 +319,7 @@ public class Building : MonoBehaviour{
 	public void CreateGasStation(){
 		StrikeDamage.Add (Element.Crush, 1f);
 
-		EffectDamage.Add (Element.Fire, 0.2f);
+		EffectDamage.Add (Element.Fire, 0.6f);
 		EffectDamage.Add (Element.Water, 0.1f);
 
 		EffectTime.Add (Element.Fire, 2f);
@@ -297,7 +329,7 @@ public class Building : MonoBehaviour{
 		AddConstants ();
 		ImageNumberFromAtlas = 39;
 		UpdateImage ();
-		StartingPopulation = _Population = 10;
+		StartingPopulation = _Population = 0;
 		gameObject.name = "Gas station";
 	}
 
@@ -307,14 +339,14 @@ public class Building : MonoBehaviour{
 		EffectDamage.Add (Element.Fire, 0.2f);
 		EffectDamage.Add (Element.Water, 0.1f);
 
-		EffectTime.Add (Element.Fire, 2f);
+		EffectTime.Add (Element.Fire, 2.4f);
 
 		AfterHit.Add (Element.Water, Side.Center);
 
 		AddConstants ();
 		ImageNumberFromAtlas = 40;
 		UpdateImage ();
-		StartingPopulation = _Population = 10;
+		StartingPopulation = _Population = 0;
 	}
 
 	public void CreateElectricityTower(){
@@ -335,28 +367,28 @@ public class Building : MonoBehaviour{
 
 	public void TreatWith(Element e, float startingValue=0){
 		if (Statuses.ContainsKey (e) && Statuses [e] <= startingValue) {
-			return ; //no need to treat with it
+			return ; //no need to treat with it if already has this element
 		}
 
 		if (StrikeDamage.ContainsKey(e)) {
-
 			if (StrikeDamage[e] > 0 && Health > 0){
 				List<Element> bss = AfterHit.Keys.ToList();
 				foreach (Element e2 in bss) {
 					Game.Me.CataclysmTo(e2, gameObject, Side.Center);
 					//splash damage with crush
 					if (e == Element.Crush){
-						Game.Me.TreatNeighboursWith(gameObject, e2);
+						//we don't want the splash damage
+						//Game.Me.TreatNeighboursWith(gameObject, e2);
 					}
 				}
 			}
 		}
 		if (EffectDamage.ContainsKey(e) && (!Statuses.ContainsKey(e) || Statuses[e] > startingValue)){
-			if ( e == Element.Fire && Health == 0){
+			//if ( e == Element.Fire && Health == 0){
 				//dont start fire on dead buildings
-			} else {
+			//} else {
 				AddStatus(e, startingValue);
-			}
+			//}
 		}
 		if (StrikeDamage.ContainsKey(e)){
 			Health -= StrikeDamage [e];
