@@ -20,6 +20,8 @@ public class Building : MonoBehaviour{
 	private Dictionary<Element, GoQuestion> FillRequirement = new Dictionary<Element, GoQuestion>();
 	private Dictionary<Element, float> ContaminateDelta = new Dictionary<Element, float> ();
 
+	public Dictionary<Side, Building> Neighbours = new Dictionary<Side, Building>();
+
 	public List<Listener> Listeners = new List<Listener>();
 
 	private int StartingPopulation, _Population, LastCheckedPopulation;
@@ -269,7 +271,6 @@ public class Building : MonoBehaviour{
 		});
 
 		ContaminateDelta.Add (Element.Fire, -1f);
-
 	}
 
 	private void UpdateImage(){
@@ -284,7 +285,6 @@ public class Building : MonoBehaviour{
 
 		//update health bar
 		GameObjectHealthBar.GetComponent<Image> ().fillAmount = Health;
-
 		GameObjectHealthBar.transform.parent.gameObject.SetActive (Health > 0);
 	}
 

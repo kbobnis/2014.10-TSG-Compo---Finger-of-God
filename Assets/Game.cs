@@ -45,6 +45,7 @@ public class Game : MonoBehaviour {
 				Destroy(go);
 			}
 		}
+		Buildings.Clear();
 	}
 
 	public void Start(){
@@ -71,7 +72,6 @@ public class Game : MonoBehaviour {
 				Buildings.Add(buildingsRow);
 				buildingsRow = new List<GameObject>();
 			}
-
 			GameObject newItem = Instantiate(sl.itemPrefab) as GameObject;
 			newItem.SetActive(true);
 			Building b = newItem.GetComponent<Building>();
@@ -104,12 +104,44 @@ public class Game : MonoBehaviour {
 			b.Inform();
 
 			buildingsRow.Add(newItem);
+
 		}
 		Buildings.Add (buildingsRow);
 		sl.Prepare ();
 		sl.itemPrefab.SetActive (false);
+		
+		//create neighbours -> optimization
+		int x = 0;
+		foreach (List<GameObject> cols in Buildings) {
+			int y = 0;
+			foreach (GameObject bi in cols) {
+				Building bu = bi.GetComponent<Building>();
+
+				if (Buildings.Count > x + 1) {
+					bu.Neighbours.Add(Side.Right, Buildings[x + 1][y].GetComponent<Building>());
+				}
+				
+				if (Buildings[x].Count > y + 1) {
+					bu.Neighbours.Add(Side.Down, Buildings[x][y+1].GetComponent<Building>());
+				}
+				
+				if (x - 1 >= 0) {
+					bu.Neighbours.Add(Side.Left, Buildings[x - 1][y].GetComponent<Building>());
+				}
+				
+				if (y - 1 >= 0){
+					bu.Neighbours.Add(Side.Up, Buildings[x][y - 1].GetComponent<Building>());
+				}
+				y++;	
+			}
+			x++;	
+		}
+		
+		
 		Preparing = false;
 	}
+
+
 
 	void Update(){
 		if (TextPopulation.GetComponent<NumberShower> ().Number == 0 && !Preparing) {
@@ -127,31 +159,14 @@ public class Game : MonoBehaviour {
 	}
 
 	public GameObject GetNeighbour(GameObject g, Side s){
-		GameObject tmp = null;
-		try{
-			int myX=0, myY=0;
-			int i = 0;
-			foreach (List<GameObject> cols in Buildings) {
-				int j=0;
-				foreach(GameObject b in cols){
-					if (b == g){
-						myX = j;
-						myY = i;
-					}
-					j++;
-				}
-				i++;
-			}
-
-
-			if (s.DeltaY() + myY >= 0 && s.DeltaX() + myX >= 0 && Buildings.Count > (s.DeltaY() + myY) && Buildings[s.DeltaY() + myY].Count > (s.DeltaX() + myX)){
-			 tmp = Buildings [s.DeltaY () + myY] [s.DeltaX () + myX];
-			}
-
-		} catch(System.Exception e){
-			Debug.Log("[GetNeightbour] " + e);
+		if (s == Side.Center) {
+			return g;
 		}
-		return tmp;
+		GameObject tmp2 = null;
+		if (g.GetComponent<Building>().Neighbours.ContainsKey(s)) {
+			tmp2 = g.GetComponent<Building>().Neighbours[s].gameObject;
+		}
+		return tmp2;
 	}
 
 	public void CataclysmTo(Element el, GameObject g, Side s){
@@ -165,7 +180,7 @@ public class Game : MonoBehaviour {
 
 
 	public void TreatNeighboursWith(GameObject go, Element e, float startingValue=0, GoQuestion goq=null){
-		if (startingValue >= 1) {
+		if (startingValue >= 1 || go == null) {
 			return ; //we don't want to waste time for dead startingValue
 		}
 
