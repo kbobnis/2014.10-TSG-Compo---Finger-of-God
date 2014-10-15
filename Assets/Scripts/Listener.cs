@@ -1,6 +1,7 @@
 
-public interface Listener
+public interface Listener<T, Y>
 {
-	void Inform(object o);
+	void Clear(T t);
+	void Inform(T t, Y delta);
 }
 

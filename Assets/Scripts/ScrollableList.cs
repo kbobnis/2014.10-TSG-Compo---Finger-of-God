@@ -78,12 +78,10 @@ public class ScrollableList : MonoBehaviour
 			//this is used instead of a double for loop because itemCount may not fit perfectly into the rows/columns
 			i++;
 		}
-
 	}
 
-    void Start()
-    {
-		//Prepare ();
+    void Start(){
+		itemPrefab.SetActive(false);
     }
 
 }

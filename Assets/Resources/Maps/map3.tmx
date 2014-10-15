@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map version="1.0" orientation="orthogonal" renderorder="right-down" width="5" height="7" tilewidth="32" tileheight="32">
+ <properties>
+  <property name="Interventions" value="3"/>
+ </properties>
+ <tileset firstgid="1" name="buildings" tilewidth="32" tileheight="32">
+  <image source="../Images/buildings.png" width="224" height="32"/>
+ </tileset>
+ <layer name="Tile Layer 1" width="5" height="7">
+  <data>
+   <tile gid="7"/>
+   <tile gid="7"/>
+   <tile gid="1"/>
+   <tile gid="7"/>
+   <tile gid="7"/>
+   <tile gid="7"/>
+   <tile gid="4"/>
+   <tile gid="4"/>
+   <tile gid="7"/>
+   <tile gid="7"/>
+   <tile gid="7"/>
+   <tile gid="4"/>
+   <tile gid="1"/>
+   <tile gid="7"/>
+   <tile gid="7"/>
+   <tile gid="1"/>
+   <tile gid="1"/>
+   <tile gid="1"/>
+   <tile gid="7"/>
+   <tile gid="7"/>
+   <tile gid="7"/>
+   <tile gid="7"/>
+   <tile gid="1"/>
+   <tile gid="7"/>
+   <tile gid="7"/>
+   <tile gid="7"/>
+   <tile gid="7"/>
+   <tile gid="1"/>
+   <tile gid="7"/>
+   <tile gid="7"/>
+   <tile gid="7"/>
+   <tile gid="7"/>
+   <tile gid="7"/>
+   <tile gid="7"/>
+   <tile gid="7"/>
+  </data>
+ </layer>
+</map>
