@@ -6,21 +6,44 @@ using UnityEngine.UI;
 
 public class PanelBeforeMission : MonoBehaviour {
 
-	public GameObject TextInfo, Image, ButtonStartMission;
+	public GameObject TextInfo, ButtonStartMission, PanelPrefabHolder, BuildingPrefab;
 	public GameObject PanelMinigame, PanelTopBar;
-
 
 	public void PleaseStartMinigame(Mission m, PanelMainMenu pmm) {
 		Debug.Log("Please start minigame");
-		if (m.BeforeText != null) {
+		for (int i = 0; i < PanelPrefabHolder.transform.childCount; i++) {
+			Destroy(PanelPrefabHolder.transform.GetChild(i).gameObject);
+		}
+		PanelPrefabHolder.transform.DetachChildren();
+
+		if (m.BeforeText != "") {
 			TextInfo.GetComponent<Text>().text = m.BeforeText;
+		} else {
+			StartMinigame(m, new List<Listener<MissionStatus, bool>> { pmm });
+		}
+
+		Debug.Log("before building: " + m.BeforeBuilding);
+		if (m.BeforeBuilding != BuildingType.None) {
+			GameObject newItem = Instantiate(BuildingPrefab) as GameObject;
+			newItem.SetActive(true);
+			newItem.transform.parent = PanelPrefabHolder.transform;
+
+			RectTransform r = PanelPrefabHolder.GetComponent<RectTransform>();
+			RectTransform itemR = newItem.GetComponent<RectTransform>();
+			itemR.offsetMin = new Vector2(-r.rect.width/2, -r.rect.height/2);
+			itemR.offsetMax = new Vector2(r.rect.width/2, r.rect.height/2);
+			Building b = newItem.GetComponent<Building>();
+			b.CreateFromTemplate(m.BeforeBuilding);
+			
+
 		}
 		ButtonStartMission.GetComponent<Button>().onClick.AddListener(() => { 
 			StartMinigame(m, new List<Listener<MissionStatus, bool>>(){pmm}); 
 		});
 	}
 
-	public void StartMinigame(Mission m, List<Listener<MissionStatus, bool>> missionStatusListeners) {
+
+	private void StartMinigame(Mission m, List<Listener<MissionStatus, bool>> missionStatusListeners) {
 		gameObject.SetActive(false);
 		PanelMinigame.SetActive(true);
 

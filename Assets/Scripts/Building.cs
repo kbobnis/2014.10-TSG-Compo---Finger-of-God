@@ -10,6 +10,7 @@ public enum Element{
 }
 
 public enum BuildingType {
+	None,
 	Wood,
 	Stone,
 	Block,

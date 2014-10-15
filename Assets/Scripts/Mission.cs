@@ -15,6 +15,7 @@ public class Mission{
 	public List<AchievQuery> SuccessQueries = new List<AchievQuery>();
 	public List<AchievQuery> FailureQueries = new List<AchievQuery>();
 	public string BeforeText;
+	public BuildingType BeforeBuilding;
 
 	private int Number;
 
@@ -81,8 +82,16 @@ public class Mission{
 
 		Mission m = new Mission();
 		m.FailureQueries.Add(new AchievQuery(ScoreType.Interventions, Sign.Bigger, n["properties"]["Interventions"].AsInt));
-		m.BeforeText = n["properties"]["BeforeText"].ToString();
+		m.BeforeText = n["properties"]["BeforeText"].ToString().Trim(new Char[]{'"'});
 		m.SuccessQueries.Add(new AchievQuery(ScoreType.Population, Sign.Equal, 0));
+		
+		int buildingInt = n["properties"]["BeforeImage"].AsInt;
+		BuildingType bt = BuildingType.None;
+		if (intToBuildingMap.ContainsKey(buildingInt)){
+			bt = intToBuildingMap[buildingInt];
+		}
+		m.BeforeBuilding = bt;
+		
 		m.Number = number;
 
 		int i=0; 
@@ -148,4 +157,5 @@ public class Mission{
 
 		return bt;
 	}
+
 }

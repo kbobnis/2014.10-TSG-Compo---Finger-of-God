@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <map version="1.0" orientation="orthogonal" renderorder="right-down" width="5" height="7" tilewidth="32" tileheight="32">
  <properties>
+  <property name="BeforeImage" value="6"/>
+  <property name="BeforeText" value="This is a gas station. It will set on fire nearby buildings if destroyed."/>
   <property name="Interventions" value="5"/>
  </properties>
  <tileset firstgid="1" name="buildings" tilewidth="32" tileheight="32">

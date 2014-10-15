@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <map version="1.0" orientation="orthogonal" renderorder="right-down" width="5" height="7" tilewidth="32" tileheight="32">
  <properties>
+  <property name="BeforeImage" value="4"/>
+  <property name="BeforeText" value="This is water tower. It will flood all empty spaces and corresponding buildings. Flood destroys building a little."/>
   <property name="Interventions" value="3"/>
  </properties>
  <tileset firstgid="1" name="buildings" tilewidth="32" tileheight="32">

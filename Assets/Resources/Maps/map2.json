@@ -14,6 +14,8 @@
  "orientation":"orthogonal",
  "properties":
     {
+     "BeforeImage":"6",
+     "BeforeText":"This is a gas station. It will set on fire nearby buildings if destroyed.",
      "Interventions":"5"
     },
  "renderorder":"right-down",

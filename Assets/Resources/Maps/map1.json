@@ -14,7 +14,8 @@
  "orientation":"orthogonal",
  "properties":
     {
-     "BeforeText":"This is a wooden building {building0.image}. {building0.population} people live in it. Destroy it to exterminate them. Exterminate all people in this city. ",
+     "BeforeImage":"1",
+     "BeforeText":"This is a wooden building. People live in it. Destroy it to exterminate them. Exterminate all people in all buildings.",
      "Interventions":"9"
     },
  "renderorder":"right-down",
