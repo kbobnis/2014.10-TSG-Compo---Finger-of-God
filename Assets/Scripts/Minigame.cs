@@ -106,7 +106,7 @@ public class Minigame : MonoBehaviour, Listener<ScoreType, int> {
 
 			if (ms == MissionStatus.Failure || ms == MissionStatus.Success) {
 				gameObject.SetActive(false);
-				Mission.Accomplished();
+				Mission.Accomplished(ms, ActualResults);
 			}
 		}
 

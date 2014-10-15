@@ -22,8 +22,11 @@ public class Mission{
 		return PlayerPrefs.GetInt("CompletedMission", 0);
 	}
 
-	public void Accomplished() {
-		PlayerPrefs.SetInt("CompletedMission", Number);
+	public void Accomplished(MissionStatus ms, Dictionary<ScoreType, Result> actualResults) {
+
+		if (ms == MissionStatus.Success) {
+			PlayerPrefs.SetInt("CompletedMission", Number);
+		}
 	}
 
 	public static void ResetMission() {

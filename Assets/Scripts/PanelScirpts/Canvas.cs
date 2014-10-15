@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using UnityEngine.UI;
 
 public class Canvas : MonoBehaviour, Listener<MissionStatus, bool> {
 
@@ -20,8 +21,22 @@ public class Canvas : MonoBehaviour, Listener<MissionStatus, bool> {
 		scoreListeners.Add(PanelTopBar.GetComponent<PanelTopBar>().TextPopulation.GetComponent<NumberShower>());
 		scoreListeners.Add(PanelTopBar.GetComponent<PanelTopBar>().TextInterventions.GetComponent<NumberShower>());
 
+		if (m.FailureQueries.Count > 0) {
+			AchievQueryShower failureQuery = PanelTopBar.GetComponent<PanelTopBar>().TextMissionFailure.GetComponent<AchievQueryShower>();
+			failureQuery.AchievQuery = m.FailureQueries[0];
+			scoreListeners.Add(failureQuery);
+		}
+
+		if (m.SuccessQueries.Count > 0) {
+			AchievQueryShower successQuery = PanelTopBar.GetComponent<PanelTopBar>().TextMissionSuccess.GetComponent<AchievQueryShower>();
+			successQuery.AchievQuery = m.SuccessQueries[0];
+			scoreListeners.Add(successQuery);
+		}
+
+
 		List<Listener<MissionStatus, bool>> missionStatusListeners = new List<Listener<MissionStatus, bool>>();
 		missionStatusListeners.Add(this);
+		
 		PanelMinigame.GetComponent<Minigame>().PrepareGame(m, scoreListeners, missionStatusListeners);
 	}
 
@@ -32,5 +47,6 @@ public class Canvas : MonoBehaviour, Listener<MissionStatus, bool> {
 	public void Inform(MissionStatus t, bool delta) {
 		Debug.Log("Mission status update: " + t + " with: " + delta);
 		PanelMainMenu.gameObject.SetActive(true);
+
 	}
 }
