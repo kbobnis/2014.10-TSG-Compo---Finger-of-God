@@ -25,14 +25,16 @@ public class PanelMainMenu : MonoBehaviour, Listener<MissionStatus, bool> {
 
 	public void StartMission() {
 		//load actual mission;
+		
 		try {
 			int number = Mission.GetCompletedMission() + 1;
+			Debug.Log("starting new mission number: " + number);
 
 			string path = "Maps/map" + number;
 			if (Resources.Load<TextAsset>(path) != null) {
 				Mission mission = Mission.LoadMission(number);
 				PanelBeforeMission.gameObject.SetActive(true);
-				PanelBeforeMission.GetComponent<PanelBeforeMission>().PleaseStartMinigame(mission, this);
+				PanelBeforeMission.GetComponent<PanelBeforeMission>().PleaseStartMinigame(mission);
 				gameObject.SetActive(false);
 			} else {
 				Debug.Log("There is no mission named: " + path);
@@ -47,7 +49,7 @@ public class PanelMainMenu : MonoBehaviour, Listener<MissionStatus, bool> {
 	public void QuickGame() {
 		try {
 			PanelBeforeMission.gameObject.SetActive(true);
-			PanelBeforeMission.GetComponent<PanelBeforeMission>().PleaseStartMinigame(Mission.MissionWithRandom(), this);
+			PanelBeforeMission.GetComponent<PanelBeforeMission>().PleaseStartMinigame(Mission.MissionWithRandom());
 			gameObject.SetActive(false);
 		} catch (System.Exception e) {
 			Debug.Log("Exceptin: " + e);

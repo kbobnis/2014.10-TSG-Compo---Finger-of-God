@@ -4,26 +4,31 @@ using System.Collections.Generic;
 using UnityEngine.UI;
 
 
-public class PanelBeforeMission : MonoBehaviour {
+public class PanelBeforeMission : MonoBehaviour, Listener<MissionStatus, bool> {
 
-	public GameObject TextInfo, ButtonStartMission, PanelPrefabHolder, BuildingPrefab;
+	public GameObject TextInfo, ButtonStartMission, PanelPrefabHolder, BuildingPrefab, TextMissionQuery, PanelAfterMission;
 	public GameObject PanelMinigame, PanelTopBar;
 
-	public void PleaseStartMinigame(Mission m, PanelMainMenu pmm) {
-		Debug.Log("Please start minigame");
+	public void PleaseStartMinigame(Mission m) {
 		for (int i = 0; i < PanelPrefabHolder.transform.childCount; i++) {
 			Destroy(PanelPrefabHolder.transform.GetChild(i).gameObject);
 		}
 		PanelPrefabHolder.transform.DetachChildren();
 
-		if (m.BeforeText != "") {
-			TextInfo.GetComponent<Text>().text = m.BeforeText;
-		} else {
-			StartMinigame(m, new List<Listener<MissionStatus, bool>> { pmm });
+		TextInfo.GetComponent<Text>().text = m.BeforeMissionText;
+
+		/*if (m.SuccessQueries.Count > 0) {
+			AchievQuery successQuery = m.SuccessQueries[0];
+			TextMissionQuery.GetComponent<Text>().text = "Win when " + successQuery.ScoreType + " " + successQuery.Sign.Text() + " " + successQuery.Value;
+		}*/
+
+		if (m.FailureQueries.Count > 0) {
+			AchievQuery failureQuery = m.FailureQueries[0];
+			TextMissionQuery.GetComponent<Text>().text = "\nLose when " + failureQuery.ScoreType + " " + failureQuery.Sign.Text() + " " + failureQuery.Value;
 		}
 
-		Debug.Log("before building: " + m.BeforeBuilding);
-		if (m.BeforeBuilding != BuildingType.None) {
+		Debug.Log("before building: " + m.BeforeMissionBuilding);
+		if (m.BeforeMissionBuilding != BuildingType.None) {
 			GameObject newItem = Instantiate(BuildingPrefab) as GameObject;
 			newItem.SetActive(true);
 			newItem.transform.parent = PanelPrefabHolder.transform;
@@ -32,13 +37,15 @@ public class PanelBeforeMission : MonoBehaviour {
 			RectTransform itemR = newItem.GetComponent<RectTransform>();
 			itemR.offsetMin = new Vector2(-r.rect.width/2, -r.rect.height/2);
 			itemR.offsetMax = new Vector2(r.rect.width/2, r.rect.height/2);
+			//itemR.anchorMin = new Vector2(0, 0);
+			//itemR.anchorMax = new Vector2(1, 1);
 			Building b = newItem.GetComponent<Building>();
-			b.CreateFromTemplate(m.BeforeBuilding);
+			b.CreateFromTemplate(m.BeforeMissionBuilding);
 			
 
 		}
 		ButtonStartMission.GetComponent<Button>().onClick.AddListener(() => { 
-			StartMinigame(m, new List<Listener<MissionStatus, bool>>(){pmm}); 
+			StartMinigame(m, new List<Listener<MissionStatus, bool>>(){this}); 
 		});
 	}
 
@@ -64,5 +71,15 @@ public class PanelBeforeMission : MonoBehaviour {
 		}
 
 		PanelMinigame.GetComponent<Minigame>().PrepareGame(m, scoreListeners, missionStatusListeners);
+	}
+
+	public void Clear(MissionStatus t) {
+	}
+
+	public void Inform(MissionStatus t, bool delta) {
+		PanelAfterMission.SetActive(true);
+		PanelAfterMission.GetComponent<PanelAfterMission>().Inform(t, delta);
+		gameObject.SetActive(false);
+
 	}
 }

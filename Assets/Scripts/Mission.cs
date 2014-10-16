@@ -14,8 +14,9 @@ public class Mission{
 	public List<List<BuildingType>> Buildings = new List<List<BuildingType>>();
 	public List<AchievQuery> SuccessQueries = new List<AchievQuery>();
 	public List<AchievQuery> FailureQueries = new List<AchievQuery>();
-	public string BeforeText;
-	public BuildingType BeforeBuilding;
+	
+	public string BeforeMissionText = "";
+	public BuildingType BeforeMissionBuilding;
 
 	private int Number;
 
@@ -35,16 +36,6 @@ public class Mission{
 	}
 
 	public MissionStatus GetStatus(Dictionary<ScoreType, Result> results) {
-		
-		bool allSuccess = true;
-		foreach (AchievQuery success in SuccessQueries) {
-			if (!success.CanAccept(results[success.ScoreType])) {
-				allSuccess = false;
-			} 
-		}
-		if (allSuccess) {
-			return MissionStatus.Success;
-		}
 
 		bool foundFailure = false;
 		foreach (AchievQuery failure in FailureQueries) {
@@ -55,6 +46,18 @@ public class Mission{
 		if (foundFailure) {
 			return MissionStatus.Failure;
 		}
+		
+
+		bool allSuccess = true;
+		foreach (AchievQuery success in SuccessQueries) {
+			if (!success.CanAccept(results[success.ScoreType])) {
+				allSuccess = false;
+			} 
+		}
+		if (allSuccess) {
+			return MissionStatus.Success;
+		}
+
 
 		return MissionStatus.NotYetDetermined;
 	}
@@ -81,8 +84,8 @@ public class Mission{
 		int height = buildingsLayerJson["height"].AsInt;
 
 		Mission m = new Mission();
-		m.FailureQueries.Add(new AchievQuery(ScoreType.Interventions, Sign.Bigger, n["properties"]["Interventions"].AsInt));
-		m.BeforeText = n["properties"]["BeforeText"].ToString().Trim(new Char[]{'"'});
+		m.FailureQueries.Add(new AchievQuery(ScoreType.Interventions, Sign.Equal, n["properties"]["Interventions"].AsInt+1));
+		m.BeforeMissionText = n["properties"]["BeforeText"].ToString().Trim(new Char[]{'"'});
 		m.SuccessQueries.Add(new AchievQuery(ScoreType.Population, Sign.Equal, 0));
 		
 		int buildingInt = n["properties"]["BeforeImage"].AsInt;
@@ -90,7 +93,7 @@ public class Mission{
 		if (intToBuildingMap.ContainsKey(buildingInt)){
 			bt = intToBuildingMap[buildingInt];
 		}
-		m.BeforeBuilding = bt;
+		m.BeforeMissionBuilding = bt;
 		
 		m.Number = number;
 
@@ -120,42 +123,17 @@ public class Mission{
 		for (int i = 0; i < h; i++) {
 			List<BuildingType> bRow = new List<BuildingType>();
 			for (int j = 0; j < w; j++) {
-				bRow.Add(RandomBuilding());
+				bRow.Add(BuildingTypeMethods.RandomBuilding());
 			}
 			m.Buildings.Add(bRow);
 		}
-		m.SuccessQueries.Add(new AchievQuery(ScoreType.Population, Sign.SmallerEqual, 0));
+		m.SuccessQueries.Add(new AchievQuery(ScoreType.Population, Sign.Equal, 0));
+		m.BeforeMissionBuilding = BuildingTypeMethods.RandomBuilding();
+		m.BeforeMissionText = m.BeforeMissionBuilding.Description();
 
 		return m;
 	}
 
 
-	private static BuildingType RandomBuilding(){
-		
-		BuildingType bt = BuildingType.Destroyed;
-
-		Dictionary<BuildingType, int> chances = new Dictionary<BuildingType,int>();
-		chances.Add(BuildingType.GasStation, 1);
-		chances.Add(BuildingType.WaterTower, 1);
-		chances.Add(BuildingType.ElectricTower, 1);
-		chances.Add(BuildingType.Stone, 2);
-		chances.Add(BuildingType.Wood, 2);
-		chances.Add(BuildingType.Destroyed, 1);
-		chances.Add(BuildingType.Block, 0);
-		int sumOfChances = 0;
-		foreach(int chance in chances.Values.ToList()){
-			sumOfChances += chance;
-		}
-		int ticket = Mathf.RoundToInt(UnityEngine.Random.value * sumOfChances);
-		foreach(KeyValuePair<BuildingType, int> b in chances){
-			ticket -= b.Value;
-			if (ticket <= 0){
-				bt = b.Key;
-				break;
-			}
-		}
-
-		return bt;
-	}
 
 }

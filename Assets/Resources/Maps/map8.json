@@ -1,7 +1,7 @@
 { "height":7,
  "layers":[
         {
-         "data":[7, 7, 7, 7, 7, 7, 1, 6, 1, 7, 1, 6, 2, 6, 1, 1, 1, 6, 1, 1, 6, 2, 6, 2, 6, 2, 6, 2, 6, 2, 2, 1, 7, 1, 1],
+         "data":[4, 1, 7, 1, 4, 7, 1, 7, 1, 1, 7, 1, 7, 1, 7, 7, 1, 7, 1, 7, 7, 1, 7, 1, 7, 1, 1, 7, 1, 7, 4, 1, 7, 1, 4],
          "height":7,
          "name":"Tile Layer 1",
          "opacity":1,
@@ -14,9 +14,9 @@
  "orientation":"orthogonal",
  "properties":
     {
-     "BeforeImage":"6",
-     "BeforeText":"Try to experiment with the fire. Have fun.",
-     "Interventions":"10"
+     "BeforeImage":"4",
+     "BeforeText":"Not everything must be destroyed. Focus only on habitable buildings. There is no one living in water towers.",
+     "Interventions":"4"
     },
  "renderorder":"right-down",
  "tileheight":32,
@@ -27,7 +27,7 @@
          "imageheight":32,
          "imagewidth":224,
          "margin":0,
-         "name":"building",
+         "name":"buildings",
          "properties":
             {
 

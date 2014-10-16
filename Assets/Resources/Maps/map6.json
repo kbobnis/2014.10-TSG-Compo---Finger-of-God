@@ -1,7 +1,7 @@
 { "height":7,
  "layers":[
         {
-         "data":[7, 7, 7, 7, 7, 7, 1, 6, 1, 7, 1, 6, 2, 6, 1, 1, 1, 6, 1, 1, 6, 2, 6, 2, 6, 2, 6, 2, 6, 2, 2, 1, 7, 1, 1],
+         "data":[1, 7, 7, 7, 1, 1, 7, 4, 7, 1, 1, 7, 7, 7, 1, 1, 7, 4, 7, 1, 1, 7, 7, 7, 1, 1, 7, 7, 7, 1, 1, 7, 7, 7, 1],
          "height":7,
          "name":"Tile Layer 1",
          "opacity":1,
@@ -14,9 +14,9 @@
  "orientation":"orthogonal",
  "properties":
     {
-     "BeforeImage":"6",
-     "BeforeText":"Try to experiment with the fire. Have fun.",
-     "Interventions":"10"
+     "BeforeImage":"4",
+     "BeforeText":"This is water tower. After destroyed will flood all empty spaces and neighbours with water. Two waters don't double the effect!",
+     "Interventions":"2"
     },
  "renderorder":"right-down",
  "tileheight":32,
@@ -34,6 +34,15 @@
             },
          "spacing":0,
          "tileheight":32,
+         "tileproperties":
+            {
+             "6":
+                {
+                 "BeforeImage":"4",
+                 "BeforeText":"This is water tower. After destroyed will flood all empty spaces and neighbours with water. Two waters don't double the effect!",
+                 "Interventions":"2"
+                }
+            },
          "tilewidth":32
         }],
  "tilewidth":32,

@@ -94,15 +94,11 @@ public class Minigame : MonoBehaviour, Listener<ScoreType, int> {
 		if (Mission != null) {
 			MissionStatus ms = Mission.GetStatus(ActualResults);
 
-
-			
 			if (ms != MissionStatus.NotYetDetermined){
-				Debug.Log("mission status: " + ms);
 				foreach(Listener<MissionStatus, bool> l in MissionStatusListeners){
 					l.Inform(ms, true);
 				}
 			}
-
 
 			if (ms == MissionStatus.Failure || ms == MissionStatus.Success) {
 				gameObject.SetActive(false);

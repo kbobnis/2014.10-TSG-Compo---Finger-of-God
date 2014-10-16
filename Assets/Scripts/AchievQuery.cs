@@ -5,6 +5,7 @@ using UnityEngine;
 using System.Collections;
 using UnityEngine.SocialPlatforms;
 using System.Collections.Generic;
+using System.ComponentModel;
 
 
 public enum ScoreType {
@@ -19,7 +20,12 @@ public static class ScoreTypeMethods {
 }
 
 public enum Sign {
-	SmallerEqual, Equal, BiggerEqual, NoMatter, Smaller, Bigger
+	SmallerEqual,
+	Equal,
+	BiggerEqual,
+	NoMatter,
+	Smaller,
+	Bigger
 }
 public static class SignMethods {
 	public static bool IsMet(this Sign s1, float v1, float v2) {
@@ -42,22 +48,30 @@ public static class SignMethods {
 	}
 
 	public static string Text(this Sign s1) {
+		string text = "will be ";
 		switch (s1) {
 			case Sign.BiggerEqual:
-				return "bigger or equal";
+				text += "bigger or equal to";
+				break;
 			case Sign.SmallerEqual:
-				return "smaller or equal";
+				text += "smaller or equal to";
+				break;
 			case Sign.Equal:
-				return "equal";
+				text += "equal to";
+				break;
 			case Sign.NoMatter:
-				return "no matter";
+				text += "no matter";
+				break;
 			case Sign.Smaller:
-				return "smaller";
+				text += "smaller than";
+				break;
 			case Sign.Bigger:
-				return "bigger";
+				text += "bigger than";
+				break;
 			default:
 				throw new UnityException("There is no sign: " + s1);
 		}
+		return text ;
 	}
 
 }
