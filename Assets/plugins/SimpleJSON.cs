@@ -46,6 +46,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using UnityEngine;
  
  
 namespace SimpleJSON
@@ -343,6 +344,8 @@ namespace SimpleJSON
  
                     case ' ':
                     case '\t':
+						//Debug.Log("is qute mode? " + QuoteMode + " i: " + i + ", a json: " + aJSON[i-1] + " after: " + aJSON[i+1] );
+
                         if (QuoteMode)
                             Token += aJSON[i];
                     break;

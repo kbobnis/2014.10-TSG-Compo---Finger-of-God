@@ -2,10 +2,10 @@
 using System.Collections;
 using UnityEngine.UI;
 
-public class NumberShower : MonoBehaviour, Listener<ScoreType, int> {
+public class NumberShower : MonoBehaviour, Listener<ScoreType, float> {
 
 	public string Prefix = "none";
-	private int Number;
+	private float Number;
 	public bool Minus;
 	public ScoreType ScoreType;
 
@@ -14,7 +14,7 @@ public class NumberShower : MonoBehaviour, Listener<ScoreType, int> {
 		Actualize();
 	}
 
-	public void Inform(ScoreType st, int delta){
+	public void Inform(ScoreType st, float delta){
 		if (st == ScoreType) {
 			AddNumber (delta);
 		}
@@ -28,7 +28,7 @@ public class NumberShower : MonoBehaviour, Listener<ScoreType, int> {
 		Actualize();
 	}
 	
-	private void AddNumber(int number){
+	private void AddNumber(float number){
 		Number += (Minus?-1:1) * number;
 	}
 

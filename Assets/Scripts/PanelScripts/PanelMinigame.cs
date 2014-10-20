@@ -2,26 +2,27 @@
 using System.Collections;
 using System.Collections.Generic;
 
-public class Minigame : MonoBehaviour, Listener<ScoreType, int> {
+public class PanelMinigame : MonoBehaviour, Listener<ScoreType, float> {
+
+	public GameObject PanelAfterMission;
 
 	private Mission Mission;
 	private Dictionary<ScoreType, Result> ActualResults = new Dictionary<ScoreType, Result>();
-	private List<Listener<ScoreType, int>> ScoreTypeListeners;
-	private List<Listener<MissionStatus, bool>> MissionStatusListeners;
+	private List<Listener<ScoreType, float>> ScoreTypeListeners;
 
-	public void PrepareGame(Mission m, List<Listener<ScoreType, int>> scoreTypeListeners, List<Listener<MissionStatus, bool>> missionStatusListeners) {
+	public void PrepareGame(Mission m, List<Listener<ScoreType, float>> scoreTypeListeners) {
 
 		scoreTypeListeners.Add(this);
 		ScoreTypeListeners = scoreTypeListeners;
-		foreach (Listener<ScoreType, int> l in ScoreTypeListeners) {
+		foreach (Listener<ScoreType, float> l in ScoreTypeListeners) {
 			l.Clear(ScoreType.Interventions);
+			l.Clear(ScoreType.Time);
 		}
-
-		MissionStatusListeners = missionStatusListeners;
 
 		ActualResults.Clear();
 		ActualResults.Add(ScoreType.Interventions, new Result(ScoreType.Interventions, 0));
 		ActualResults.Add(ScoreType.Population, new Result(ScoreType.Population, 0)); //buildings will inform about population change
+		ActualResults.Add(ScoreType.Time, new Result(ScoreType.Time, 0));
 
 		ScrollableList sl = GetComponentInChildren<ScrollableList>();
 		int columns = sl.columnCount;
@@ -84,27 +85,31 @@ public class Minigame : MonoBehaviour, Listener<ScoreType, int> {
 
 	public void Clear(ScoreType st) {
 		if (st == ScoreType.Population) {
-			ActualResults[ScoreType.Population].Value = 0;
+			ActualResults[st].Value = 0;
 		}
 	}
 
-	public void Inform(ScoreType st, int delta) {
+	void Update() {
+		if (ActualResults.ContainsKey(ScoreType.Time)) {
+			ActualResults[ScoreType.Time].Value += Time.deltaTime;
+		}
+	}
+
+	public void Inform(ScoreType st, float delta) {
 		ActualResults[st].Value += delta;
 
 		if (Mission != null) {
 			MissionStatus ms = Mission.GetStatus(ActualResults);
 
-			if (ms != MissionStatus.NotYetDetermined){
-				foreach(Listener<MissionStatus, bool> l in MissionStatusListeners){
-					l.Inform(ms, true);
-				}
-			}
-
 			if (ms == MissionStatus.Failure || ms == MissionStatus.Success) {
+				PanelAfterMission.SetActive(true);
+				PanelAfterMission.GetComponent<PanelAfterMission>().Prepare(Mission, ActualResults);
 				gameObject.SetActive(false);
-				Mission.Accomplished(ms, ActualResults);
+				Mission = null;
 			}
 		}
-
 	}
+
+
+
 }

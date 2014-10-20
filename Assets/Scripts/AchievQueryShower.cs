@@ -2,11 +2,11 @@
 using System.Collections;
 using UnityEngine.UI;
 
-public class AchievQueryShower : MonoBehaviour, Listener<ScoreType, int> {
+public class AchievQueryShower : MonoBehaviour, Listener<ScoreType, float> {
 
 	public AchievQuery AchievQuery;
 
-	public int ActualValue;
+	public float ActualValue;
 	public string Prefix;
 
 	// Use this for initialization
@@ -26,7 +26,7 @@ public class AchievQueryShower : MonoBehaviour, Listener<ScoreType, int> {
 		ActualValue = 0;
 	}
 
-	public void Inform(ScoreType t, int delta) {
+	public void Inform(ScoreType t, float delta) {
 		if (t == AchievQuery.ScoreType) {
 			ActualValue += delta;
 		}

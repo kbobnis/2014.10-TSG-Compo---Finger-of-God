@@ -22,7 +22,7 @@ public class PlaySingleSound : MonoBehaviour
 			GameObject go = new GameObject( "sound clip: " + clip.name );
 
 			AudioSource audio = go.AddComponent<AudioSource>();
-			audio.volume = volume;
+			audio.volume = 0f;// volume;
 			audio.clip = clip;
 			//audio.rolloffMode = AudioRolloffMode.Linear;
 			audio.Play();

@@ -9,7 +9,7 @@ using System.ComponentModel;
 
 
 public enum ScoreType {
-	Interventions, Population
+	Interventions, Population, Time
 }
 public static class ScoreTypeMethods {
 	public static string HumanName(this ScoreType s) {
@@ -77,17 +77,17 @@ public static class SignMethods {
 }
 public class Result {
 	protected ScoreType _ScoreType;
-	protected int _Value;
+	protected float _Value;
 
 	public ScoreType ScoreType {
 		get { return _ScoreType; }
 	}
-	public int Value {
+	public float Value {
 		get { return _Value; }
 		set { _Value = value;  }
 	}
 
-	public Result(ScoreType scoreType, int value) {
+	public Result(ScoreType scoreType, float value) {
 		_ScoreType = scoreType;
 		_Value = value;
 	}

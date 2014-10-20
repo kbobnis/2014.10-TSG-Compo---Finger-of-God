@@ -12,15 +12,11 @@ public enum Element{
 
 public enum BuildingType {
 	None,
-	[Description("Wood")]
 	Wood,
 	Stone,
 	Block,
-	[Description("Water Tower")]
 	WaterTower,
-	[Description("Electric Tower")]
 	ElectricTower,
-	[Description("Gas Station")]
 	GasStation,
 	Destroyed
 }
@@ -65,7 +61,7 @@ public static class BuildingTypeMethods {
 				bt = b.Key;
 				break;
 			}
-	}
+		}
 
 		return bt;
 	}
@@ -85,7 +81,7 @@ public class Building : MonoBehaviour{
 
 	public Dictionary<Side, Building> Neighbours = new Dictionary<Side, Building>();
 
-	public List<Listener<ScoreType, int>> Listeners = new List<Listener<ScoreType, int>>();
+	public List<Listener<ScoreType, float>> Listeners = new List<Listener<ScoreType, float>>();
 
 	private int StartingPopulation, _Population, LastCheckedPopulation;
 	private float _Health = 1f;
@@ -232,54 +228,60 @@ public class Building : MonoBehaviour{
 
 	void Update(){
 
-		ExtinguishFireCheck();
+		try {
 
-		List<Element> bss = Statuses.Keys.ToList();
-		foreach (Element status in bss) {
-			float value = Statuses[status];
-			if (value < 1 ){
+			ExtinguishFireCheck();
 
-				if (EffectDamage.ContainsKey(status)){
-					Health -= EffectDamage[status] * Time.deltaTime;
-				}
-				if (Statuses.ContainsKey(status) && EffectTime.ContainsKey(status)){
-					float progress = Statuses[status] += 1 / EffectTime[status] * Time.deltaTime;
-					if (progress > 1){
-						progress = 1f;
+			List<Element> bss = Statuses.Keys.ToList();
+			foreach (Element status in bss) {
+				float value = Statuses[status];
+				if (value < 1) {
+
+					if (EffectDamage.ContainsKey(status)) {
+						Health -= EffectDamage[status] * Time.deltaTime;
 					}
-					if (SpriteManager.ElementSprites.ContainsKey(status) && ElGO.ContainsKey(status)){
-						Image i = ElGO[status].GetComponent<Image>();
-						i.enabled = true;
-						Sprite[] ss = SpriteManager.ElementSprites[status];
-						i.sprite = ss[Mathf.RoundToInt(progress * (ss.Length-1))];
+					if (Statuses.ContainsKey(status) && EffectTime.ContainsKey(status)) {
+						float progress = Statuses[status] += 1 / EffectTime[status] * Time.deltaTime;
+						if (progress > 1) {
+							progress = 1f;
+						}
+						if (SpriteManager.ElementSprites.ContainsKey(status) && ElGO.ContainsKey(status)) {
+							Image i = ElGO[status].GetComponent<Image>();
+							i.enabled = true;
+							Sprite[] ss = SpriteManager.ElementSprites[status];
+							i.sprite = ss[Mathf.RoundToInt(progress * (ss.Length - 1))];
+						}
 					}
 				}
 			}
-		}
 
-		bss = Statuses.Keys.ToList();
-		foreach (Element status in bss) {
-			if (Statuses[status] >= 1) {
-				FinishStatus(status);
-			}
-		}
-
-		foreach (Element e in FillRequirement.Keys.ToList ()) {
-			if (Statuses.ContainsKey(e) && Time.time - LastFill[e] > FillSpeed[e] )  {
-				LastFill[e] = Time.time;
-				
-				float toSet = Statuses[e];
-				if (ContaminateDelta.ContainsKey(e)){
-					toSet += ContaminateDelta[e] ;
-					if (toSet < 0){
-						toSet = 0;
-					}
+			bss = Statuses.Keys.ToList();
+			foreach (Element status in bss) {
+				if (Statuses[status] >= 1) {
+					FinishStatus(status);
 				}
-				
-				TreatNeighboursWith(this, e, toSet, FillRequirement[e]);
 			}
+
+			foreach (Element e in FillRequirement.Keys.ToList()) {
+				if (Statuses.ContainsKey(e) && Time.time - LastFill[e] > FillSpeed[e]) {
+					LastFill[e] = Time.time;
+
+					float toSet = Statuses[e];
+					if (ContaminateDelta.ContainsKey(e)) {
+						toSet += ContaminateDelta[e];
+						if (toSet < 0) {
+							toSet = 0;
+						}
+					}
+
+					TreatNeighboursWith(this, e, toSet, FillRequirement[e]);
+				}
+			}
+			UpdateImage();
+
+		} catch (System.Exception e) {
+			Debug.Log("Exception: " + e);
 		}
-		UpdateImage();
 
 	}
 
@@ -287,7 +289,7 @@ public class Building : MonoBehaviour{
 		_Population = (int)(Health * StartingPopulation);
 		int d = PopulationDelta;
 		if (d != 0 ) {
-			foreach(Listener<ScoreType, int> l in Listeners){
+			foreach(Listener<ScoreType, float> l in Listeners){
 				l.Inform(ScoreType.Population, d);
 			}
 		}
@@ -447,8 +449,8 @@ public class Building : MonoBehaviour{
 	}
 
 	public void Clicked(BaseEventData b) {
-		foreach (Listener<ScoreType, int> l in Listeners) {
-			l.Inform(ScoreType.Interventions, 1);
+		foreach (Listener<ScoreType, float> l in Listeners) {
+			l.Inform(ScoreType.Interventions, 1f);
 		}
 		TreatWith(Element.Crush);
 	}
