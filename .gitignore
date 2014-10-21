@@ -11,3 +11,5 @@ apk
 android.project
 platforms
 /platforms/fingerOfGod/*.unity3d
+/web/*.html
+/web/*.unity3d

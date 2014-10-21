@@ -40,11 +40,11 @@ public class PanelBeforeMission : MonoBehaviour {
 		itemR.offsetMax = new Vector2(r.rect.width / 2, r.rect.height / 2);
 		Building b = newItem.GetComponent<Building>();
 		b.CreateFromTemplate(showBuilding);
-		
+
+		ButtonStartMission.GetComponent<Button>().onClick.RemoveAllListeners();
 		ButtonStartMission.GetComponent<Button>().onClick.AddListener(() => {
 			StartMinigame(m);
 		});
-
 	}
 
 	private void StartMinigame(Mission m) {
@@ -69,6 +69,7 @@ public class PanelBeforeMission : MonoBehaviour {
 				scoreListeners.Add(successQuery);
 			}
 
+			Debug.Log("Starting minigame");
 			PanelMinigame.GetComponent<PanelMinigame>().PrepareGame(m, scoreListeners);
 			gameObject.SetActive(false);
 		} catch (System.Exception e) {
