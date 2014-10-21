@@ -6,12 +6,17 @@ using SimpleJSON;
 
 public class PanelAfterMission : MonoBehaviour {
 
-	public GameObject PanelMainMenu, ButtonMainMenu, ButtonQuickNextMission, TextUsersResults, TextMissionResult, InputFieldYourName;
+	public GameObject PanelMainMenu, ButtonMainMenu, ButtonQuickNextMission, TextUsersResults, TextMissionResult, InputFieldYourName, TextFieldYourName;
 	private int Delay = 1;
 	private float TimeEndMission;
 	private Mission Mission;
+	private Dictionary<ScoreType, Result> ActualResults;
 
 	void OnEnable() {
+		Debug.Log("Panel after mission was enabled");
+		if (Game.Me != null && Game.Me.UserName != null){
+			InputFieldYourName.GetComponent<InputField>().value = TextFieldYourName.GetComponent<Text>().text = Game.Me.UserName;
+		}
 		TimeEndMission = 0;
 		ButtonMainMenu.SetActive(false);
 		ButtonQuickNextMission.SetActive(false);
@@ -24,8 +29,9 @@ public class PanelAfterMission : MonoBehaviour {
 		}
 	}
 
-	public void Prepare(Mission mission, Dictionary<ScoreType, Result> ActualResults) {
+	public void Prepare(Mission mission, Dictionary<ScoreType, Result> actualResults) {
 		Mission = mission;
+		ActualResults = actualResults;
 		StartCoroutine(SaveMissionCoroutine(mission, ActualResults));
 
 		TextUsersResults.GetComponent<Text>().text = "Loading scores";
@@ -50,27 +56,39 @@ public class PanelAfterMission : MonoBehaviour {
 
 		WWW www = mission.SaveGame(ActualResults);
 		yield return www;
-
-		string text = "";
-		if (www.error != null) {
-			Debug.Log("Some errors occured: " + www.error);
-			text = www.error;
-		} else {
-			Debug.Log("Mission saved: " + www.text);
-			//text = www.text;
-			JSONNode n = JSONNode.Parse(www.text);
-
-			foreach (JSONNode tile in n.Childs) {
-				string name = tile["name"];
-				string interv = tile["interventions"];
-				float time = tile["time"].AsInt / 1000;
-				text += "Name: " + name + ", interv: " + interv + ", time: " + time + "\n";
-			}
-		}
-
-		
-		TextUsersResults.GetComponent<Text>().text = text;
+		UpdateText(www);
 	}
+
+	private void UpdateText(WWW www) {
+		try {
+			string text = "";
+			if (www.error != null) {
+				Debug.Log("Some errors occured: " + www.error);
+				text = www.error;
+			} else {
+				Debug.Log("Mission saved: " + www.text);
+				//text = www.text;
+				JSONNode n = JSONNode.Parse(www.text);
+
+				foreach (JSONNode tile in n.Childs) {
+					string name = tile["name"];
+					string interv = tile["interventions"];
+					float time = tile["time"].AsInt / 1000;
+					text += name+ ", " + interv + " interv, " + time + "s\n";
+				}
+			}
+			TextUsersResults.GetComponent<Text>().text = text;
+		} catch (System.Exception e) {
+			Debug.Log("Exception: " + e);
+		}
+	}
+
+	private IEnumerator UpdateNameCoroutine(string newName) {
+		WWW www = WebConnector.ChangeName(newName, Mission, ActualResults);
+		yield return www;
+		UpdateText(www);
+	}
+
 
 	public void ShowMainMenu() {
 		gameObject.SetActive(false);
@@ -89,5 +107,19 @@ public class PanelAfterMission : MonoBehaviour {
 			default: throw new UnityEngine.UnityException("There is no button for mission type: " + Mission.MissionType);
 		}
 		gameObject.SetActive(false);
+	}
+
+	public void ChangeName() {
+		try {
+			GameObject ifyn = InputFieldYourName;
+			Debug.Log("ifyn: " + ifyn);
+			string text = ifyn.GetComponent<InputField>().value;
+			Debug.Log("Text component: " + text);
+			string name = text;
+			Debug.Log("Changing name to : " + name);
+			StartCoroutine(UpdateNameCoroutine(name));
+		} catch (System.Exception e) {
+			Debug.Log("Exception: " + e);
+		}
 	}
 }

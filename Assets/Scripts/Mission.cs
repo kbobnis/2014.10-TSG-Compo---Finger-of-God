@@ -23,15 +23,19 @@ public class Mission {
 	public string BeforeMissionText = "";
 	public BuildingType BeforeMissionBuilding;
 
-	private int Number;
+	private int _Number;
 	private MissionType _MissionType;
 
 	public MissionType MissionType {
 		get { return _MissionType;  }
 	}
 
+	public int Number {
+		get { return _Number;  }
+	}
+
 	public WWW SaveGame(Dictionary<ScoreType, Result> actualResults) {
-		return WebConnector.SendMissionAccomplished(_MissionType, Number, GetStatus(actualResults), actualResults);
+		return WebConnector.SendMissionAccomplished(_MissionType, _Number, GetStatus(actualResults), actualResults);
 	}
 
 	public MissionStatus GetStatus(Dictionary<ScoreType, Result> results) {
@@ -63,7 +67,7 @@ public class Mission {
 
 	public Mission(string json, MissionType mt, int number) {
 		_MissionType = mt;
-		Number = number;
+		_Number = number;
 
 		JSONNode n = JSONNode.Parse(json);
 		JSONNode buildingsLayerJson = n["layers"].Childs.ElementAt(0);

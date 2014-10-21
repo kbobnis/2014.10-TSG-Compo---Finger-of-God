@@ -42,6 +42,8 @@ public class PanelLoadingMission : MonoBehaviour {
 				int number = n["number"].AsInt;
 				TextInfo.GetComponent<Text>().text = n["map"];
 				string jsonMap = WWW.UnEscapeURL( n["map"]);
+				Game.Me.UserName  = WWW.UnEscapeURL( n["name"]);
+				
 
 				ButtonContinue.SetActive(true);
 				ButtonContinue.GetComponent<Button>().onClick.AddListener(() => {
