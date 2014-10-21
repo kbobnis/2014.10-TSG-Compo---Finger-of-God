@@ -40,6 +40,7 @@ public class PanelLoadingMission : MonoBehaviour {
 				int number = n["number"].AsInt;
 				string jsonMap = WWW.UnEscapeURL( n["map"]);
 				ButtonContinue.SetActive(true);
+				Game.Me.UserName = WWW.UnEscapeURL(n["name"]);
 				if (jsonMap == null || jsonMap == "" || jsonMap == "null") {
 					
 					TextInfo.GetComponent<Text>().text = "There are no more missions. \n\nVisit fb page for updates.";
@@ -50,25 +51,13 @@ public class PanelLoadingMission : MonoBehaviour {
 						gameObject.SetActive(false);
 					});
 				} else {
-					TextInfo.GetComponent<Text>().text = "Mission loaded ";
-					ButtonContinue.GetComponent<Button>().onClick.RemoveAllListeners();
-					ButtonContinue.GetComponent<Button>().onClick.AddListener(() => {
-						try {
-							PanelBeforeMission.SetActive(true);
-							PanelBeforeMission.GetComponent<PanelBeforeMission>().MissionBriefing(new Mission(jsonMap, mt, number));
-							gameObject.SetActive(false);
-						} catch (System.Exception e) {
-							Debug.Log("Exception: " + e);
-						}
-					});
-
+					PanelBeforeMission.SetActive(true);
+					PanelBeforeMission.GetComponent<PanelBeforeMission>().MissionBriefing(new Mission(jsonMap, mt, number));
+					gameObject.SetActive(false);
 				}
-				Game.Me.UserName  = WWW.UnEscapeURL( n["name"]);
-
 			} catch (System.Exception e) {
 				Debug.Log("Exception: " + e);
 			}
-
 		}
 	}
 }

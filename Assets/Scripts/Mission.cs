@@ -21,6 +21,7 @@ public class Mission {
 	public List<AchievQuery> FailureQueries = new List<AchievQuery>();
 	
 	public string BeforeMissionText = "";
+	public string TipText = "";
 	public BuildingType BeforeMissionBuilding;
 
 	private int _Number;
@@ -49,18 +50,16 @@ public class Mission {
 		if (foundFailure) {
 			return MissionStatus.Failure;
 		}
-		
 
 		bool allSuccess = true;
 		foreach (AchievQuery success in SuccessQueries) {
 			if (!success.CanAccept(results[success.ScoreType])) {
 				allSuccess = false;
-			} 
+			}
 		}
 		if (allSuccess) {
 			return MissionStatus.Success;
 		}
-
 
 		return MissionStatus.NotYetDetermined;
 	}
@@ -91,7 +90,8 @@ public class Mission {
 			FailureQueries.Add(new AchievQuery(ScoreType.Interventions, Sign.Equal, interventions+1));
 		}
 		
-		BeforeMissionText = n["properties"]["BeforeText"].ToString().Trim(new Char[]{'"'});
+		BeforeMissionText = WWW.UnEscapeURL( n["properties"]["BeforeText"] );
+		TipText = WWW.UnEscapeURL(n["properties"]["TipText"]);
 		
 		SuccessQueries.Add(new AchievQuery(ScoreType.Population, Sign.Equal, 0));
 		

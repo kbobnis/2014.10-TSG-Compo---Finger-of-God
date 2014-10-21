@@ -6,7 +6,7 @@ using SimpleJSON;
 
 public class PanelAfterMission : MonoBehaviour {
 
-	public GameObject PanelMainMenu, ButtonMainMenu, ButtonQuickNextMission, TextUsersResults, TextMissionResult, InputFieldYourName, TextFieldYourName;
+	public GameObject PanelMainMenu, ButtonMainMenu, ButtonQuickNextMission, TextUsersResults, TextMissionResult, InputFieldYourName, TextFieldYourName, PanelYourName;
 	private int Delay = 1;
 	private float TimeEndMission;
 	private Mission Mission;
@@ -40,9 +40,12 @@ public class PanelAfterMission : MonoBehaviour {
 			case MissionStatus.Failure: 
 				TextMissionResult.GetComponent<Text>().text = "Mission failed";
 				ButtonQuickNextMission.GetComponentInChildren<Text>().text = "Repeat mission";
+				TextUsersResults.GetComponent<Text>().text = mission.TipText;
+				PanelYourName.SetActive(false);
 				TimeEndMission = Time.time;
 				break;
 			case MissionStatus.Success:
+				PanelYourName.SetActive(true);
 				TextMissionResult.GetComponent<Text>().text = "Mission success";
 				ButtonQuickNextMission.GetComponentInChildren<Text>().text = mission.MissionType==global::MissionType.Specified?"Next mission":"Next quick game";
 				TimeEndMission = Time.time;
@@ -55,7 +58,9 @@ public class PanelAfterMission : MonoBehaviour {
 
 		WWW www = mission.SaveGame(ActualResults);
 		yield return www;
-		UpdateText(www);
+		if (mission.GetStatus(ActualResults) == MissionStatus.Success) {
+			UpdateText(www);
+		}
 	}
 
 	private void UpdateText(WWW www) {

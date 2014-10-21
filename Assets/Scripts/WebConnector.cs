@@ -6,8 +6,12 @@ using UnityEngine;
 
 class WebConnector {
 
-	private static string Server = "localhost/godsfingerserver/index-test.php?r=site";
-	//private static string Server = "http://philon.pl/fingerOfGod/godsfingerserver/index.php?r=site";
+	
+	public static string Server = "localhost/godsfingerserver/";
+	//public static string Server = "philon.pl/fingerOfGod/godsfingerserver/";
+
+	private static string Service = "index-test.php?r=site";
+	//private static string Service = "index.php?r=site";
 
 	private static WWWForm PrepareForm() {
 		WWWForm form = new WWWForm();
@@ -25,13 +29,13 @@ class WebConnector {
 		form.AddField("MissionStatus", ms.ToString());
 		form.AddField("Interventions", interventions);
 		form.AddField("Time", ""+ (int)( time*1000) );
-		return new WWW(Server+"/save", form);
+		return new WWW(Server+Service+"/save", form);
 	}
 
 	internal static WWW LoadMission(MissionType mt) {
 		WWWForm form = PrepareForm();
 		form.AddField("MissionType", mt.ToString());
-		return new WWW(Server+"/load", form);
+		return new WWW(Server+Service+"/load", form);
 	}
 
 	internal static WWW ChangeName(string name, Mission Mission, Dictionary<ScoreType, Result> ActualResults) {
@@ -41,7 +45,7 @@ class WebConnector {
 			form.AddField("Number", Mission.Number);
 			form.AddField("MissionStatus", Mission.GetStatus(ActualResults).ToString());
 			form.AddField("MissionType", Mission.MissionType.ToString());
-			return new WWW(Server + "/changeNameAndGetResults", form);
+			return new WWW(Server+Service+ "/changeNameAndGetResults", form);
 		} catch (System.Exception e) {
 			Debug.Log("Exception: " + e);
 		}

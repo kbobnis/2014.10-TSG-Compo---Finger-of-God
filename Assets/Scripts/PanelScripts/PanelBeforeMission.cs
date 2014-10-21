@@ -9,7 +9,10 @@ public class PanelBeforeMission : MonoBehaviour {
 	public GameObject TextInfo, ButtonStartMission, PanelPrefabHolder, BuildingPrefab, TextMissionQuery;
 	public GameObject PanelMinigame, PanelTopBar;
 
+	private Mission Mission;
+
 	public void MissionBriefing(Mission m){
+		Mission = m;
 		for (int i = 0; i < PanelPrefabHolder.transform.childCount; i++) {
 			Destroy(PanelPrefabHolder.transform.GetChild(i).gameObject);
 		}
@@ -42,38 +45,38 @@ public class PanelBeforeMission : MonoBehaviour {
 		b.CreateFromTemplate(showBuilding);
 
 		ButtonStartMission.GetComponent<Button>().onClick.RemoveAllListeners();
-		ButtonStartMission.GetComponent<Button>().onClick.AddListener(() => {
-			StartMinigame(m);
-		});
+		ButtonStartMission.GetComponent<Button>().onClick.AddListener(() => { StartMinigameListener(m); });
 	}
 
-	private void StartMinigame(Mission m) {
+	private void StartMinigameListener(Mission m){
+		StartCoroutine( StartMinigame(m) );
+	}
 
-		try {
-			gameObject.SetActive(false);
-			PanelMinigame.SetActive(true);
+	private IEnumerator StartMinigame(Mission m) {
 
-			List<Listener<ScoreType, float>> scoreListeners = new List<Listener<ScoreType, float>>();
-			scoreListeners.Add(PanelTopBar.GetComponent<PanelTopBar>().TextPopulation.GetComponent<NumberShower>());
-			scoreListeners.Add(PanelTopBar.GetComponent<PanelTopBar>().TextInterventions.GetComponent<NumberShower>());
+		gameObject.SetActive(false);
+		PanelMinigame.SetActive(true);
 
-			if (m.FailureQueries.Count > 0) {
-				AchievQueryShower failureQuery = PanelTopBar.GetComponent<PanelTopBar>().TextMissionFailure.GetComponent<AchievQueryShower>();
-				failureQuery.AchievQuery = m.FailureQueries[0];
-				scoreListeners.Add(failureQuery);
-			}
+		List<Listener<ScoreType, float>> scoreListeners = new List<Listener<ScoreType, float>>();
+		scoreListeners.Add(PanelTopBar.GetComponent<PanelTopBar>().TextPopulation.GetComponent<NumberShower>());
+		scoreListeners.Add(PanelTopBar.GetComponent<PanelTopBar>().TextInterventions.GetComponent<NumberShower>());
 
-			if (m.SuccessQueries.Count > 0) {
-				AchievQueryShower successQuery = PanelTopBar.GetComponent<PanelTopBar>().TextMissionSuccess.GetComponent<AchievQueryShower>();
-				successQuery.AchievQuery = m.SuccessQueries[0];
-				scoreListeners.Add(successQuery);
-			}
-
-			PanelMinigame.GetComponent<PanelMinigame>().PrepareGame(m, scoreListeners);
-			gameObject.SetActive(false);
-		} catch (System.Exception e) {
-			Debug.Log("Exceptin: " + e);
+		if (m.FailureQueries.Count > 0) {
+			AchievQueryShower failureQuery = PanelTopBar.GetComponent<PanelTopBar>().TextMissionFailure.GetComponent<AchievQueryShower>();
+			failureQuery.AchievQuery = m.FailureQueries[0];
+			scoreListeners.Add(failureQuery);
 		}
+
+		if (m.SuccessQueries.Count > 0) {
+			AchievQueryShower successQuery = PanelTopBar.GetComponent<PanelTopBar>().TextMissionSuccess.GetComponent<AchievQueryShower>();
+			successQuery.AchievQuery = m.SuccessQueries[0];
+			scoreListeners.Add(successQuery);
+		}
+
+		//ButtonStartMission.GetComponentInChildren<Text>().text = "Preparing mission...";
+		PanelMinigame.GetComponent<PanelMinigame>().PrepareGame(m, scoreListeners);
+		yield return null;
+		gameObject.SetActive(false);
 	}
 
 }
