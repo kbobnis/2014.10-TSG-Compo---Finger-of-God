@@ -34,11 +34,9 @@ public class PanelMinigame : MonoBehaviour, Listener<ScoreType, float> {
 
 		List<List<Building>> buildings = new List<List<Building>>();
 
-		int i = 0; 
 		foreach (List<BuildingType> row in m.Buildings) {
 			List<Building> buildingsRow = new List<Building>();
 			foreach (BuildingType bt in row) {
-				Debug.Log("Creating building nr: " + i++);
 				GameObject newItem = Instantiate(sl.itemPrefab) as GameObject;
 
 				Building b = newItem.GetComponent<Building>();

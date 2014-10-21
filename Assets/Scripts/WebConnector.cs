@@ -6,8 +6,8 @@ using UnityEngine;
 
 class WebConnector {
 
-	//private static string Server = "localhost/godsfingerserver/index-test.php?r=site";
-	private static string Server = "http://philon.pl/fingerOfGod/godsfingerserver/index.php?r=site";
+	private static string Server = "localhost/godsfingerserver/index-test.php?r=site";
+	//private static string Server = "http://philon.pl/fingerOfGod/godsfingerserver/index.php?r=site";
 
 	private static WWWForm PrepareForm() {
 		WWWForm form = new WWWForm();
@@ -37,7 +37,6 @@ class WebConnector {
 	internal static WWW ChangeName(string name, Mission Mission, Dictionary<ScoreType, Result> ActualResults) {
 		try {
 			WWWForm form = PrepareForm();
-			Debug.Log("sending server info. name: " + name + ", number: " + Mission.Number + ", status: " + Mission.GetStatus(ActualResults).ToString());
 			form.AddField("Name", name);
 			form.AddField("Number", Mission.Number);
 			form.AddField("MissionStatus", Mission.GetStatus(ActualResults).ToString());

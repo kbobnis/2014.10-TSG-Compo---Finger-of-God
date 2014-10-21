@@ -27,6 +27,7 @@ public class PanelLoadingMission : MonoBehaviour {
 			TextInfo.GetComponent<Text>().text = "Error occured: " + www.error;
 			ButtonContinue.SetActive(true);
 			ButtonContinue.GetComponentInChildren<Text>().text = "Return to main menu";
+			ButtonContinue.GetComponent<Button>().onClick.RemoveAllListeners();
 			ButtonContinue.GetComponent<Button>().onClick.AddListener(() => {
 				PanelMainMenu.SetActive(true);
 				gameObject.SetActive(false);
@@ -35,26 +36,35 @@ public class PanelLoadingMission : MonoBehaviour {
 		} else {
 
 			try {
-				TextInfo.GetComponent<Text>().text = "Mission loaded ";
-
 				JSONNode n = JSONNode.Parse(www.text);
-
 				int number = n["number"].AsInt;
-				TextInfo.GetComponent<Text>().text = n["map"];
 				string jsonMap = WWW.UnEscapeURL( n["map"]);
-				Game.Me.UserName  = WWW.UnEscapeURL( n["name"]);
-				
-
 				ButtonContinue.SetActive(true);
-				ButtonContinue.GetComponent<Button>().onClick.AddListener(() => {
-					try {
-						PanelBeforeMission.SetActive(true);
-						PanelBeforeMission.GetComponent<PanelBeforeMission>().MissionBriefing(new Mission(jsonMap, mt, number));
+				if (jsonMap == null || jsonMap == "" || jsonMap == "null") {
+					
+					TextInfo.GetComponent<Text>().text = "There are no more missions. \n\nVisit fb page for updates.";
+					ButtonContinue.GetComponentInChildren<Text>().text = "Return to main menu";
+					ButtonContinue.GetComponent<Button>().onClick.RemoveAllListeners();
+					ButtonContinue.GetComponent<Button>().onClick.AddListener(() => {
+						PanelMainMenu.SetActive(true);
 						gameObject.SetActive(false);
-					} catch (System.Exception e) {
-						Debug.Log("Exception: " + e);
-					}
-				});
+					});
+				} else {
+					TextInfo.GetComponent<Text>().text = "Mission loaded ";
+					ButtonContinue.GetComponent<Button>().onClick.RemoveAllListeners();
+					ButtonContinue.GetComponent<Button>().onClick.AddListener(() => {
+						try {
+							PanelBeforeMission.SetActive(true);
+							PanelBeforeMission.GetComponent<PanelBeforeMission>().MissionBriefing(new Mission(jsonMap, mt, number));
+							gameObject.SetActive(false);
+						} catch (System.Exception e) {
+							Debug.Log("Exception: " + e);
+						}
+					});
+
+				}
+				Game.Me.UserName  = WWW.UnEscapeURL( n["name"]);
+
 			} catch (System.Exception e) {
 				Debug.Log("Exception: " + e);
 			}

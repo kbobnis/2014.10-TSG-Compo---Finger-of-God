@@ -13,7 +13,6 @@ public class PanelAfterMission : MonoBehaviour {
 	private Dictionary<ScoreType, Result> ActualResults;
 
 	void OnEnable() {
-		Debug.Log("Panel after mission was enabled");
 		if (Game.Me != null && Game.Me.UserName != null){
 			InputFieldYourName.GetComponent<InputField>().value = TextFieldYourName.GetComponent<Text>().text = Game.Me.UserName;
 		}
@@ -63,13 +62,9 @@ public class PanelAfterMission : MonoBehaviour {
 		try {
 			string text = "";
 			if (www.error != null) {
-				Debug.Log("Some errors occured: " + www.error);
 				text = www.error;
 			} else {
-				Debug.Log("Mission saved: " + www.text);
-				//text = www.text;
 				JSONNode n = JSONNode.Parse(www.text);
-
 				foreach (JSONNode tile in n.Childs) {
 					string name = tile["name"];
 					string interv = tile["interventions"];
@@ -112,11 +107,8 @@ public class PanelAfterMission : MonoBehaviour {
 	public void ChangeName() {
 		try {
 			GameObject ifyn = InputFieldYourName;
-			Debug.Log("ifyn: " + ifyn);
 			string text = ifyn.GetComponent<InputField>().value;
-			Debug.Log("Text component: " + text);
 			string name = text;
-			Debug.Log("Changing name to : " + name);
 			StartCoroutine(UpdateNameCoroutine(name));
 		} catch (System.Exception e) {
 			Debug.Log("Exception: " + e);

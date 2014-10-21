@@ -69,7 +69,6 @@ public class PanelBeforeMission : MonoBehaviour {
 				scoreListeners.Add(successQuery);
 			}
 
-			Debug.Log("Starting minigame");
 			PanelMinigame.GetComponent<PanelMinigame>().PrepareGame(m, scoreListeners);
 			gameObject.SetActive(false);
 		} catch (System.Exception e) {
