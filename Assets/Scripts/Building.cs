@@ -35,6 +35,8 @@ public static class BuildingTypeMethods {
 				break;
 			case BuildingType.GasStation: text += "After destroyed sets on fire nearby buildings. ";
 				break;
+			case BuildingType.Block: text += "You need more than one intervention to bring it down. It is sesceptive to elementals.";
+				break;
 		}
 		return text;
 	}
@@ -49,7 +51,7 @@ public static class BuildingTypeMethods {
 		chances.Add(BuildingType.Stone, 2);
 		chances.Add(BuildingType.Wood, 2);
 		chances.Add(BuildingType.Destroyed, 1);
-		chances.Add(BuildingType.Block, 0);
+		chances.Add(BuildingType.Block, 1);
 		int sumOfChances = 0;
 		foreach (int chance in chances.Values.ToList()) {
 			sumOfChances += chance;
@@ -72,7 +74,7 @@ public class Building : MonoBehaviour{
 	private Dictionary<Element, float> StrikeDamage = new Dictionary<Element, float>();
 	private Dictionary<Element, float> EffectDamage = new Dictionary<Element, float>();
 	private Dictionary<Element, float> EffectTime = new Dictionary<Element, float>();
-	private Dictionary<Element, Side> AfterHit = new Dictionary<Element, Side> ();
+	private Dictionary<Element, Side> AfterDeath = new Dictionary<Element, Side> ();
 	private Dictionary<Element, float> Statuses = new Dictionary<Element, float>();
 	private Dictionary<Element, float> FillSpeed = new Dictionary<Element, float> ();
 	private Dictionary<Element, float> LastFill = new Dictionary<Element, float> ();
@@ -197,13 +199,15 @@ public class Building : MonoBehaviour{
 	private void Die(){
 		PlaySingleSound.SpawnSound(SoundManager.BuildingDown);
 
-        //if filling with water, check the ground level, only on crater water fills
-		foreach (Element e in AfterHit.Keys.ToList ()) {
+		foreach (Element e in AfterDeath.Keys.ToList()) {
 			TreatWith(e);
-			if (e == Element.Fire) {
-				TreatNeighboursWith(GetNeighbour(this, AfterHit[e]), e, 0, delegate(Building b) {
-					return b.Health > 0;
-				});
+		}
+
+		foreach (Element e in Statuses.Keys.ToList ()) {
+			if (e == Element.Water) {
+				TreatWith(e, Statuses[e]);
+			} else if (e == Element.Fire && Statuses[e] < 0.95f) { //we don't want to hit full blown fire it is finishing
+				TreatNeighboursWith(this, e);
 			}
 		}
 	}
@@ -226,7 +230,7 @@ public class Building : MonoBehaviour{
 		}
 	}
 
-	void Update(){
+	void FixedUpdate(){
 
 		try {
 
@@ -315,14 +319,14 @@ public class Building : MonoBehaviour{
 			return ; //no need to treat with it if already has this element
 		}
 
-		if (StrikeDamage.ContainsKey(e)) {
+		/*if (StrikeDamage.ContainsKey(e)) {
 			if (StrikeDamage[e] > 0 && Health > 0){
-				List<Element> bss = AfterHit.Keys.ToList();
+				List<Element> bss = AfterDeath.Keys.ToList();
 				foreach (Element e2 in bss) {
 					CataclysmTo(e2, this, Side.Center);
 				}
 			}
-		}
+		}*/
 		AddStatus(e, startingValue);
 		if (StrikeDamage.ContainsKey(e)){
 			Health -= StrikeDamage [e];
@@ -334,66 +338,74 @@ public class Building : MonoBehaviour{
 
 		switch (bt) {
 			case BuildingType.ElectricTower:
-				EffectDamage.Add (Element.Fire, 0.2f);
-				EffectDamage.Add (Element.Water, 0.1f);
+				EffectDamage.Add (Element.Fire, 0.5f);
+				EffectDamage.Add (Element.Water, 0.05f);
 				EffectTime.Add (Element.Fire, 3f);
-				AfterHit.Add (Element.Electricity, Side.Center);
+				EffectDamage.Add(Element.Electricity, 0.6f);
+
+				AfterDeath.Add (Element.Electricity, Side.Center);
 				ImageNumberFromAtlas = 41;
 				StartingPopulation = _Population = 0;
 				break;
 			case BuildingType.Wood:
-				EffectDamage.Add(Element.Fire, 0.43f);
-				EffectDamage.Add(Element.Water, 0.15f);
-				EffectTime.Add(Element.Fire, 2.4f);
+				EffectDamage.Add(Element.Fire, 0.55f);
+				EffectDamage.Add(Element.Water, 0.11f);
+				EffectTime.Add(Element.Fire, 1.9f);
+				EffectDamage.Add(Element.Electricity, 0.6f);
+
 				ImageNumberFromAtlas = 38;
 				StartingPopulation = _Population = 1000;
 				break;
-			case BuildingType.WaterTower:
-				EffectDamage.Add (Element.Fire, 0.2f);
-				EffectDamage.Add (Element.Water, 0.1f);
-				EffectTime.Add (Element.Fire, 2.4f);
-				AfterHit.Add (Element.Water, Side.Center);
-				ImageNumberFromAtlas = 40;
-				break;
-			case BuildingType.GasStation:
-				EffectDamage.Add (Element.Fire, 0.6f);
-				EffectDamage.Add (Element.Water, 0.1f);
-				EffectTime.Add (Element.Fire, 2f);
-				AfterHit.Add (Element.Fire, Side.Center);
-				ImageNumberFromAtlas = 39;
-				break;
 			case BuildingType.Stone:
-				EffectDamage.Add (Element.Fire, 0.22f);
-				EffectDamage.Add (Element.Water, 0.15f);
-				EffectTime.Add (Element.Fire, 2.4f);
+				EffectDamage.Add(Element.Fire, 0.33f);
+				EffectDamage.Add(Element.Water, 0.11f);
+				EffectTime.Add(Element.Fire, 1.9f);
+				EffectDamage.Add(Element.Electricity, 0.65f);
 				ImageNumberFromAtlas = 37;
 				StartingPopulation = _Population = 1000;
 				break;
+			case BuildingType.WaterTower:
+				EffectDamage.Add (Element.Fire, 0.55f);
+				EffectDamage.Add (Element.Water, 0.11f);
+				EffectTime.Add (Element.Fire, 1.9f);
+				EffectDamage.Add(Element.Electricity, 0.7f);
+
+				AfterDeath.Add (Element.Water, Side.Center);
+				ImageNumberFromAtlas = 40;
+				break;
+			case BuildingType.GasStation:
+				EffectDamage.Add (Element.Fire, 2f);
+				EffectDamage.Add (Element.Water, 0.12f);
+				EffectTime.Add (Element.Fire, 0.6f);
+				EffectDamage.Add(Element.Electricity, 0.75f);
+				AfterDeath.Add (Element.Fire, Side.Center);
+				ImageNumberFromAtlas = 39;
+				break;
+
 			case BuildingType.Destroyed:
 				_Health = 0;
 				ImageNumberFromAtlas = 37;
 				break;
 			case BuildingType.Block:
-				EffectDamage.Add(Element.Fire, 0);
-				EffectDamage.Add(Element.Water, 0);
-				ImageNumberFromAtlas = 22;
+				
+				EffectDamage.Add(Element.Fire, 1.5f);
+				EffectTime.Add(Element.Fire, 0.9f);
+				EffectDamage.Add(Element.Water, 0.1f);
+				ImageNumberFromAtlas = 5;
 				break;
 		}
-
-		StrikeDamage.Add(Element.Crush, 1f);
+		StrikeDamage.Add(Element.Crush, 0.4f);
 
 		EffectDamage.Add (Element.Crush, 0.00f);
-		EffectDamage.Add (Element.Electricity, 0.6f);
-		EffectDamage.Add(Element.SmokeAfterFire, 0.5f);
+		EffectDamage.Add(Element.SmokeAfterFire, 0f);
 
-		EffectTime.Add (Element.SmokeAfterFire, 1.5f);
-		EffectTime.Add (Element.Crush, 1f);
+		EffectTime.Add (Element.SmokeAfterFire, 0.5f);
+		EffectTime.Add (Element.Crush, 0.3f);
 		EffectTime.Add (Element.Electricity, 1f);
 		EffectTime.Add (Element.Water, 5f);
 
-		FillSpeed.Add (Element.Electricity, 0.05f);
-		FillSpeed.Add (Element.Water, 0.1f);
-		FillSpeed.Add (Element.Fire, 2.5f);
+		FillSpeed.Add (Element.Electricity, 0.1f);
+		FillSpeed.Add (Element.Water, 0.2f);
 
 		FillRequirement.Add(Element.Electricity, delegate(Building b){
 			return b.Statuses.ContainsKey(Element.Water) && Statuses.ContainsKey(Element.Water);
@@ -440,10 +452,6 @@ public class Building : MonoBehaviour{
 				);
 		});
 
-		FillRequirement.Add (Element.Fire, delegate(Building b) {
-			return b.Health > 0;
-		});
-
 		ContaminateDelta.Add (Element.Fire, -1f);
 
 	}
@@ -453,5 +461,6 @@ public class Building : MonoBehaviour{
 			l.Inform(ScoreType.Interventions, 1f);
 		}
 		TreatWith(Element.Crush);
+		TreatWith(Element.Fire);
 	}
 }

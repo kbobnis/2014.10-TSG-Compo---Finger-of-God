@@ -7,11 +7,11 @@ using UnityEngine;
 class WebConnector {
 
 	
-	public static string Server = "localhost/godsfingerserver/";
-	//public static string Server = "philon.pl/fingerOfGod/godsfingerserver/";
+	//public static string Server = "localhost/godsfingerserver/";
+	public static string Server = "philon.pl/fingerOfGod/godsfingerserver/";
 
-	private static string Service = "index-test.php?r=site";
-	//private static string Service = "index.php?r=site";
+	//private static string Service = "index-test.php?r=site";
+	private static string Service = "index.php?r=site";
 
 	private static WWWForm PrepareForm() {
 		WWWForm form = new WWWForm();

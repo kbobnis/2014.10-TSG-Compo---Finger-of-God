@@ -31,7 +31,7 @@ public class PanelBeforeMission : MonoBehaviour {
 			showBuilding = BuildingTypeMethods.RandomBuilding();
 		}
 
-		TextInfo.GetComponent<Text>().text = showBuilding.Description();
+		TextInfo.GetComponent<Text>().text = m.BeforeMissionText==""? showBuilding.Description():m.BeforeMissionText;
 
 		GameObject newItem = Instantiate(BuildingPrefab) as GameObject;
 		newItem.SetActive(true);

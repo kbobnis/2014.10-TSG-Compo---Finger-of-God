@@ -39,16 +39,16 @@ public class SpriteManager : MonoBehaviour{
 	}
 
 	void Start() {
-		StartCoroutine(LoadFromUrl("silos.png", 40, BuildingSprites));
-		StartCoroutine(LoadFromUrl("silos_destroyed.png", 40, BuildingSpritesDestroyed));
+		//StartCoroutine(LoadFromUrl("silos.png", 40, BuildingSprites));
+		//StartCoroutine(LoadFromUrl("silos_destroyed.png", 40, BuildingSpritesDestroyed));
 
 	}
 
-	private IEnumerator LoadFromUrl(string name, int number, List<Sprite> sprites){
+	/*private IEnumerator LoadFromUrl(string name, int number, List<Sprite> sprites){
 		string url = WebConnector.Server + SpritesUrl + name;
     
         WWW www = new WWW(url);
         yield return www;
 		sprites[number] = Sprite.Create(www.texture, new Rect(0, 0, www.texture.width, www.texture.height), new Vector2(0.5f, 0.5f));
-	}
+	}*/
 }
