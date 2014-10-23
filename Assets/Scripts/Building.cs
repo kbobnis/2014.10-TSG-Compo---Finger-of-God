@@ -112,7 +112,7 @@ public class Building : MonoBehaviour{
 
 		foreach (Element e in Statuses.Keys.ToList ()) {
 			if (e == Element.Fire && Statuses[e].Value > 0.1f) { //we don't want to hit full blown fire it is finishing
-				TreatNeighboursWith(this, e, Statuses[e].Value, (Building b) => { return b.Health > 0;  });
+				TreatNeighboursWith(this, e, 1, (Building b) => { return b.Health > 0;  });
 			}
 		}
 	}
@@ -189,9 +189,8 @@ public class Building : MonoBehaviour{
 
 		switch (bt) {
 			case BuildingType.ElectricTower:
-				strikeDamage.Add(Element.Crush, 1f);
 				
-				effectDamage.Add (Element.Fire, 0.8f);
+				effectDamage.Add (Element.Fire, 0.6f);
 				effectDamage.Add (Element.Water, 0.05f);
 				effectDamage.Add(Element.Electricity, 0.6f);
 				
@@ -202,22 +201,20 @@ public class Building : MonoBehaviour{
 				StartingPopulation = _Population = 0;
 				break;
 			case BuildingType.Wood:
-				strikeDamage.Add(Element.Crush, 0.8f);
 				
 				effectDamage.Add(Element.Fire, 0.55f);
-				effectDamage.Add(Element.Water, 0.11f);
+				effectDamage.Add(Element.Water, 0.15f);
 				effectTime.Add(Element.Fire, 1.9f);
-				effectDamage.Add(Element.Electricity, 0.6f);
+				effectDamage.Add(Element.Electricity, 0.7f);
 
 				ImageNumberFromAtlas = 38;
 				StartingPopulation = _Population = 1000;
 				break;
 			case BuildingType.Stone:
-				strikeDamage.Add(Element.Crush, 0.8f);
 				
 				effectDamage.Add(Element.Fire, 0.33f);
-				effectDamage.Add(Element.Water, 0.11f);
-				effectDamage.Add(Element.Electricity, 0.65f);
+				effectDamage.Add(Element.Water, 0.17f);
+				effectDamage.Add(Element.Electricity, 0.75f);
 
 				effectTime.Add(Element.Fire, 1.9f);
 				
@@ -225,7 +222,6 @@ public class Building : MonoBehaviour{
 				StartingPopulation = _Population = 1000;
 				break;
 			case BuildingType.WaterTower:
-				strikeDamage.Add(Element.Crush, 0.8f);
 				
 				effectDamage.Add (Element.Fire, 0.55f);
 				effectDamage.Add (Element.Water, 0.11f);
@@ -237,7 +233,6 @@ public class Building : MonoBehaviour{
 				ImageNumberFromAtlas = 40;
 				break;
 			case BuildingType.GasStation:
-				strikeDamage.Add(Element.Crush, 0.8f);
 				
 				effectDamage.Add (Element.Fire, 2f);
 				effectDamage.Add (Element.Water, 0.12f);
@@ -254,7 +249,7 @@ public class Building : MonoBehaviour{
 				ImageNumberFromAtlas = 37;
 				break;
 			case BuildingType.Block:
-				strikeDamage.Add(Element.Crush, 0.8f);
+				
 				
 				effectDamage.Add(Element.Fire, 1.5f);
 				effectDamage.Add(Element.Water, 0.1f);
@@ -264,6 +259,7 @@ public class Building : MonoBehaviour{
 				ImageNumberFromAtlas = 5;
 				break;
 		}
+		strikeDamage.Add(Element.Crush, 0.85f);
 
 		effectDamage.Add (Element.Crush, 0.00f);
 		effectDamage.Add(Element.SmokeAfterFire, 0f);
@@ -271,10 +267,10 @@ public class Building : MonoBehaviour{
 		effectTime.Add (Element.SmokeAfterFire, 0.5f);
 		effectTime.Add (Element.Crush, 0.3f);
 		effectTime.Add (Element.Electricity, 1f);
-		effectTime.Add (Element.Water, 5f);
+		effectTime.Add (Element.Water, 5.5f);
 		
 		fillSpeed.Add (Element.Electricity, 0.09f);
-		fillSpeed.Add (Element.Water, 0.2f);
+		fillSpeed.Add (Element.Water, 0.15f);
 
 		FillRequirement.Add(Element.Electricity, delegate(Building b){
 			return b.Statuses[Element.Water].Value > 0 && Statuses[Element.Water].Value > 0 ;
