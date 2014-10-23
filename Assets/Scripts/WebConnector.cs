@@ -7,11 +7,11 @@ using UnityEngine;
 class WebConnector {
 
 	
-	//public static string Server = "localhost/godsfingerserver/";
-	public static string Server = "http://philon.pl/fingerOfGod/godsfingerserver/";
+	public static string Server = "localhost/godsfingerserver/";
+	//public static string Server = "http://philon.pl/fingerOfGod/godsfingerserver/";
 
-	//private static string Service = "index-test.php?r=site";
-	private static string Service = "index.php?r=site";
+	private static string Service = "index-test.php?r=site";
+	//private static string Service = "index.php?r=site";
 
 	private static WWWForm PrepareForm() {
 		WWWForm form = new WWWForm();
@@ -19,7 +19,7 @@ class WebConnector {
 		return form;
 	}
 
-	internal static WWW SendMissionAccomplished(MissionType MissionType, int Number, MissionStatus ms, Dictionary<ScoreType, Result> actualResults) {
+	internal static WWW SendMissionAccomplished(MissionType MissionType, int Number, int Round, MissionStatus ms, Dictionary<ScoreType, Result> actualResults) {
 
 		int interventions = (int)actualResults[ScoreType.Interventions].Value;
 		float time = actualResults[ScoreType.Time].Value;
@@ -29,6 +29,7 @@ class WebConnector {
 		form.AddField("MissionStatus", ms.ToString());
 		form.AddField("Interventions", interventions);
 		form.AddField("Time", ""+ (int)( time*1000) );
+		form.AddField("Round", Round);
 		return new WWW(Server+Service+"/save", form);
 	}
 
@@ -50,5 +51,10 @@ class WebConnector {
 			Debug.Log("Exception: " + e);
 		}
 		return null;
+	}
+
+	internal static WWW RestartLevels() {
+		WWWForm form = PrepareForm();
+		return new WWW(Server + Service + "/restartLevels", form);
 	}
 }

@@ -5,20 +5,27 @@ using SimpleJSON;
 
 public class PanelLoadingMission : MonoBehaviour {
 
-	public GameObject PanelMainMenu, PanelBeforeMission, TextInfo, ButtonContinue;
+	public GameObject PanelMainMenu, PanelBeforeMission, TextInfo, ButtonContinue, ButtonRestartLevels;
 
 	// Use this for initialization
 	void Start () {
 		TextInfo.GetComponent<Text>().text = "Loading mission";
 		ButtonContinue.SetActive(false);
+		
 	}
 	
 	internal void LoadMission(MissionType mt) {
 		StartCoroutine(LoadMissionCoroutine(mt));
 	}
 
-	private IEnumerator LoadMissionCoroutine(MissionType mt) {
+	public void RestartLevels() {
+		WebConnector.RestartLevels();
+		PanelMainMenu.SetActive(true);
+		gameObject.SetActive(false);
+	}
 
+	private IEnumerator LoadMissionCoroutine(MissionType mt) {
+		ButtonRestartLevels.SetActive(false);
 		WWW www = WebConnector.LoadMission(mt);
 		yield return www;
 
@@ -38,6 +45,7 @@ public class PanelLoadingMission : MonoBehaviour {
 			try {
 				JSONNode n = JSONNode.Parse(www.text);
 				int number = n["number"].AsInt;
+				int round = n["round"].AsInt;
 				string jsonMap = WWW.UnEscapeURL( n["map"]);
 				ButtonContinue.SetActive(true);
 				Game.Me.UserName = WWW.UnEscapeURL(n["name"]);
@@ -50,9 +58,10 @@ public class PanelLoadingMission : MonoBehaviour {
 						PanelMainMenu.SetActive(true);
 						gameObject.SetActive(false);
 					});
+					ButtonRestartLevels.SetActive(true);
 				} else {
 					PanelBeforeMission.SetActive(true);
-					PanelBeforeMission.GetComponent<PanelBeforeMission>().MissionBriefing(new Mission(jsonMap, mt, number));
+					PanelBeforeMission.GetComponent<PanelBeforeMission>().MissionBriefing(new Mission(jsonMap, mt, number, round));
 					gameObject.SetActive(false);
 				}
 			} catch (System.Exception e) {

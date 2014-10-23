@@ -190,11 +190,11 @@ public class Building : MonoBehaviour{
 		switch (bt) {
 			case BuildingType.ElectricTower:
 				
-				effectDamage.Add (Element.Fire, 0.6f);
+				effectDamage.Add (Element.Fire, 0.3f);
 				effectDamage.Add (Element.Water, 0.05f);
 				effectDamage.Add(Element.Electricity, 0.6f);
 				
-				effectTime.Add (Element.Fire, 3f);
+				effectTime.Add (Element.Fire, 6f);
 				
 				AfterDeath.Add (Element.Electricity);
 				ImageNumberFromAtlas = 41;
@@ -202,9 +202,9 @@ public class Building : MonoBehaviour{
 				break;
 			case BuildingType.Wood:
 				
-				effectDamage.Add(Element.Fire, 0.55f);
+				effectDamage.Add(Element.Fire, 0.27f);
 				effectDamage.Add(Element.Water, 0.15f);
-				effectTime.Add(Element.Fire, 1.9f);
+				effectTime.Add(Element.Fire, 3.8f);
 				effectDamage.Add(Element.Electricity, 0.7f);
 
 				ImageNumberFromAtlas = 38;
@@ -212,33 +212,33 @@ public class Building : MonoBehaviour{
 				break;
 			case BuildingType.Stone:
 				
-				effectDamage.Add(Element.Fire, 0.33f);
+				effectDamage.Add(Element.Fire, 0.17f);
 				effectDamage.Add(Element.Water, 0.17f);
 				effectDamage.Add(Element.Electricity, 0.75f);
 
-				effectTime.Add(Element.Fire, 1.9f);
+				effectTime.Add(Element.Fire, 3.8f);
 				
 				ImageNumberFromAtlas = 37;
 				StartingPopulation = _Population = 1000;
 				break;
 			case BuildingType.WaterTower:
 				
-				effectDamage.Add (Element.Fire, 0.55f);
+				effectDamage.Add (Element.Fire, 0.27f);
 				effectDamage.Add (Element.Water, 0.11f);
 				effectDamage.Add(Element.Electricity, 0.7f);
 
-				effectTime.Add (Element.Fire, 1.9f);
+				effectTime.Add (Element.Fire, 3.8f);
 
 				AfterDeath.Add (Element.Water);
 				ImageNumberFromAtlas = 40;
 				break;
 			case BuildingType.GasStation:
 				
-				effectDamage.Add (Element.Fire, 2f);
+				effectDamage.Add (Element.Fire, 1f);
 				effectDamage.Add (Element.Water, 0.12f);
 				effectDamage.Add(Element.Electricity, 0.75f);
 
-				effectTime.Add(Element.Fire, 0.6f);
+				effectTime.Add(Element.Fire, 1.2f);
 
 				AfterDeath.Add (Element.Fire);
 				ImageNumberFromAtlas = 39;
@@ -251,10 +251,10 @@ public class Building : MonoBehaviour{
 			case BuildingType.Block:
 				
 				
-				effectDamage.Add(Element.Fire, 1.5f);
+				effectDamage.Add(Element.Fire, 0.75f);
 				effectDamage.Add(Element.Water, 0.1f);
 
-				effectTime.Add(Element.Fire, 0.9f);
+				effectTime.Add(Element.Fire, 1.8f);
 				
 				ImageNumberFromAtlas = 5;
 				break;

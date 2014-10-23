@@ -26,6 +26,7 @@ public class Mission {
 
 	private int _Number;
 	private MissionType _MissionType;
+	private int _Round;
 
 	public MissionType MissionType {
 		get { return _MissionType;  }
@@ -36,7 +37,7 @@ public class Mission {
 	}
 
 	public WWW SaveGame(Dictionary<ScoreType, Result> actualResults) {
-		return WebConnector.SendMissionAccomplished(_MissionType, _Number, GetStatus(actualResults), actualResults);
+		return WebConnector.SendMissionAccomplished(_MissionType, _Number, _Round, GetStatus(actualResults), actualResults);
 	}
 
 	public MissionStatus GetStatus(Dictionary<ScoreType, Result> results) {
@@ -64,9 +65,10 @@ public class Mission {
 		return MissionStatus.NotYetDetermined;
 	}
 
-	public Mission(string json, MissionType mt, int number) {
+	public Mission(string json, MissionType mt, int number, int round) {
 		_MissionType = mt;
 		_Number = number;
+		_Round = round;
 
 		JSONNode n = JSONNode.Parse(json);
 		JSONNode buildingsLayerJson = n["layers"].Childs.ElementAt(0);
