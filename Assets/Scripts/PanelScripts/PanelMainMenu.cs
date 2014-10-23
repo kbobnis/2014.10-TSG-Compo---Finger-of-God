@@ -3,7 +3,7 @@ using System.Collections;
 using UnityEngine.UI;
 using System.Collections.Generic;
 
-public delegate bool GoQuestion(Building go);
+
 
 public class PanelMainMenu : MonoBehaviour {
 

@@ -4,7 +4,7 @@ using UnityEngine.UI;
 using System.Collections.Generic;
 using System.Linq;
 
-public class SpriteManager : MonoBehaviour{
+public class SpriteManager {
 
 
 	public static List<Sprite> BuildingSprites;

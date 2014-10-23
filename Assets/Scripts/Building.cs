@@ -10,91 +10,25 @@ public enum Element{
 	Crush, SmallCrush, Water, Electricity, Fire, SmokeAfterFire
 }
 
-public enum BuildingType {
-	None,
-	Wood,
-	Stone,
-	Block,
-	WaterTower,
-	ElectricTower,
-	GasStation,
-	Destroyed
-}
-
-public static class BuildingTypeMethods {
-
-
-	public static string Description(this BuildingType bt) {
-		Building b = new Building();
-		b.CreateFromTemplate(bt);
-		string text = bt + " building. Has " + b.Population + " people. ";
-		switch (bt) {
-			case BuildingType.WaterTower: text += "After destroyed fills with water all empty spaces and sorroundings. ";
-				break;
-			case BuildingType.ElectricTower: text += "After destroyed shocks with electricity. Electricity travels with water. ";
-				break;
-			case BuildingType.GasStation: text += "After destroyed sets on fire nearby buildings. ";
-				break;
-			case BuildingType.Block: text += "You need more than one intervention to bring it down. It is sesceptive to elementals.";
-				break;
-		}
-		return text;
-	}
-	
-
-	public static BuildingType RandomBuilding() {
-		BuildingType bt = BuildingType.Destroyed;
-		Dictionary<BuildingType, int> chances = new Dictionary<BuildingType, int>();
-		chances.Add(BuildingType.GasStation, 1);
-		chances.Add(BuildingType.WaterTower, 1);
-		chances.Add(BuildingType.ElectricTower, 1);
-		chances.Add(BuildingType.Stone, 2);
-		chances.Add(BuildingType.Wood, 2);
-		chances.Add(BuildingType.Destroyed, 1);
-		chances.Add(BuildingType.Block, 1);
-		int sumOfChances = 0;
-		foreach (int chance in chances.Values.ToList()) {
-			sumOfChances += chance;
-		}
-		int ticket = Mathf.RoundToInt(UnityEngine.Random.value * sumOfChances);
-		foreach (KeyValuePair<BuildingType, int> b in chances) {
-			ticket -= b.Value;
-			if (ticket <= 0) {
-				bt = b.Key;
-				break;
-			}
-		}
-
-		return bt;
-	}
-}
+public delegate bool GoQuestion(Building go);
 
 public class Building : MonoBehaviour{
 
-	private Dictionary<Element, float> StrikeDamage = new Dictionary<Element, float>();
-	private Dictionary<Element, float> EffectDamage = new Dictionary<Element, float>();
-	private Dictionary<Element, float> EffectTime = new Dictionary<Element, float>();
-	private Dictionary<Element, Side> AfterDeath = new Dictionary<Element, Side> ();
-	private Dictionary<Element, float> Statuses = new Dictionary<Element, float>();
-	private Dictionary<Element, float> FillSpeed = new Dictionary<Element, float> ();
-	private Dictionary<Element, float> LastFill = new Dictionary<Element, float> ();
+	private Dictionary<Element, BuildingStatus> Statuses = new Dictionary<Element, BuildingStatus>();
+	private List<Element> AfterDeath = new List<Element>();
 	private Dictionary<Element, GoQuestion> FillRequirement = new Dictionary<Element, GoQuestion>();
-	private Dictionary<Element, float> ContaminateDelta = new Dictionary<Element, float> ();
-
-	public Dictionary<Side, Building> Neighbours = new Dictionary<Side, Building>();
-
-	public List<Listener<ScoreType, float>> Listeners = new List<Listener<ScoreType, float>>();
+	private Dictionary<Element, float> ContaminateDelta = new Dictionary<Element, float>();
 
 	private int StartingPopulation, _Population, LastCheckedPopulation;
 	private float _Health = 1f;
 	private int ImageNumberFromAtlas;
+	private Vector3 startingPos;
+
+	public Dictionary<Side, Building> Neighbours = new Dictionary<Side, Building>();
+	public List<Listener<ScoreType, float>> Listeners = new List<Listener<ScoreType, float>>();
 
 	public GameObject GameObjectGroundLevel, GameObjectBuilding;
 	public GameObject GameObjectFire, GameObjectWaterLevel, GameObjectSmokeAfterFire, GameObjectElectricity, GameObjectCrush, GameObjectHealthBar;
-
-	private Dictionary<Element, GameObject> ElGO = new Dictionary<Element, GameObject> ();
-	private Vector3 startingPos;
-
 
 	private static Building GetNeighbour(Building b, Side s) {
 		if (s == Side.Center) {
@@ -107,8 +41,11 @@ public class Building : MonoBehaviour{
 		return tmp2;
 	}
 
-	private static void TreatNeighboursWith(Building b, Element e, float startingValue = 0, GoQuestion goq = null) {
-		if (startingValue >= 1 || b == null) {
+	private static void TreatNeighboursWith(Building b, Element e, float startingValue = 1, GoQuestion goq = null) {
+		if (startingValue > 1) {
+			startingValue = 1;
+		}
+		if (startingValue <= 0 || b == null) {
 			return; //we don't want to waste time for dead startingValue
 		}
 
@@ -139,18 +76,6 @@ public class Building : MonoBehaviour{
 		}
 	}
 
-
-	void Start(){
-		startingPos = GameObjectBuilding.GetComponent<RectTransform>().localPosition;
-
-		ElGO.Add (Element.Fire, GameObjectFire);
-		ElGO.Add (Element.Water, GameObjectWaterLevel);
-		ElGO.Add (Element.SmokeAfterFire, GameObjectSmokeAfterFire);
-		ElGO.Add (Element.Electricity, GameObjectElectricity);
-		ElGO.Add (Element.Crush, GameObjectCrush);
-
-	}
-
 	public int PopulationDelta{
 		get {
 			int delta = _Population - LastCheckedPopulation;
@@ -178,115 +103,51 @@ public class Building : MonoBehaviour{
 		}
 	}
 
-	private void AddStatus(Element e, float startingValue=0){
-		if (!Statuses.ContainsKey(e)){
-			Statuses.Add(e, startingValue);
-			LastFill[e] = Time.time;
-			if (SoundManager.Clips.ContainsKey (e)) {
-				PlaySingleSound.SpawnSound(SoundManager.Clips[e]);
-			}
-
-		} else if (Statuses[e] > startingValue) {
-			Statuses[e] = startingValue;
-			LastFill[e] = Time.time;
-			if (SoundManager.Clips.ContainsKey (e) && e != Element.Water) {
-				PlaySingleSound.SpawnSound(SoundManager.Clips[e]);
-			}
-		}
-
-	}
-
 	private void Die(){
 		PlaySingleSound.SpawnSound(SoundManager.BuildingDown);
 
-		foreach (Element e in AfterDeath.Keys.ToList()) {
+		foreach (Element e in AfterDeath) {
 			TreatWith(e);
 		}
 
 		foreach (Element e in Statuses.Keys.ToList ()) {
-			if (e == Element.Water) {
-				TreatWith(e, Statuses[e]);
-			} else if (e == Element.Fire && Statuses[e] < 0.95f) { //we don't want to hit full blown fire it is finishing
-				TreatNeighboursWith(this, e);
+			if (e == Element.Fire && Statuses[e].Value > 0.1f) { //we don't want to hit full blown fire it is finishing
+				TreatNeighboursWith(this, e, Statuses[e].Value, (Building b) => { return b.Health > 0;  });
 			}
 		}
 	}
 
 	private void ExtinguishFireCheck(){
-		if (Statuses.ContainsKey (Element.Water) && Statuses.ContainsKey (Element.Fire)) {
-			FinishStatus(Element.Fire);
-			AddStatus(Element.SmokeAfterFire);
-		} 
-	}
-
-	private void FinishStatus(Element e){
-		Statuses.Remove(e);
-
-		if (e == Element.Crush ){
-			AddStatus(Element.SmallCrush);
-		}
-		if (ElGO.ContainsKey(e)){
-			ElGO[e].GetComponent<Image>().enabled = false;
+		if (Statuses[Element.Water].Value > 0 && Statuses[Element.Fire].Value > 0) {
+			Statuses[Element.Fire].StopNow();
+			Statuses[Element.SmokeAfterFire].Add();
 		}
 	}
 
 	void FixedUpdate(){
-
-		try {
-
-			ExtinguishFireCheck();
-
-			List<Element> bss = Statuses.Keys.ToList();
-			foreach (Element status in bss) {
-				float value = Statuses[status];
-				if (value < 1) {
-
-					if (EffectDamage.ContainsKey(status)) {
-						Health -= EffectDamage[status] * Time.deltaTime;
-					}
-					if (Statuses.ContainsKey(status) && EffectTime.ContainsKey(status)) {
-						float progress = Statuses[status] += 1 / EffectTime[status] * Time.deltaTime;
-						if (progress > 1) {
-							progress = 1f;
-						}
-						if (SpriteManager.ElementSprites.ContainsKey(status) && ElGO.ContainsKey(status)) {
-							Image i = ElGO[status].GetComponent<Image>();
-							i.enabled = true;
-							Sprite[] ss = SpriteManager.ElementSprites[status];
-							i.sprite = ss[Mathf.RoundToInt(progress * (ss.Length - 1))];
-						}
-					}
-				}
-			}
-
-			bss = Statuses.Keys.ToList();
-			foreach (Element status in bss) {
-				if (Statuses[status] >= 1) {
-					FinishStatus(status);
-				}
-			}
-
-			foreach (Element e in FillRequirement.Keys.ToList()) {
-				if (Statuses.ContainsKey(e) && Time.time - LastFill[e] > FillSpeed[e]) {
-					LastFill[e] = Time.time;
-
-					float toSet = Statuses[e];
-					if (ContaminateDelta.ContainsKey(e)) {
-						toSet += ContaminateDelta[e];
-						if (toSet < 0) {
-							toSet = 0;
-						}
-					}
-
-					TreatNeighboursWith(this, e, toSet, FillRequirement[e]);
-				}
-			}
-			UpdateImage();
-
-		} catch (System.Exception e) {
-			Debug.Log("Exception: " + e);
+		//check if prepared already
+		if (Statuses.Count == 0) {
+			return;
 		}
 
+		ExtinguishFireCheck();
+
+		foreach (Element status in Statuses.Keys.ToList()) {
+			Health -= Statuses[status].UpdateAndGetDamage();
+		}
+
+		foreach (Element e in FillRequirement.Keys.ToList()) {
+
+			if (Statuses[e].CanFill()) {
+				Statuses[e].Fill(); //so it won't fill too quickly
+				float toSet = Statuses[e].Value;
+				if (ContaminateDelta.ContainsKey(e)) {
+					toSet += ContaminateDelta[e];
+				}
+				TreatNeighboursWith(this, e, toSet, FillRequirement[e]);
+			}
+		}
+		UpdateImage();
 	}
 
 	public void InformListeners(){
@@ -314,71 +175,77 @@ public class Building : MonoBehaviour{
 		GameObjectHealthBar.transform.parent.gameObject.SetActive (Health > 0);
 	}
 
-	public void TreatWith(Element e, float startingValue=0){
-		if (Statuses.ContainsKey (e) && Statuses [e] <= startingValue) {
-			return ; //no need to treat with it if already has this element
-		}
-
-		/*if (StrikeDamage.ContainsKey(e)) {
-			if (StrikeDamage[e] > 0 && Health > 0){
-				List<Element> bss = AfterDeath.Keys.ToList();
-				foreach (Element e2 in bss) {
-					CataclysmTo(e2, this, Side.Center);
-				}
-			}
-		}*/
-		AddStatus(e, startingValue);
-		if (StrikeDamage.ContainsKey(e)){
-			Health -= StrikeDamage [e];
-		}
+	public void TreatWith(Element e, float startingValue=1){
+		//Debug.Log("Treating with: " + e + ", starting value: " + startingValue);
+		Statuses[e].Add(startingValue);
 	}
-
 
 	internal void CreateFromTemplate(BuildingType bt) {
 
+		Dictionary<Element, float> strikeDamage = new Dictionary<Element, float>();
+		Dictionary<Element, float> effectDamage = new Dictionary<Element, float>();
+		Dictionary<Element, float> effectTime = new Dictionary<Element, float>();
+		Dictionary<Element, float> fillSpeed = new Dictionary<Element, float>();
+
 		switch (bt) {
 			case BuildingType.ElectricTower:
-				EffectDamage.Add (Element.Fire, 0.5f);
-				EffectDamage.Add (Element.Water, 0.05f);
-				EffectTime.Add (Element.Fire, 3f);
-				EffectDamage.Add(Element.Electricity, 0.6f);
-
-				AfterDeath.Add (Element.Electricity, Side.Center);
+				strikeDamage.Add(Element.Crush, 1f);
+				
+				effectDamage.Add (Element.Fire, 0.8f);
+				effectDamage.Add (Element.Water, 0.05f);
+				effectDamage.Add(Element.Electricity, 0.6f);
+				
+				effectTime.Add (Element.Fire, 3f);
+				
+				AfterDeath.Add (Element.Electricity);
 				ImageNumberFromAtlas = 41;
 				StartingPopulation = _Population = 0;
 				break;
 			case BuildingType.Wood:
-				EffectDamage.Add(Element.Fire, 0.55f);
-				EffectDamage.Add(Element.Water, 0.11f);
-				EffectTime.Add(Element.Fire, 1.9f);
-				EffectDamage.Add(Element.Electricity, 0.6f);
+				strikeDamage.Add(Element.Crush, 0.8f);
+				
+				effectDamage.Add(Element.Fire, 0.55f);
+				effectDamage.Add(Element.Water, 0.11f);
+				effectTime.Add(Element.Fire, 1.9f);
+				effectDamage.Add(Element.Electricity, 0.6f);
 
 				ImageNumberFromAtlas = 38;
 				StartingPopulation = _Population = 1000;
 				break;
 			case BuildingType.Stone:
-				EffectDamage.Add(Element.Fire, 0.33f);
-				EffectDamage.Add(Element.Water, 0.11f);
-				EffectTime.Add(Element.Fire, 1.9f);
-				EffectDamage.Add(Element.Electricity, 0.65f);
+				strikeDamage.Add(Element.Crush, 0.8f);
+				
+				effectDamage.Add(Element.Fire, 0.33f);
+				effectDamage.Add(Element.Water, 0.11f);
+				effectDamage.Add(Element.Electricity, 0.65f);
+
+				effectTime.Add(Element.Fire, 1.9f);
+				
 				ImageNumberFromAtlas = 37;
 				StartingPopulation = _Population = 1000;
 				break;
 			case BuildingType.WaterTower:
-				EffectDamage.Add (Element.Fire, 0.55f);
-				EffectDamage.Add (Element.Water, 0.11f);
-				EffectTime.Add (Element.Fire, 1.9f);
-				EffectDamage.Add(Element.Electricity, 0.7f);
+				strikeDamage.Add(Element.Crush, 0.8f);
+				
+				effectDamage.Add (Element.Fire, 0.55f);
+				effectDamage.Add (Element.Water, 0.11f);
+				effectDamage.Add(Element.Electricity, 0.7f);
 
-				AfterDeath.Add (Element.Water, Side.Center);
+				effectTime.Add (Element.Fire, 1.9f);
+
+				AfterDeath.Add (Element.Water);
 				ImageNumberFromAtlas = 40;
 				break;
 			case BuildingType.GasStation:
-				EffectDamage.Add (Element.Fire, 2f);
-				EffectDamage.Add (Element.Water, 0.12f);
-				EffectTime.Add (Element.Fire, 0.6f);
-				EffectDamage.Add(Element.Electricity, 0.75f);
-				AfterDeath.Add (Element.Fire, Side.Center);
+				strikeDamage.Add(Element.Crush, 0.8f);
+				
+				effectDamage.Add (Element.Fire, 2f);
+				effectDamage.Add (Element.Water, 0.12f);
+				effectDamage.Add(Element.Electricity, 0.75f);
+
+				effectTime.Add(Element.Fire, 0.6f);
+
+				AfterDeath.Add (Element.Fire);
 				ImageNumberFromAtlas = 39;
 				break;
 
@@ -387,28 +254,30 @@ public class Building : MonoBehaviour{
 				ImageNumberFromAtlas = 37;
 				break;
 			case BuildingType.Block:
+				strikeDamage.Add(Element.Crush, 0.8f);
 				
-				EffectDamage.Add(Element.Fire, 1.5f);
-				EffectTime.Add(Element.Fire, 0.9f);
-				EffectDamage.Add(Element.Water, 0.1f);
+				effectDamage.Add(Element.Fire, 1.5f);
+				effectDamage.Add(Element.Water, 0.1f);
+
+				effectTime.Add(Element.Fire, 0.9f);
+				
 				ImageNumberFromAtlas = 5;
 				break;
 		}
-		StrikeDamage.Add(Element.Crush, 0.4f);
 
-		EffectDamage.Add (Element.Crush, 0.00f);
-		EffectDamage.Add(Element.SmokeAfterFire, 0f);
+		effectDamage.Add (Element.Crush, 0.00f);
+		effectDamage.Add(Element.SmokeAfterFire, 0f);
 
-		EffectTime.Add (Element.SmokeAfterFire, 0.5f);
-		EffectTime.Add (Element.Crush, 0.3f);
-		EffectTime.Add (Element.Electricity, 1f);
-		EffectTime.Add (Element.Water, 5f);
-
-		FillSpeed.Add (Element.Electricity, 0.1f);
-		FillSpeed.Add (Element.Water, 0.2f);
+		effectTime.Add (Element.SmokeAfterFire, 0.5f);
+		effectTime.Add (Element.Crush, 0.3f);
+		effectTime.Add (Element.Electricity, 1f);
+		effectTime.Add (Element.Water, 5f);
+		
+		fillSpeed.Add (Element.Electricity, 0.09f);
+		fillSpeed.Add (Element.Water, 0.2f);
 
 		FillRequirement.Add(Element.Electricity, delegate(Building b){
-			return b.Statuses.ContainsKey(Element.Water) && Statuses.ContainsKey(Element.Water);
+			return b.Statuses[Element.Water].Value > 0 && Statuses[Element.Water].Value > 0 ;
 		});
 
 		FillRequirement.Add(Element.Water, delegate(Building b){
@@ -417,43 +286,56 @@ public class Building : MonoBehaviour{
 					(
 						(	 //side up check if is in water
 							GetNeighbour(b, Side.Up) != null &&
-							GetNeighbour(b, Side.Up).Statuses.ContainsKey(Element.Water) &&
-							GetNeighbour(b, Side.Up).Statuses[Element.Water] > 0 &&
+							GetNeighbour(b, Side.Up).Statuses[Element.Water].Value > 0 &&
 							GetNeighbour(b, Side.Up).Health == 0
 						)
 						||
 						(	 //side down check if is in water
 							GetNeighbour(b, Side.Down) != null &&
-							GetNeighbour(b, Side.Down).Statuses.ContainsKey(Element.Water) &&
-							GetNeighbour(b, Side.Down).Statuses[Element.Water] > 0 &&
+							GetNeighbour(b, Side.Down).Statuses[Element.Water].Value > 0 &&
 							GetNeighbour(b, Side.Down).Health == 0
 						)
 						||
 						(	 //side left check if is in water
 							GetNeighbour(b, Side.Left) != null &&
-							GetNeighbour(b, Side.Left).Statuses.ContainsKey(Element.Water) &&
-							GetNeighbour(b, Side.Left).Statuses[Element.Water] > 0  &&
+							GetNeighbour(b, Side.Left).Statuses[Element.Water].Value > 0  &&
 							GetNeighbour(b, Side.Left).Health == 0
 						)
 						||
 						(	 //side right check if is in water
 							GetNeighbour(b, Side.Right) != null &&
-							GetNeighbour(b, Side.Right).Statuses.ContainsKey(Element.Water) &&
-							GetNeighbour(b, Side.Right).Statuses[Element.Water] > 0 &&
+							GetNeighbour(b, Side.Right).Statuses[Element.Water].Value > 0 &&
 							GetNeighbour(b, Side.Right).Health == 0
 						)
 					)
 				)
 				&&
 				(
-					!b.Statuses.ContainsKey(Element.Water) 
+					b.Statuses[Element.Water].Value == 0
 					|| 
-					b.Statuses[Element.Water] >  Statuses[Element.Water]
+					b.Statuses[Element.Water].Value <  Statuses[Element.Water].Value
 				);
 		});
 
-		ContaminateDelta.Add (Element.Fire, -1f);
+		ContaminateDelta.Add (Element.Fire, 1f);
 
+		startingPos = GameObjectBuilding.GetComponent<RectTransform>().localPosition;
+
+		Dictionary<Element, GameObject> elGo = new Dictionary<Element, GameObject>();
+		elGo.Add(Element.Fire, GameObjectFire);
+		elGo.Add(Element.Water, GameObjectWaterLevel);
+		elGo.Add(Element.SmokeAfterFire, GameObjectSmokeAfterFire);
+		elGo.Add(Element.Electricity, GameObjectElectricity);
+		elGo.Add(Element.Crush, GameObjectCrush);
+
+		//initializing statuses
+		foreach (Element e in new Element[] { Element.Fire, Element.Water, Element.SmokeAfterFire, Element.Electricity, Element.Crush }) {
+			float fillSpeedF = fillSpeed.ContainsKey(e)?fillSpeed[e]:0;
+			float strikeDamageF = strikeDamage.ContainsKey(e) ? strikeDamage[e] : 0;
+			float effectDamageF = (effectDamage.ContainsKey(e) ? effectDamage[e] : 0);
+			float effectTimeF = (effectTime.ContainsKey(e) ? effectTime[e] : 0);
+			Statuses.Add(e, new BuildingStatus(elGo[e], SpriteManager.ElementSprites[e], SoundManager.Clips[e], effectDamageF, effectTimeF, strikeDamageF, fillSpeedF));
+		}
 	}
 
 	public void Clicked(BaseEventData b) {
