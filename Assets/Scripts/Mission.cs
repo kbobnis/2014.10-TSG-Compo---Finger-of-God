@@ -16,13 +16,13 @@ public enum MissionType {
 
 public class Mission {
 
-	public List<List<BuildingType>> Buildings = new List<List<BuildingType>>();
+	public List<List<BuildingTemplate>> Buildings = new List<List<BuildingTemplate>>();
 	public List<AchievQuery> SuccessQueries = new List<AchievQuery>();
 	public List<AchievQuery> FailureQueries = new List<AchievQuery>();
 	
 	public string BeforeMissionText = "";
 	public string TipText = "";
-	public BuildingType BeforeMissionBuilding;
+	public BuildingTemplate BeforeMissionBuilding;
 
 	private int _Number;
 	private MissionType _MissionType;
@@ -73,19 +73,8 @@ public class Mission {
 		JSONNode n = JSONNode.Parse(json);
 		JSONNode buildingsLayerJson = n["layers"].Childs.ElementAt(0);
 		
-
-		Dictionary<int, BuildingType> intToBuildingMap = new Dictionary<int, BuildingType>();
-		intToBuildingMap.Add(1, BuildingType.Wood);
-		intToBuildingMap.Add(2, BuildingType.Stone);
-		intToBuildingMap.Add(3, BuildingType.Block);
-		intToBuildingMap.Add(4, BuildingType.WaterTower);
-		intToBuildingMap.Add(5, BuildingType.ElectricTower);
-		intToBuildingMap.Add(6, BuildingType.GasStation);
-		intToBuildingMap.Add(7, BuildingType.Destroyed);
-
 		int width = buildingsLayerJson["width"].AsInt;
 		int height = buildingsLayerJson["height"].AsInt;
-
 
 		int interventions = n["properties"]["Interventions"].AsInt;
 		if (interventions > 0){
@@ -98,22 +87,19 @@ public class Mission {
 		SuccessQueries.Add(new AchievQuery(ScoreType.Population, Sign.Equal, 0));
 		
 		int buildingInt = n["properties"]["BeforeImage"].AsInt;
-		BuildingType bt = BuildingType.None;
-		if (intToBuildingMap.ContainsKey(buildingInt)){
-			bt = intToBuildingMap[buildingInt];
-		}
-		BeforeMissionBuilding = bt;
+
+		BeforeMissionBuilding = Game.Me.BuildingTemplates.ContainsKey(buildingInt)?Game.Me.BuildingTemplates[buildingInt]:Game.Me.BuildingTemplates[1];
 		
 		int i=0; 
-		List<BuildingType> bRow = null;
+		List<BuildingTemplate> bRow = null;
 		foreach (JSONNode tile in buildingsLayerJson["data"].Childs) {
 			if (i % width == 0){
 				if (i > 0) { //we want to add the first row, not the zero row
 					Buildings.Add(bRow);
 				}
-				bRow = new List<BuildingType>();
+				bRow = new List<BuildingTemplate>();
 			}
-			bRow.Add(intToBuildingMap[tile.AsInt]);
+			bRow.Add(Game.Me.BuildingTemplates[tile.AsInt]);
 			i++;
 		}
 		Buildings.Add(bRow);

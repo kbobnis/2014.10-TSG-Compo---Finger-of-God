@@ -40,21 +40,21 @@ class WebConnector {
 	}
 
 	internal static WWW ChangeName(string name, Mission Mission, Dictionary<ScoreType, Result> ActualResults) {
-		try {
-			WWWForm form = PrepareForm();
-			form.AddField("Name", name);
-			form.AddField("Number", Mission.Number);
-			form.AddField("MissionStatus", Mission.GetStatus(ActualResults).ToString());
-			form.AddField("MissionType", Mission.MissionType.ToString());
-			return new WWW(Server+Service+ "/changeNameAndGetResults", form);
-		} catch (System.Exception e) {
-			Debug.Log("Exception: " + e);
-		}
-		return null;
+		WWWForm form = PrepareForm();
+		form.AddField("Name", name);
+		form.AddField("Number", Mission.Number);
+		form.AddField("MissionStatus", Mission.GetStatus(ActualResults).ToString());
+		form.AddField("MissionType", Mission.MissionType.ToString());
+		return new WWW(Server+Service+ "/changeNameAndGetResults", form);
 	}
 
 	internal static WWW RestartLevels() {
 		WWWForm form = PrepareForm();
 		return new WWW(Server + Service + "/restartLevels", form);
+	}
+
+	internal static WWW GetInitialData() {
+		WWWForm form = PrepareForm();
+		return new WWW(Server + Service + "/getInitialData", form);
 	}
 }

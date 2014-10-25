@@ -4,51 +4,73 @@ using UnityEngine.UI;
 using System.Collections.Generic;
 using System.Linq;
 
-public class SpriteManager {
+public delegate void LoadSprite(Sprite s);
 
+public class SpriteManager : MonoBehaviour{
 
-	public static List<Sprite> BuildingSprites;
-	public static List<Sprite> BuildingSpritesDestroyed;
-
-	public static Sprite[] GroundLevels;
 	public static Dictionary<Element, Sprite[]> ElementSprites = new Dictionary<Element, Sprite[]>();
 
-	private static string SpritesUrl = "assets/Images/";
+	private static List<KeyValuePair<string, LoadSprite>> SpritesToLoad = new List<KeyValuePair<string, LoadSprite>>();
+	private static Dictionary<string, int> Retries = new Dictionary<string, int>();
+	private static bool DownloadingNow = false;
+	private static Dictionary<string, Sprite> LoadedSprites = new Dictionary<string, Sprite>();
 
-	static SpriteManager() {
-
-		BuildingSprites = Resources.LoadAll<Sprite>("Images/buildings_vert").ToList();
-		BuildingSprites.Add (Resources.Load<Sprite> ("Images/gas_station"));
-		BuildingSprites.Add (Resources.Load<Sprite> ("Images/silos"));
-		BuildingSprites.Add (Resources.Load<Sprite> ("Images/electricityTower"));
-
-		BuildingSpritesDestroyed = Resources.LoadAll<Sprite>("Images/buildings_vert_destroyed").ToList();
-		BuildingSpritesDestroyed.Add (Resources.Load<Sprite> ("Images/gas_station_destroyed"));
-		BuildingSpritesDestroyed.Add (Resources.Load<Sprite> ("Images/silos_destroyed"));
-		BuildingSpritesDestroyed.Add (Resources.Load<Sprite> ("Images/electricityTower_destroyed"));
+	void Start() {
 
 		ElementSprites.Add(Element.Fire, Resources.LoadAll<Sprite> ("Images/fire"));
-		GroundLevels = Resources.LoadAll<Sprite> ("Images/groundLevels");
 		ElementSprites.Add (Element.Water, Resources.LoadAll<Sprite> ("Images/water"));
-
 		ElementSprites.Add (Element.SmokeAfterFire, Resources.LoadAll<Sprite> ("Images/smokeAfterFire"));
 		ElementSprites.Add (Element.Electricity, Resources.LoadAll<Sprite> ("Images/electric"));
-
 		ElementSprites.Add (Element.Crush, Resources.LoadAll<Sprite> ("Images/explosion"));
 
 	}
 
-	void Start() {
-		//StartCoroutine(LoadFromUrl("silos.png", 40, BuildingSprites));
-		//StartCoroutine(LoadFromUrl("silos_destroyed.png", 40, BuildingSpritesDestroyed));
-
+	public static void LoadAsynchronous(string path, LoadSprite ls) {
+		if (LoadedSprites.ContainsKey(path)) {
+			ls(LoadedSprites[path]);
+		} else {
+			SpritesToLoad.Add(new KeyValuePair<string, LoadSprite>(path, ls));
+		}
 	}
 
-	/*private IEnumerator LoadFromUrl(string name, int number, List<Sprite> sprites){
-		string url = WebConnector.Server + SpritesUrl + name;
+	void Update() {
+		if (SpritesToLoad.Count > 0) {
+			KeyValuePair<string, LoadSprite> kvp = SpritesToLoad[0];
+			
+			if (LoadedSprites.ContainsKey(kvp.Key)) {
+				kvp.Value(LoadedSprites[kvp.Key]);
+				SpritesToLoad.Remove(kvp);
+			} else if (DownloadingNow == false){
+				DownloadingNow = true;
+				StartCoroutine(LoadFromUrl(kvp.Key, kvp.Value));
+				SpritesToLoad.Remove(kvp);
+			}
+		}
+	}
+
+	private IEnumerator LoadFromUrl(string path, LoadSprite ls){
+		string url =  WebConnector.Server + path;
     
         WWW www = new WWW(url);
+		
         yield return www;
-		sprites[number] = Sprite.Create(www.texture, new Rect(0, 0, www.texture.width, www.texture.height), new Vector2(0.5f, 0.5f));
-	}*/
+		if (www.error != null) {
+			//will retry
+			if (!Retries.ContainsKey(path)){
+				Retries.Add(path, 0);
+			}
+			Retries[path]++;
+
+			if (Retries[path] < 3) {
+				Debug.Log("Error " + www.error + ", when downloading " + path + ", retries: " + Retries[path]);
+				SpritesToLoad.Add(new KeyValuePair<string, LoadSprite>(path, ls));
+			}
+		} else {
+			Sprite s = Sprite.Create(www.texture, new Rect(0, 0, www.texture.width, www.texture.height), new Vector2(0.5f, 0.5f));
+			s.texture.filterMode = FilterMode.Point;
+			ls(s);
+		}
+
+		DownloadingNow = false;
+	}
 }

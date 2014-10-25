@@ -26,12 +26,7 @@ public class PanelBeforeMission : MonoBehaviour {
 			TextMissionQuery.GetComponent<Text>().text = "Win when " + successQuery.ScoreType + " " + successQuery.Sign.Text() + " " + successQuery.Value;
 		}
 
-		BuildingType showBuilding = m.BeforeMissionBuilding;
-		if (showBuilding == BuildingType.None) {
-			showBuilding = BuildingTypeMethods.RandomBuilding();
-		}
-
-		TextInfo.GetComponent<Text>().text = m.BeforeMissionText==""? showBuilding.Description():m.BeforeMissionText;
+		TextInfo.GetComponent<Text>().text = m.BeforeMissionText == "" ? m.BeforeMissionBuilding.Description : m.BeforeMissionText;
 
 		GameObject newItem = Instantiate(BuildingPrefab) as GameObject;
 		newItem.SetActive(true);
@@ -42,7 +37,8 @@ public class PanelBeforeMission : MonoBehaviour {
 		itemR.offsetMin = new Vector2(-r.rect.width / 2, -r.rect.height / 2);
 		itemR.offsetMax = new Vector2(r.rect.width / 2, r.rect.height / 2);
 		Building b = newItem.GetComponent<Building>();
-		b.CreateFromTemplate(showBuilding);
+		Debug.Log("mission: " + m.Number + ", before building: " + m.BeforeMissionBuilding.Name);
+		b.CreateFromTemplate(m.BeforeMissionBuilding);
 
 		ButtonStartMission.GetComponent<Button>().onClick.RemoveAllListeners();
 		ButtonStartMission.GetComponent<Button>().onClick.AddListener(() => { StartMinigameListener(m); });
