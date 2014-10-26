@@ -15,6 +15,7 @@ public class PanelLoadingMission : MonoBehaviour {
 	}
 	
 	internal void LoadMission(MissionType mt) {
+		ButtonContinue.SetActive(false);
 		StartCoroutine(LoadMissionCoroutine(mt));
 	}
 
@@ -26,13 +27,13 @@ public class PanelLoadingMission : MonoBehaviour {
 
 	private IEnumerator LoadMissionCoroutine(MissionType mt) {
 		ButtonRestartLevels.SetActive(false);
+		ButtonContinue.SetActive(true);
 		WWW www = WebConnector.LoadMission(mt);
 		yield return www;
 
 		if (www.error != null) {
 			Debug.Log("Some errors occured: " + www.error);
 			TextInfo.GetComponent<Text>().text = "Error occured: " + www.error;
-			ButtonContinue.SetActive(true);
 			ButtonContinue.GetComponentInChildren<Text>().text = "Return to main menu";
 			ButtonContinue.GetComponent<Button>().onClick.RemoveAllListeners();
 			ButtonContinue.GetComponent<Button>().onClick.AddListener(() => {

@@ -24,6 +24,7 @@ public class PanelLoading : MonoBehaviour {
 	public void SetLoading(string text, JustDo justDo) {
 		JustDo = justDo;
 		TextLoading.GetComponent<Text>().text = text;
+		TextTap.SetActive(false);
 		GetComponent<EventTrigger>().enabled = false;
 	}
 
