@@ -23,8 +23,8 @@ public class Building : MonoBehaviour{
 	public Dictionary<Side, Building> Neighbours = new Dictionary<Side, Building>();
 	public List<Listener<ScoreType, float>> Listeners = new List<Listener<ScoreType, float>>();
 
-	public GameObject GameObjectGroundLevel, GameObjectBuilding;
-	public GameObject GameObjectFire, GameObjectWaterLevel, GameObjectSmokeAfterFire, GameObjectElectricity, GameObjectCrush, GameObjectHealthBar;
+ 
+	public GameObject GameObjectBuilding, GameObjectBackground, GameObjectFire, GameObjectWaterLevel, GameObjectSmokeAfterFire, GameObjectElectricity, GameObjectCrush, GameObjectHealthBar, GameObjectClickableAfterDeath;
 
 	private static Building GetNeighbour(Building b, Side s) {
 		if (s == Side.Center) {
@@ -47,28 +47,21 @@ public class Building : MonoBehaviour{
 
 		Building left = GetNeighbour(b, Side.Left);
 		if (left != null && (goq == null || goq(left))) {
-			left.GetComponent<Building>().TreatWith(e, startingValue);
+			left.GetComponent<Building>().TreatWith(e, startingValue, false);
 		}
 		Building right = GetNeighbour(b, Side.Right);
 		if (right != null && (goq == null || goq(right))) {
-			right.TreatWith(e, startingValue);
+			right.TreatWith(e, startingValue, false);
 		}
 
 		Building up = GetNeighbour(b, Side.Up);
 		if (up != null && (goq == null || goq(up))) {
-			up.TreatWith(e, startingValue);
+			up.TreatWith(e, startingValue, false);
 		}
 
 		Building down = GetNeighbour(b, Side.Down);
 		if (down != null && (goq == null || goq(down))) {
-			down.TreatWith(e, startingValue);
-		}
-	}
-
-	public void CataclysmTo(Element el, Building b, Side s) {
-		Building tmp = GetNeighbour(b, s);
-		if (tmp != null) {
-			tmp.TreatWith(el);
+			down.TreatWith(e, startingValue, false);
 		}
 	}
 
@@ -102,12 +95,8 @@ public class Building : MonoBehaviour{
 	private void Die(){
 		PlaySingleSound.SpawnSound(SoundManager.BuildingDown);
 
-		foreach (Element e in Template.Stats[StatType.AfterDeath].Keys.ToList()) {
-			if (Template.Stats[StatType.AfterDeath][e] > 0) {
-				TreatWith(e, Template.Stats[StatType.AfterDeath][e]);
-			}
-		}
-
+		TreatYourselfWithYourPower();
+		
 		foreach (Element e in Statuses.Keys.ToList()) {
 			if (Statuses[e].Value > 0 && Template.Stats[StatType.ContaminateDelta][e] > 0) {
 				TreatNeighboursWith(this, e, Statuses[e].Value + Template.Stats[StatType.ContaminateDelta][e], (Building b) => { return b.Health > 0; });
@@ -115,10 +104,24 @@ public class Building : MonoBehaviour{
 		}
 	}
 
+	private void TreatYourselfWithYourPower() {
+		foreach (Element e in Template.Stats[StatType.AfterDeath].Keys.ToList()) {
+			if (Template.Stats[StatType.AfterDeath][e] > 0) {
+				TreatWith(e, Template.Stats[StatType.AfterDeath][e], true);
+			}
+		}
+	}
+
 	private void ExtinguishFireCheck(){
 		if (Statuses[Element.Water].Value > 0 && Statuses[Element.Fire].Value > 0) {
 			Statuses[Element.Fire].StopNow();
-			Statuses[Element.SmokeAfterFire].Add();
+			Statuses[Element.SmokeAfterFire].Add(1, false);
+		}
+	}
+
+	private void DryElectricityCheck() {
+		if (Statuses[Element.Electricity].Value > 0 && Statuses[Element.Water].Value <= 0 && Health > 0) {
+			Statuses[Element.Fire].Add(1, false);
 		}
 	}
 
@@ -129,6 +132,7 @@ public class Building : MonoBehaviour{
 		}
 
 		ExtinguishFireCheck();
+		DryElectricityCheck();
 
 		foreach (Element status in Statuses.Keys.ToList()) {
 			Health -= Statuses[status].UpdateAndGetDamage();
@@ -136,7 +140,7 @@ public class Building : MonoBehaviour{
 
 		foreach (Element e in FillRequirement.Keys.ToList()) {
 			if (Statuses[e].CanFill()) {
-				Statuses[e].Fill(); //so it won't fill too quickly
+				Statuses[e].FilledNow(); //so it won't fill too quickly
 				TreatNeighboursWith(this, e, Statuses[e].Value, FillRequirement[e]);
 			}
 		}
@@ -160,8 +164,6 @@ public class Building : MonoBehaviour{
 
 			GameObjectBuilding.GetComponent<RectTransform>().offsetMin = new Vector2(0, 0);
 			GameObjectBuilding.GetComponent<RectTransform>().offsetMax = new Vector2(0, 0);
-
-			//GameObjectBuilding.GetComponent<RectTransform>().rect = new Rect(r.xMin, 0, r.width, r.height);
 		}
 		Sprite actualSprite = GameObjectBuilding.GetComponent<Image> ().sprite;
 		if (actualSprite != s){
@@ -173,11 +175,23 @@ public class Building : MonoBehaviour{
 		GameObjectHealthBar.transform.parent.gameObject.SetActive (Health > 0 && Health < 1);
 	}
 
-	public void TreatWith(Element e, float startingValue=1){
-		Statuses[e].Add(startingValue);
+	public void TreatWith(Element e, float startingValue, bool isSource){
+		if (Statuses[e].Add(startingValue, isSource) > 0 && Health > 0) {
+			TreatYourselfWithYourPower();
+		}
 	}
 
 	internal void CreateFromTemplate(BuildingTemplate bt) {
+
+		/*Debug.Log("Creating event from template");
+		EventTrigger.Entry entry = new EventTrigger.Entry();
+		entry.eventID = EventTriggerType.PointerDown;
+		entry.callback = new EventTrigger.TriggerEvent();
+		UnityEngine.Events.UnityAction<BaseEventData> callback = new UnityEngine.Events.UnityAction<BaseEventData>(Clicked);
+		entry.callback.AddListener(callback);
+		GameObjectBackground.GetComponent<EventTrigger>().delegates.Add(entry);
+		 * */
+
 		Template = bt;
 		StartingPopulation = _Population = Template.Population;
 		_Health = Template.StartingHealth;
@@ -193,25 +207,37 @@ public class Building : MonoBehaviour{
 						(	 //side up check if is in water
 							GetNeighbour(b, Side.Up) != null &&
 							GetNeighbour(b, Side.Up).Statuses[Element.Water].Value > 0 &&
-							GetNeighbour(b, Side.Up).Health == 0
+							(
+								GetNeighbour(b, Side.Up).Health == 0 || 
+								GetNeighbour(b, Side.Up).Statuses[Element.Water].IsSource()
+							)
 						)
 						||
 						(	 //side down check if is in water
 							GetNeighbour(b, Side.Down) != null &&
 							GetNeighbour(b, Side.Down).Statuses[Element.Water].Value > 0 &&
-							GetNeighbour(b, Side.Down).Health == 0
+							(
+								GetNeighbour(b, Side.Down).Health == 0 ||
+								GetNeighbour(b, Side.Down).Statuses[Element.Water].IsSource()
+							)
 						)
 						||
 						(	 //side left check if is in water
 							GetNeighbour(b, Side.Left) != null &&
 							GetNeighbour(b, Side.Left).Statuses[Element.Water].Value > 0  &&
-							GetNeighbour(b, Side.Left).Health == 0
+							(
+								GetNeighbour(b, Side.Left).Health == 0 ||
+								GetNeighbour(b, Side.Left).Statuses[Element.Water].IsSource()
+							)
 						)
 						||
 						(	 //side right check if is in water
 							GetNeighbour(b, Side.Right) != null &&
 							GetNeighbour(b, Side.Right).Statuses[Element.Water].Value > 0 &&
-							GetNeighbour(b, Side.Right).Health == 0
+							(
+								GetNeighbour(b, Side.Right).Health == 0 ||
+								GetNeighbour(b, Side.Right).Statuses[Element.Water].IsSource()
+							)
 						)
 					)
 				)
@@ -246,7 +272,9 @@ public class Building : MonoBehaviour{
 		foreach (Listener<ScoreType, float> l in Listeners) {
 			l.Inform(ScoreType.Interventions, 1f);
 		}
-		TreatWith(Element.Crush);
-		TreatWith(Element.Fire);
+
+		foreach (Element e in Game.Me.TouchPowers) {
+			TreatWith(e, 1, true);
+		}
 	}
 }

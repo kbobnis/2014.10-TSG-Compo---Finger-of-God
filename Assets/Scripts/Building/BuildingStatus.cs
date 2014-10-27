@@ -7,7 +7,7 @@ using UnityEngine.UI;
 
 public class BuildingStatus {
 
-	private float Status;
+	private float _Status;
 	private GameObject GameObject;
 	private Sprite[] Animation;
 	private AudioClip Sound;
@@ -15,10 +15,10 @@ public class BuildingStatus {
 	private float EffectTime;
 	private float LastFill = 0;
 	private float StrikeDamage;
-
 	private float StrikeDamageWaiting;
 	private float FillSpeed;
 
+	private bool _IsSource;
 
 	public float Value {
 		get { return Status; }
@@ -35,27 +35,46 @@ public class BuildingStatus {
 		FillSpeed = fillSpeed;
     }
 
-	internal void Add(float startingValue=1) {
+	private float Status {
+		set { 
+			if (value <= 0) {
+				_IsSource = false;
+			}
+			_Status = value;
+		}
+		get { return _Status;  }
+	}
+
+	internal float Add(float startingValue, bool triggerPower) {
 
 		PlaySingleSound.SpawnSound(Sound);
 	
 		if (startingValue > Status){
 			Status  = startingValue;
-			Fill(); //so it will fill neighbours in next turn
+			FilledNow(); //so it will fill neighbours in next turn
 		}
 		StrikeDamageWaiting += StrikeDamage;
+		_IsSource = triggerPower;
+		return StrikeDamage;
+	}
+
+	internal bool IsSource() {
+		return _IsSource;
 	}
 
 	internal float UpdateAndGetDamage() {
 
 		if (EffectTime > 0) {
 			Status += -1 / EffectTime * Time.deltaTime;
+		} else {
+			Status = 0;
 		}
 		if (Status < 0) {
 			Status = 0;
+
 		}
 		
-		GameObject.SetActive(Status > 0);
+		GameObject.SetActive( Status > 0);
 		if (Status > 0) {
 
 			float progress = 1 - Status;
@@ -79,9 +98,11 @@ public class BuildingStatus {
 		return Status > 0 && FillSpeed > 0 && Time.time - LastFill > FillSpeed ;
 	}
 
-	internal void Fill() {
+	internal void FilledNow() {
 		LastFill = Time.time;
 	}
 
-	
+
+
+
 }

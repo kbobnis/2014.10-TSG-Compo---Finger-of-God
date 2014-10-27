@@ -11,6 +11,7 @@ public class Game : MonoBehaviour {
 
 	public string UserName = "Anonymous";
 	public Dictionary<int, BuildingTemplate> BuildingTemplates = new Dictionary<int, BuildingTemplate>();
+	public List<Element> TouchPowers = new List<Element>();
 
 	public static Game Me;
 
@@ -66,6 +67,10 @@ public class Game : MonoBehaviour {
 			float health = float.Parse( buildingXml.Attributes["health"].Value == "" ? "1" : buildingXml.Attributes["health"].Value);
 
 			BuildingTemplates.Add(id, new BuildingTemplate(id, name, population, health, imagePath, imageDPath, thisStats));
+		}
+
+		foreach (XmlNode power in model.GetElementsByTagName("power")) {
+			TouchPowers.Add((Element)power.Attributes["elId"].Value);
 		}
 
 		PanelLoading.GetComponent<PanelLoading>().Ready();
