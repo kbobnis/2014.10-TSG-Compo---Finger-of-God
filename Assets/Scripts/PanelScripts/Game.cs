@@ -14,11 +14,21 @@ public class Game : MonoBehaviour {
 
 	public static Game Me;
 
-	void Start () {
+	void Awake () {
 		Me = this;
+		Game.Me.GetComponent<GoogleAnalyticsV3>().StartSession();
 
 		SayLoading();
 		StartCoroutine(LoadXml());
+		
+	}
+
+	void OnApplicatoinPause(bool pauseStatus) {
+		if (pauseStatus == false) {
+			GetComponent<GoogleAnalyticsV3>().StopSession();
+		} else {
+			GetComponent<GoogleAnalyticsV3>().StartSession();
+		}
 	}
 
 	private IEnumerator LoadXml() {

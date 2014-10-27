@@ -46,6 +46,23 @@
 	</Reference>
   </ItemGroup>
   <ItemGroup>
+     <Compile Include="Assets\plugins\GoogleAnalyticsV3\Attributes\RangedTooltipAttribute.cs" />
+     <Compile Include="Assets\plugins\GoogleAnalyticsV3\Attributes\TooltipAttribute.cs" />
+     <Compile Include="Assets\plugins\GoogleAnalyticsV3\Field.cs" />
+     <Compile Include="Assets\plugins\GoogleAnalyticsV3\Fields.cs" />
+     <Compile Include="Assets\plugins\GoogleAnalyticsV3\GAIHandler.cs" />
+     <Compile Include="Assets\plugins\GoogleAnalyticsV3\GoogleAnalyticsAndroidV3.cs" />
+     <Compile Include="Assets\plugins\GoogleAnalyticsV3\GoogleAnalyticsMPV3.cs" />
+     <Compile Include="Assets\plugins\GoogleAnalyticsV3\GoogleAnalyticsV3.cs" />
+     <Compile Include="Assets\plugins\GoogleAnalyticsV3\GoogleAnalyticsiOSV3.cs" />
+     <Compile Include="Assets\plugins\GoogleAnalyticsV3\HitBuilders\AppViewHitBuilder.cs" />
+     <Compile Include="Assets\plugins\GoogleAnalyticsV3\HitBuilders\EventHitBuilder.cs" />
+     <Compile Include="Assets\plugins\GoogleAnalyticsV3\HitBuilders\ExceptionHitBuilder.cs" />
+     <Compile Include="Assets\plugins\GoogleAnalyticsV3\HitBuilders\HitBuilder.cs" />
+     <Compile Include="Assets\plugins\GoogleAnalyticsV3\HitBuilders\ItemHitBuilder.cs" />
+     <Compile Include="Assets\plugins\GoogleAnalyticsV3\HitBuilders\SocialHitBuilder.cs" />
+     <Compile Include="Assets\plugins\GoogleAnalyticsV3\HitBuilders\TimingHitBuilder.cs" />
+     <Compile Include="Assets\plugins\GoogleAnalyticsV3\HitBuilders\TransactionHitBuilder.cs" />
      <Compile Include="Assets\plugins\SimpleJSON.cs" />
  <Reference Include="UnityEngine.UI">
  <HintPath>C:/Program Files (x86)/Unity/Editor/Data/UnityExtensions/Unity/GUISystem/4.6.0/UnityEngine.UI.dll</HintPath>

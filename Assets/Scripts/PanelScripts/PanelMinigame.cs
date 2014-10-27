@@ -12,6 +12,9 @@ public class PanelMinigame : MonoBehaviour, Listener<ScoreType, float> {
 
 	public void PrepareGame(Mission m, List<Listener<ScoreType, float>> scoreTypeListeners) {
 
+		Debug.Log("logging screen.");
+		Game.Me.GetComponent<GoogleAnalyticsV3>().LogScreen(m.MissionType.ToString());
+
 		scoreTypeListeners.Add(this);
 		ScoreTypeListeners = scoreTypeListeners;
 		foreach (Listener<ScoreType, float> l in ScoreTypeListeners) {
