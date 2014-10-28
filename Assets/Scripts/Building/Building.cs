@@ -19,6 +19,7 @@ public class Building : MonoBehaviour{
 	private float _Health = 1f;
 	private Vector3 startingPos;
 	private Vector2 OriginalOffsetMin, OriginalOffsetMax;
+	private bool UpdateHeightNeeded = true;
 
 	public Dictionary<Side, Building> Neighbours = new Dictionary<Side, Building>();
 	public List<Listener<ScoreType, float>> Listeners = new List<Listener<ScoreType, float>>();
@@ -87,13 +88,16 @@ public class Building : MonoBehaviour{
 			}
 			InformListeners();
 			if (!wasDead && _Health == 0){
+				UpdateHeightNeeded = true;
 				Die();
 			}
 		}
 	}
 
 	private void Die(){
+		//int middleRow = 
 		PlaySingleSound.SpawnSound(SoundManager.BuildingDown);
+
 
 		TreatYourselfWithYourPower();
 		
@@ -162,9 +166,18 @@ public class Building : MonoBehaviour{
 		if (Health <= 0){
 			s = Template.ImageD;
 
-			GameObjectBuilding.GetComponent<RectTransform>().offsetMin = new Vector2(0, 0);
-			GameObjectBuilding.GetComponent<RectTransform>().offsetMax = new Vector2(0, 0);
 		}
+
+		if (UpdateHeightNeeded) {
+			UpdateHeightNeeded = false;
+
+			Rect before = GameObjectBuilding.GetComponent<RectTransform>().rect;
+			float scale = before.width / s.rect.width;
+			float targetHeight = scale * s.rect.height;
+			GameObjectBuilding.GetComponent<RectTransform>().offsetMax = new Vector2(0, targetHeight);
+		}
+
+
 		Sprite actualSprite = GameObjectBuilding.GetComponent<Image> ().sprite;
 		if (actualSprite != s){
 			GameObjectBuilding.GetComponent<Image> ().sprite = s;
@@ -182,15 +195,6 @@ public class Building : MonoBehaviour{
 	}
 
 	internal void CreateFromTemplate(BuildingTemplate bt) {
-
-		/*Debug.Log("Creating event from template");
-		EventTrigger.Entry entry = new EventTrigger.Entry();
-		entry.eventID = EventTriggerType.PointerDown;
-		entry.callback = new EventTrigger.TriggerEvent();
-		UnityEngine.Events.UnityAction<BaseEventData> callback = new UnityEngine.Events.UnityAction<BaseEventData>(Clicked);
-		entry.callback.AddListener(callback);
-		GameObjectBackground.GetComponent<EventTrigger>().delegates.Add(entry);
-		 * */
 
 		Template = bt;
 		StartingPopulation = _Population = Template.Population;

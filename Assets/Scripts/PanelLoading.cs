@@ -21,6 +21,9 @@ public class PanelLoading : MonoBehaviour {
 	
 	}
 
+
+	//PanelLoading.GetComponent<PanelLoading>().TapToLoad("Error: " + www.error + "\n Retrying for the " + (RetryTimes++) + " time", () => { ReadyToPlay(); }, () => { StartCoroutine(LoadXml()); } );
+
 	public void SetLoading(string text, JustDo justDo) {
 		JustDo = justDo;
 		TextLoading.GetComponent<Text>().text = text;
@@ -29,7 +32,6 @@ public class PanelLoading : MonoBehaviour {
 	}
 
 	internal void Ready() {
-		Continue();
 		TextTap.SetActive(true);
 		GetComponent<EventTrigger>().enabled = true;
 		TextLoading.GetComponent<Text>().text = "Ready to play";

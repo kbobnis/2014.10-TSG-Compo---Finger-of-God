@@ -10,13 +10,11 @@ public class SoundManager : MonoBehaviour{
 
 	static SoundManager(){
 		Clips.Add (Element.Electricity, Resources.Load<AudioClip> ("Sounds/piorun"));
-		Clips.Add (Element.Crush, Resources.Load<AudioClip> ("Sounds/budynek"));
+		Clips.Add (Element.Crush, null);//Resources.Load<AudioClip> ("Sounds/budynek"));
 		Clips.Add (Element.Fire, Resources.Load<AudioClip> ("Sounds/ogien"));
 		Clips.Add (Element.Water, Resources.Load<AudioClip> ("Sounds/water"));
 		Clips.Add (Element.SmokeAfterFire, Resources.Load<AudioClip> ("Sounds/extinguishFire"));
-
-		BuildingDown = Resources.Load<AudioClip> ("Sounds/building_down");
-
+		BuildingDown = Resources.Load<AudioClip> ("Sounds/building_down_short");
 
 		Ambient = Resources.Load<AudioClip> ("Sounds/muzyczka");
 	}

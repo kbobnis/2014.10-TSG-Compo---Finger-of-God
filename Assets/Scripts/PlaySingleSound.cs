@@ -1,33 +1,67 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 
-public class PlaySingleSound : MonoBehaviour
-{
-	float sound_start = 0f;
+public class PlaySingleSound : MonoBehaviour {
 
-	// Update is called once per frame
-	void Update ()
-	{
-		if (sound_start == 0f) {
-			sound_start = Time.realtimeSinceStartup;
-		}
-		if(audio != null && Time.realtimeSinceStartup - sound_start > audio.clip.length ) {
-			GameObject.Destroy( gameObject );
-		}
-	}
+	
+	private static Dictionary<AudioClip, OneSound> Sounds = new Dictionary<AudioClip, OneSound>();
 
-	public static void SpawnSound( AudioClip clip, float volume=0.06f )
-	{
+	private float SoundStart = 0f;
+	public OneSound MySound;
+
+	public static void SpawnSound( AudioClip clip, float pan=0){
+		return;
+		float volume = 0.5f;
 		if (clip != null){
-			GameObject go = new GameObject( "sound clip: " + clip.name );
 
-			AudioSource audio = go.AddComponent<AudioSource>();
-			audio.volume = 0f;// volume;
-			audio.clip = clip;
-			//audio.rolloffMode = AudioRolloffMode.Linear;
-			audio.Play();
-
-			PlaySingleSound play_sound = go.AddComponent<PlaySingleSound>();
+			if (!Sounds.ContainsKey(clip)) {
+				Sounds.Add(clip, new OneSound(clip, volume));
+			}
+			Sounds[clip].PlayAnother(pan);
 		}
 	}
+
+	void Update() {
+		if (SoundStart == 0f && MySound != null) {
+			SoundStart = Time.realtimeSinceStartup;
+		}
+		if (audio != null && Time.realtimeSinceStartup - SoundStart > audio.clip.length) {
+			MySound.ActuallyPlaying--;
+			GameObject.Destroy(gameObject);
+		}
+	}
+}
+
+public class OneSound {
+
+	private AudioClip AudioClip;
+	private float Volume;
+	public int ActuallyPlaying;
+	private int MaxSimult = 2;
+	private float MinDelay = 0.05f;
+	private float LastPlay;
+
+	public OneSound(AudioClip ac, float volume) {
+		AudioClip = ac;
+		Volume = volume;
+	}
+
+	public void PlayAnother(float pan) {
+		if (ActuallyPlaying < MaxSimult && Time.time - MinDelay > LastPlay) {
+			LastPlay = Time.time;
+			ActuallyPlaying++;
+			GameObject go = new GameObject("sound clip: " + AudioClip.name);
+			AudioSource audio = go.AddComponent<AudioSource>();
+			audio.volume = Volume;// -(Volume / MaxSimult * ActuallyPlaying);
+			audio.pan = pan==0?Random.Range(-1, 1):pan;
+			audio.clip = AudioClip;
+			audio.panLevel = -1f;
+			audio.Play();
+			PlaySingleSound playSound = go.AddComponent<PlaySingleSound>();
+			playSound.MySound = this;
+		}
+	}
+
+
 }

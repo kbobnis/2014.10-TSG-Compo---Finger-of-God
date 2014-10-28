@@ -12,6 +12,7 @@ public class Game : MonoBehaviour {
 	public string UserName = "Anonymous";
 	public Dictionary<int, BuildingTemplate> BuildingTemplates = new Dictionary<int, BuildingTemplate>();
 	public List<Element> TouchPowers = new List<Element>();
+	private int RetryTimes;
 
 	public static Game Me;
 
@@ -36,44 +37,51 @@ public class Game : MonoBehaviour {
 		WWW www = WebConnector.GetInitialData();
 		yield return www;
 
-		JSONNode n = JSONNode.Parse(www.text);
+		if (!string.IsNullOrEmpty( www.error)) {
+			Debug.Log("www error: " + www.error);
 
-		XmlDocument model = new XmlDocument();
-		string modelString = WWW.UnEscapeURL(n["model"]);
-		model.LoadXml( modelString );
-		
-		XmlNode defaultsXml = model.GetElementsByTagName("defaults")[0];
+			//PanelLoading.GetComponent<PanelLoading>().TapToLoad("Error: " + www.error + "\n Retrying for the " + (RetryTimes++) + " time", () => { ReadyToPlay(); }, () => { StartCoroutine(LoadXml()); } );
+		} else {
 
-		Dictionary<StatType, Dictionary<Element, float>> defaultStats = ParseStats(defaultsXml.ChildNodes);
+			JSONNode n = JSONNode.Parse(www.text);
 
-		foreach (XmlNode buildingXml in model.GetElementsByTagName("building")) {
+			XmlDocument model = new XmlDocument();
+			string modelString = WWW.UnEscapeURL(n["model"]);
+			model.LoadXml(modelString);
 
-			Dictionary<StatType, Dictionary<Element, float>> thisStats = ParseStats(buildingXml.ChildNodes);
-			foreach(StatType st in defaultStats.Keys.ToList()){
-				foreach (Element el in defaultStats[st].Keys.ToList()) {
-					if (!thisStats.ContainsKey(st)) {
-						thisStats.Add(st, defaultStats[st]);
-					}
-					if (!thisStats[st].ContainsKey(el)) {
-						thisStats[st].Add(el, defaultStats[st][el]);
+			XmlNode defaultsXml = model.GetElementsByTagName("defaults")[0];
+
+			Dictionary<StatType, Dictionary<Element, float>> defaultStats = ParseStats(defaultsXml.ChildNodes);
+
+			foreach (XmlNode buildingXml in model.GetElementsByTagName("building")) {
+
+				Dictionary<StatType, Dictionary<Element, float>> thisStats = ParseStats(buildingXml.ChildNodes);
+				foreach (StatType st in defaultStats.Keys.ToList()) {
+					foreach (Element el in defaultStats[st].Keys.ToList()) {
+						if (!thisStats.ContainsKey(st)) {
+							thisStats.Add(st, defaultStats[st]);
+						}
+						if (!thisStats[st].ContainsKey(el)) {
+							thisStats[st].Add(el, defaultStats[st][el]);
+						}
 					}
 				}
+				int id = int.Parse(buildingXml.Attributes["id"].Value);
+				string name = buildingXml.Attributes["name"].Value;
+				int population = int.Parse(buildingXml.Attributes["population"].Value);
+				string imagePath = buildingXml.Attributes["image"].Value;
+				string imageDPath = buildingXml.Attributes["imageDestroyed"].Value;
+				float health = float.Parse(buildingXml.Attributes["health"].Value == "" ? "1" : buildingXml.Attributes["health"].Value);
+
+				BuildingTemplates.Add(id, new BuildingTemplate(id, name, population, health, imagePath, imageDPath, thisStats));
 			}
-			int id = int.Parse( buildingXml.Attributes["id"].Value );
-			string name = buildingXml.Attributes["name"].Value;
-			int population = int.Parse( buildingXml.Attributes["population"].Value );
-			string imagePath = buildingXml.Attributes["image"].Value;
-			string imageDPath = buildingXml.Attributes["imageDestroyed"].Value;
-			float health = float.Parse( buildingXml.Attributes["health"].Value == "" ? "1" : buildingXml.Attributes["health"].Value);
 
-			BuildingTemplates.Add(id, new BuildingTemplate(id, name, population, health, imagePath, imageDPath, thisStats));
+			foreach (XmlNode power in model.GetElementsByTagName("power")) {
+				TouchPowers.Add((Element)power.Attributes["elId"].Value);
+			}
+
+			PanelLoading.GetComponent<PanelLoading>().Ready();
 		}
-
-		foreach (XmlNode power in model.GetElementsByTagName("power")) {
-			TouchPowers.Add((Element)power.Attributes["elId"].Value);
-		}
-
-		PanelLoading.GetComponent<PanelLoading>().Ready();
 	}
 
 	private Dictionary<StatType, Dictionary<Element, float>> ParseStats(XmlNodeList statsXml) {
