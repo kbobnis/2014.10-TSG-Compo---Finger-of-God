@@ -1,10 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using UnityEngine;
 using SimpleJSON;
-using System.Collections;
 
 public enum MissionStatus {
 	Failure, Success, NotYetDetermined
@@ -22,7 +20,7 @@ public class Mission {
 	
 	public string BeforeMissionText = "";
 	public string TipText = "";
-	public BuildingTemplate BeforeMissionBuilding;
+	public List<BuildingTemplate> BeforeMissionBuildings = new List<BuildingTemplate>();
 
 	private int _Number;
 	private MissionType _MissionType;
@@ -86,10 +84,19 @@ public class Mission {
 		
 		SuccessQueries.Add(new AchievQuery(ScoreType.Population, Sign.Equal, 0));
 		
-		int buildingInt = n["properties"]["BeforeImage"].AsInt;
-
-		BeforeMissionBuilding = Game.Me.BuildingTemplates.ContainsKey(buildingInt)?Game.Me.BuildingTemplates[buildingInt]:Game.Me.BuildingTemplates[1];
-		
+		string buildingsValue = n["properties"]["BeforeImage"].Value;
+		if (!string.IsNullOrEmpty( buildingsValue) ) {
+			string[] elements = buildingsValue.Split(new char[]{','});
+			foreach (string el in elements) {
+				int tmp = int.Parse(el);
+				BeforeMissionBuildings.Add( Game.Me.BuildingTemplates[tmp]);
+			}
+		}
+		if (BeforeMissionBuildings.Count < 4) {
+			foreach(BuildingTemplate b in RandomValues(Game.Me.BuildingTemplates).Take(4 - BeforeMissionBuildings.Count)){
+				BeforeMissionBuildings.Add(b);
+			}
+		}
 		int i=0; 
 		List<BuildingTemplate> bRow = null;
 		foreach (JSONNode tile in buildingsLayerJson["data"].Childs) {
@@ -103,6 +110,15 @@ public class Mission {
 			i++;
 		}
 		Buildings.Add(bRow);
+	}
+
+	public IEnumerable<TValue> RandomValues<TKey, TValue>(IDictionary<TKey, TValue> dict) {
+		System.Random rand = new System.Random();
+		List<TValue> values = Enumerable.ToList(dict.Values);
+		int size = dict.Count;
+		while (true) {
+			yield return values[rand.Next(size)];
+		}
 	}
 
 }

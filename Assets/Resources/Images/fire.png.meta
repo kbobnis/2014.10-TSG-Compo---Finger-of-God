@@ -69,9 +69,9 @@ TextureImporter:
         x: 0
         y: 44
         width: 35
-        height: 43
-      alignment: 0
-      pivot: {x: .5, y: .5}
+        height: 38
+      alignment: 7
+      pivot: {x: .5, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
     - name: fire_1
       rect:
@@ -79,9 +79,9 @@ TextureImporter:
         x: 35
         y: 44
         width: 35
-        height: 43
-      alignment: 0
-      pivot: {x: .5, y: .5}
+        height: 37
+      alignment: 7
+      pivot: {x: .5, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
     - name: fire_2
       rect:
@@ -89,9 +89,9 @@ TextureImporter:
         x: 70
         y: 44
         width: 35
-        height: 43
-      alignment: 0
-      pivot: {x: .5, y: .5}
+        height: 31
+      alignment: 7
+      pivot: {x: .5, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
     - name: fire_3
       rect:
@@ -99,9 +99,9 @@ TextureImporter:
         x: 105
         y: 44
         width: 35
-        height: 43
-      alignment: 0
-      pivot: {x: .5, y: .5}
+        height: 30
+      alignment: 7
+      pivot: {x: .5, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
     - name: fire_4
       rect:
@@ -109,9 +109,9 @@ TextureImporter:
         x: 140
         y: 44
         width: 35
-        height: 43
-      alignment: 0
-      pivot: {x: .5, y: .5}
+        height: 25
+      alignment: 7
+      pivot: {x: .5, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
     - name: fire_5
       rect:
@@ -119,9 +119,9 @@ TextureImporter:
         x: 175
         y: 44
         width: 35
-        height: 43
-      alignment: 0
-      pivot: {x: .5, y: .5}
+        height: 25
+      alignment: 7
+      pivot: {x: .5, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
     - name: fire_6
       rect:
@@ -129,9 +129,9 @@ TextureImporter:
         x: 210
         y: 44
         width: 35
-        height: 43
-      alignment: 0
-      pivot: {x: .5, y: .5}
+        height: 25
+      alignment: 7
+      pivot: {x: .5, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
     - name: fire_7
       rect:
@@ -139,9 +139,9 @@ TextureImporter:
         x: 245
         y: 44
         width: 35
-        height: 43
-      alignment: 0
-      pivot: {x: .5, y: .5}
+        height: 25
+      alignment: 7
+      pivot: {x: .5, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
     - name: fire_8
       rect:
@@ -149,9 +149,9 @@ TextureImporter:
         x: 280
         y: 44
         width: 35
-        height: 43
-      alignment: 0
-      pivot: {x: .5, y: .5}
+        height: 21
+      alignment: 7
+      pivot: {x: .5, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
     - name: fire_9
       rect:
@@ -159,19 +159,19 @@ TextureImporter:
         x: 315
         y: 44
         width: 35
-        height: 43
-      alignment: 0
-      pivot: {x: .5, y: .5}
+        height: 21
+      alignment: 7
+      pivot: {x: .5, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
     - name: fire_10
       rect:
         serializedVersion: 2
         x: 0
-        y: 1
+        y: 0
         width: 35
-        height: 43
-      alignment: 0
-      pivot: {x: .5, y: .5}
+        height: 10
+      alignment: 7
+      pivot: {x: .5, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
     - name: fire_11
       rect:
@@ -179,9 +179,9 @@ TextureImporter:
         x: 35
         y: 1
         width: 35
-        height: 43
-      alignment: 0
-      pivot: {x: .5, y: .5}
+        height: 5
+      alignment: 7
+      pivot: {x: .5, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
   spritePackingTag: 
   userData: 

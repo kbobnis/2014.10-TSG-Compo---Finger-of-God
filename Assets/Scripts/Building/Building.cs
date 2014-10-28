@@ -22,10 +22,10 @@ public class Building : MonoBehaviour{
 	private bool UpdateHeightNeeded = true;
 
 	public Dictionary<Side, Building> Neighbours = new Dictionary<Side, Building>();
-	public List<Listener<ScoreType, float>> Listeners = new List<Listener<ScoreType, float>>();
+	public List<Listener<ScoreType, float>> Listeners;
 
  
-	public GameObject GameObjectBuilding, GameObjectBackground, GameObjectFire, GameObjectWaterLevel, GameObjectSmokeAfterFire, GameObjectElectricity, GameObjectCrush, GameObjectHealthBar, GameObjectClickableAfterDeath;
+	public GameObject GameObjectBuilding, GameObjectFire, GameObjectWaterLevel, GameObjectSmokeAfterFire, GameObjectElectricity, GameObjectCrush, GameObjectHealthBar;
 
 	private static Building GetNeighbour(Building b, Side s) {
 		if (s == Side.Center) {
@@ -154,7 +154,7 @@ public class Building : MonoBehaviour{
 	public void InformListeners(){
 		_Population = (int)(Health * StartingPopulation);
 		int d = PopulationDelta;
-		if (d != 0 ) {
+		if (d != 0 && Listeners != null) {
 			foreach(Listener<ScoreType, float> l in Listeners){
 				l.Inform(ScoreType.Population, d);
 			}
@@ -174,7 +174,8 @@ public class Building : MonoBehaviour{
 			Rect before = GameObjectBuilding.GetComponent<RectTransform>().rect;
 			float scale = before.width / s.rect.width;
 			float targetHeight = scale * s.rect.height;
-			GameObjectBuilding.GetComponent<RectTransform>().offsetMax = new Vector2(0, targetHeight);
+			Vector2 oldOffsetMax = GameObjectBuilding.GetComponent<RectTransform>().offsetMax;
+			GameObjectBuilding.GetComponent<RectTransform>().offsetMax = new Vector2(oldOffsetMax.x, targetHeight);
 		}
 
 
@@ -273,8 +274,10 @@ public class Building : MonoBehaviour{
 	}
 
 	public void Clicked(BaseEventData b) {
-		foreach (Listener<ScoreType, float> l in Listeners) {
-			l.Inform(ScoreType.Interventions, 1f);
+		if (Listeners != null) {
+			foreach (Listener<ScoreType, float> l in Listeners) {
+				l.Inform(ScoreType.Interventions, 1f);
+			}
 		}
 
 		foreach (Element e in Game.Me.TouchPowers) {

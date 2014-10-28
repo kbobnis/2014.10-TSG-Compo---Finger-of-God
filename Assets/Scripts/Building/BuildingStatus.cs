@@ -81,7 +81,13 @@ public class BuildingStatus {
 
 			Image im = GameObject.GetComponent<Image>();
 			Sprite[] ss = Animation;
-			im.sprite = ss[Mathf.RoundToInt(progress * (ss.Length - 1))];
+			Sprite s = im.sprite = ss[Mathf.RoundToInt(progress * (ss.Length - 1))];
+
+			Rect before = GameObject.GetComponent<RectTransform>().rect;
+			float scale = before.width / s.rect.width;
+			float targetHeight = scale * s.rect.height;
+			Vector2 oldOffsetMax = GameObject.GetComponent<RectTransform>().offsetMax;
+			GameObject.GetComponent<RectTransform>().offsetMax = new Vector2(oldOffsetMax.x, targetHeight);
 		}
 
 		float damage = (Status > 0 ?( EffectDamage * Time.deltaTime): 0) + StrikeDamageWaiting;
