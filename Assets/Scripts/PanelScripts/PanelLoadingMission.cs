@@ -5,13 +5,12 @@ using SimpleJSON;
 
 public class PanelLoadingMission : MonoBehaviour {
 
-	public GameObject PanelMainMenu, PanelBeforeMission, TextInfo, ButtonContinue, ButtonRestartLevels;
+	public GameObject PanelMainMenu, PanelBeforeMission, TextInfo, ButtonContinue, ButtonContinueText, ButtonRestartLevels;
 
 	// Use this for initialization
 	void Start () {
 		TextInfo.GetComponent<Text>().text = "Loading mission";
 		ButtonContinue.SetActive(false);
-		
 	}
 	
 	internal void LoadMission(MissionType mt) {
@@ -27,13 +26,13 @@ public class PanelLoadingMission : MonoBehaviour {
 
 	private IEnumerator LoadMissionCoroutine(MissionType mt) {
 		ButtonRestartLevels.SetActive(false);
-		ButtonContinue.SetActive(true);
 		WWW www = WebConnector.LoadMission(mt);
 		yield return www;
+		ButtonContinue.SetActive(true);
 
 		if (www.error != null) {
 			Debug.Log("Some errors occured: " + www.error);
-			TextInfo.GetComponent<Text>().text = "Error occured: " + www.error;
+			TextInfo.GetComponent<Text>().text = "Internet connection required: " + www.error;
 			ButtonContinue.GetComponentInChildren<Text>().text = "Return to main menu";
 			ButtonContinue.GetComponent<Button>().onClick.RemoveAllListeners();
 			ButtonContinue.GetComponent<Button>().onClick.AddListener(() => {
@@ -53,7 +52,7 @@ public class PanelLoadingMission : MonoBehaviour {
 				if (jsonMap == null || jsonMap == "" || jsonMap == "null") {
 					
 					TextInfo.GetComponent<Text>().text = "There are no more missions. \n\nVisit fb page for updates.";
-					ButtonContinue.GetComponentInChildren<Text>().text = "Return to main menu";
+					ButtonContinueText.GetComponent<Text>().text = "Return to main menu";
 					ButtonContinue.GetComponent<Button>().onClick.RemoveAllListeners();
 					ButtonContinue.GetComponent<Button>().onClick.AddListener(() => {
 						PanelMainMenu.SetActive(true);

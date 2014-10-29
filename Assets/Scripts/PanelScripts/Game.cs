@@ -7,22 +7,16 @@ using System.Linq;
 
 public class Game : MonoBehaviour {
 
+	public static Game Me;
 	public GameObject PanelMainMenu, PanelBeforeMission, PanelAfterMission, PanelLoadingMission, PanelTopBar, PanelLoading;
-
 	public string UserName = "Anonymous";
 	public Dictionary<int, BuildingTemplate> BuildingTemplates = new Dictionary<int, BuildingTemplate>();
 	public List<Element> TouchPowers = new List<Element>();
-	private int RetryTimes;
-
-	public static Game Me;
-
+	
 	void Awake () {
 		Me = this;
 		Game.Me.GetComponent<GoogleAnalyticsV3>().StartSession();
-
-		SayLoading();
-		StartCoroutine(LoadXml());
-		
+		PrepareLoading();
 	}
 
 	void OnApplicatoinPause(bool pauseStatus) {
@@ -33,54 +27,77 @@ public class Game : MonoBehaviour {
 		}
 	}
 
-	private IEnumerator LoadXml() {
+	private void PrepareLoading() {
+		PanelMainMenu.SetActive(false);
+		PanelBeforeMission.SetActive(false);
+		PanelAfterMission.SetActive(false);
+		PanelLoadingMission.SetActive(false);
+		PanelTopBar.SetActive(false);
+		PanelLoading.SetActive(true);
+
+		PanelLoading.GetComponent<PanelLoading>().TextTop = "Loading data";
+		PanelLoading.GetComponent<PanelLoading>().TextTap = "";
+		StartCoroutine(LoadData());
+	}
+
+	private IEnumerator LoadData() {
 		WWW www = WebConnector.GetInitialData();
 		yield return www;
 
 		if (!string.IsNullOrEmpty( www.error)) {
 			Debug.Log("www error: " + www.error);
 
-			//PanelLoading.GetComponent<PanelLoading>().TapToLoad("Error: " + www.error + "\n Retrying for the " + (RetryTimes++) + " time", () => { ReadyToPlay(); }, () => { StartCoroutine(LoadXml()); } );
+			PanelLoading.GetComponent<PanelLoading>().JustDo = () => { PrepareLoading(); };
+			PanelLoading.GetComponent<PanelLoading>().TextTop = "Internet connection required. (" + www.error + ")";
+			PanelLoading.GetComponent<PanelLoading>().TextTap = "Tap to retry";
 		} else {
+			ParseInitialData(www.text);
+			PanelLoading pl = PanelLoading.GetComponent<PanelLoading>();
+			PanelLoading.SetActive(false);
+			PanelMainMenu.SetActive(true);
+			PanelBeforeMission.SetActive(false);
+			PanelAfterMission.SetActive(false);
+			PanelLoadingMission.SetActive(false);
+			PanelTopBar.SetActive(true);
+		}
+	}
 
-			JSONNode n = JSONNode.Parse(www.text);
+	private void ParseInitialData(string initialDataJson) {
+		JSONNode n = JSONNode.Parse(initialDataJson);
 
-			XmlDocument model = new XmlDocument();
-			string modelString = WWW.UnEscapeURL(n["model"]);
-			model.LoadXml(modelString);
+		XmlDocument model = new XmlDocument();
+		string modelString = WWW.UnEscapeURL(n["model"]);
+		model.LoadXml(modelString);
 
-			XmlNode defaultsXml = model.GetElementsByTagName("defaults")[0];
+		XmlNode defaultsXml = model.GetElementsByTagName("defaults")[0];
 
-			Dictionary<StatType, Dictionary<Element, float>> defaultStats = ParseStats(defaultsXml.ChildNodes);
+		Dictionary<StatType, Dictionary<Element, float>> defaultStats = ParseStats(defaultsXml.ChildNodes);
 
-			foreach (XmlNode buildingXml in model.GetElementsByTagName("building")) {
+		foreach (XmlNode buildingXml in model.GetElementsByTagName("building")) {
 
-				Dictionary<StatType, Dictionary<Element, float>> thisStats = ParseStats(buildingXml.ChildNodes);
-				foreach (StatType st in defaultStats.Keys.ToList()) {
-					foreach (Element el in defaultStats[st].Keys.ToList()) {
-						if (!thisStats.ContainsKey(st)) {
-							thisStats.Add(st, defaultStats[st]);
-						}
-						if (!thisStats[st].ContainsKey(el)) {
-							thisStats[st].Add(el, defaultStats[st][el]);
-						}
+			Dictionary<StatType, Dictionary<Element, float>> thisStats = ParseStats(buildingXml.ChildNodes);
+			foreach (StatType st in defaultStats.Keys.ToList()) {
+				foreach (Element el in defaultStats[st].Keys.ToList()) {
+					if (!thisStats.ContainsKey(st)) {
+						thisStats.Add(st, defaultStats[st]);
+					}
+					if (!thisStats[st].ContainsKey(el)) {
+						thisStats[st].Add(el, defaultStats[st][el]);
 					}
 				}
-				int id = int.Parse(buildingXml.Attributes["id"].Value);
-				string name = buildingXml.Attributes["name"].Value;
-				int population = int.Parse(buildingXml.Attributes["population"].Value);
-				string imagePath = buildingXml.Attributes["image"].Value;
-				string imageDPath = buildingXml.Attributes["imageDestroyed"].Value;
-				float health = float.Parse(buildingXml.Attributes["health"].Value == "" ? "1" : buildingXml.Attributes["health"].Value);
-
-				BuildingTemplates.Add(id, new BuildingTemplate(id, name, population, health, imagePath, imageDPath, thisStats));
 			}
+			int id = int.Parse(buildingXml.Attributes["id"].Value);
+			string name = buildingXml.Attributes["name"].Value;
+			int population = int.Parse(buildingXml.Attributes["population"].Value);
+			string imagePath = buildingXml.Attributes["image"].Value;
+			string imageDPath = buildingXml.Attributes["imageDestroyed"].Value;
+			float health = float.Parse(buildingXml.Attributes["health"].Value == "" ? "1" : buildingXml.Attributes["health"].Value);
 
-			foreach (XmlNode power in model.GetElementsByTagName("power")) {
-				TouchPowers.Add((Element)power.Attributes["elId"].Value);
-			}
+			BuildingTemplates.Add(id, new BuildingTemplate(id, name, population, health, imagePath, imageDPath, thisStats));
+		}
 
-			PanelLoading.GetComponent<PanelLoading>().Ready();
+		foreach (XmlNode power in model.GetElementsByTagName("power")) {
+			TouchPowers.Add((Element)power.Attributes["elId"].Value);
 		}
 	}
 
@@ -108,24 +125,6 @@ public class Game : MonoBehaviour {
 			stats[type].Add(element, value);
 		}
 		return stats;
-	}
-
-	private void SayLoading() {
-		PanelMainMenu.SetActive(false);
-		PanelBeforeMission.SetActive(false);
-		PanelAfterMission.SetActive(false);
-		PanelLoadingMission.SetActive(false);
-		PanelTopBar.SetActive(false);
-		PanelLoading.SetActive(true);
-		PanelLoading.GetComponent<PanelLoading>().SetLoading("Loading ", () => { ReadyToPlay(); });
-	}
-
-	private void ReadyToPlay() {
-		PanelMainMenu.SetActive(true);
-		PanelBeforeMission.SetActive(false);
-		PanelAfterMission.SetActive(false);
-		PanelLoadingMission.SetActive(false);
-		PanelTopBar.SetActive(true);
 	}
 
 }

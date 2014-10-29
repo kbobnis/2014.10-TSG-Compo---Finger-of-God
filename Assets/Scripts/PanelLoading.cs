@@ -7,38 +7,22 @@ public delegate void JustDo();
 
 public class PanelLoading : MonoBehaviour {
 
-	public GameObject TextLoading, TextTap;
+	public GameObject GameObjectTextLoading, GameObjectTextTap;
 
-	private JustDo JustDo;
-
-	// Use this for initialization
-	void Start () {
-	
+	public JustDo JustDo;
+	public string TextTop {
+		set {
+			GameObjectTextLoading.GetComponent<Text>().text = value;
+		}
 	}
-	
-	// Update is called once per frame
-	void Update () {
-	
-	}
-
-
-	//PanelLoading.GetComponent<PanelLoading>().TapToLoad("Error: " + www.error + "\n Retrying for the " + (RetryTimes++) + " time", () => { ReadyToPlay(); }, () => { StartCoroutine(LoadXml()); } );
-
-	public void SetLoading(string text, JustDo justDo) {
-		JustDo = justDo;
-		TextLoading.GetComponent<Text>().text = text;
-		TextTap.SetActive(false);
-		GetComponent<EventTrigger>().enabled = false;
-	}
-
-	internal void Ready() {
-		TextTap.SetActive(true);
-		GetComponent<EventTrigger>().enabled = true;
-		TextLoading.GetComponent<Text>().text = "Ready to play";
+	public string TextTap {
+		set {
+			GameObjectTextTap.GetComponent<Text>().text = value;
+			GetComponent<EventTrigger>().enabled = value != "";
+		}
 	}
 
 	public void Continue() {
 		JustDo();
-		gameObject.SetActive(false);
 	}
 }
