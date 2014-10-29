@@ -165,7 +165,10 @@ public class Building : MonoBehaviour{
 		Sprite s = Template.Image;
 		if (Health <= 0){
 			s = Template.ImageD;
-
+		}
+		if (s == null) {
+			Debug.Log("Sprite has not yet been loaded");
+			return; 
 		}
 
 		if (UpdateHeightNeeded) {
