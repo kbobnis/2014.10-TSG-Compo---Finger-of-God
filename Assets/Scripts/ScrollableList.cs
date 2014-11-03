@@ -84,7 +84,7 @@ public class ScrollableList : MonoBehaviour
     }
 
 	public void Build(List<List<BuildingTemplate>> Buildings, List<Listener<ScoreType, float>> scoreTypeListeners) {
-		Debug.Log("columns: " + Buildings.Count + ", rows: " + Buildings[0].Count);
+		//Debug.Log("columns: " + Buildings.Count + ", rows: " + Buildings[0].Count);
 
 		foreach (GameObject go in ElementsToPut) {
 			Destroy(go);

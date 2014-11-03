@@ -8,21 +8,20 @@ using UnityEngine;
 class WebConnector {
 
 	private static string PrivateKey = "ion32gew9va09)HJ)(N#G()VENIDOSK><P[lp{>:MOF!RFWQ";
-	
-	public static string Server = "localhost/godsfingerserver/";
-	//public static string Server = "http://philon.pl/fingerOfGod/godsfingerserver/";
 
-	private static string Service = "index-test.php?r=site";
-	//private static string Service = "index.php?r=site";
+	public static string GetDeviceId() {
+		return SystemInfo.deviceUniqueIdentifier;
+	}
 
 	private static WWW CreateWWW(string method, WWWForm form) {
-		form.AddField("DeviceId", SystemInfo.deviceUniqueIdentifier);
+		form.AddField("DeviceId", GetDeviceId());
 		String data = System.Text.Encoding.UTF8.GetString(form.data);
 		MD5 md5 = MD5.Create();
-		string hash = GetMd5Hash(md5, data+"&key="+PrivateKey);
+		string builtString = data+"&key="+PrivateKey;
+		string hash = GetMd5Hash(md5, builtString);
 		form.AddField("Signature", hash);
-		//Debug.Log("form data: " + System.Text.Encoding.UTF8.GetString(form.data));
-		return new WWW(Server + Service + method, form);
+		Debug.Log("Sending post to " + method);
+		return new WWW(Config.Server + Config.IndexPath + method, form);
 	}
 
 	private static string GetMd5Hash(MD5 md5Hash, string input) {
@@ -44,13 +43,12 @@ class WebConnector {
 		return sBuilder.ToString();
 	}
 
-	internal static WWW SendMissionAccomplished(MissionType MissionType, int Number, int Round, MissionStatus ms, Dictionary<ScoreType, Result> actualResults) {
-
+	internal static WWW SendMissionAccomplished(MissionType MissionType, string MissionName, int Round, MissionStatus ms, Dictionary<ScoreType, Result> actualResults) {
 		int interventions = (int)actualResults[ScoreType.Interventions].Value;
 		float time = actualResults[ScoreType.Time].Value;
 		WWWForm form = new WWWForm();
 		form.AddField("MissionType", MissionType.ToString());
-		form.AddField("Number", Number);
+		form.AddField("MissionName", MissionName);
 		form.AddField("MissionStatus", ms.ToString());
 		form.AddField("Interventions", interventions);
 		form.AddField("Time", ""+ (int)( time*1000) );
@@ -67,7 +65,7 @@ class WebConnector {
 	internal static WWW ChangeName(string name, Mission Mission, Dictionary<ScoreType, Result> ActualResults) {
 		WWWForm form = new WWWForm();
 		form.AddField("Name", name);
-		form.AddField("Number", Mission.Number);
+		form.AddField("MissionName", Mission.Name);
 		form.AddField("MissionStatus", Mission.GetStatus(ActualResults).ToString());
 		form.AddField("MissionType", Mission.MissionType.ToString());
 		return CreateWWW("/changeNameAndGetResults", form);

@@ -49,7 +49,7 @@ public class SpriteManager : MonoBehaviour{
 	}
 
 	private IEnumerator LoadFromUrl(string path, LoadSprite ls){
-		string url =  WebConnector.Server + path;
+		string url =  Config.Server + path;
     
         WWW www = new WWW(url);
 		

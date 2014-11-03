@@ -22,7 +22,7 @@ public class Mission {
 	public string TipText = "";
 	public List<BuildingTemplate> BeforeMissionBuildings = new List<BuildingTemplate>();
 
-	private int _Number;
+	private string _Name;
 	private MissionType _MissionType;
 	private int _Round;
 
@@ -30,12 +30,12 @@ public class Mission {
 		get { return _MissionType;  }
 	}
 
-	public int Number {
-		get { return _Number;  }
+	public string Name {
+		get { return _Name;  }
 	}
 
 	public WWW SaveGame(Dictionary<ScoreType, Result> actualResults) {
-		return WebConnector.SendMissionAccomplished(_MissionType, _Number, _Round, GetStatus(actualResults), actualResults);
+		return WebConnector.SendMissionAccomplished(_MissionType, _Name, _Round, GetStatus(actualResults), actualResults);
 	}
 
 	public MissionStatus GetStatus(Dictionary<ScoreType, Result> results) {
@@ -63,9 +63,9 @@ public class Mission {
 		return MissionStatus.NotYetDetermined;
 	}
 
-	public Mission(string json, MissionType mt, int number, int round) {
+	public Mission(string json, MissionType mt, string name, int round) {
 		_MissionType = mt;
-		_Number = number;
+		_Name = name;
 		_Round = round;
 
 		JSONNode n = JSONNode.Parse(json);
@@ -83,17 +83,25 @@ public class Mission {
 		TipText = WWW.UnEscapeURL(n["properties"]["TipText"]);
 		
 		SuccessQueries.Add(new AchievQuery(ScoreType.Population, Sign.Equal, 0));
-		
+
+		int count = 0;
 		string buildingsValue = n["properties"]["BeforeImage"].Value;
 		if (!string.IsNullOrEmpty( buildingsValue) ) {
 			string[] elements = buildingsValue.Split(new char[]{','});
 			foreach (string el in elements) {
 				int tmp = int.Parse(el);
+				if (!Game.Me.BuildingTemplates.ContainsKey(tmp)) {
+					throw new Exception("There is no key in building templates with name: " + tmp);
+				}
 				BeforeMissionBuildings.Add( Game.Me.BuildingTemplates[tmp]);
+				count++;
+				if (count == 3) {
+					break;
+				}
 			}
 		}
-		if (BeforeMissionBuildings.Count < 4) {
-			foreach(BuildingTemplate b in RandomValues(Game.Me.BuildingTemplates).Take(4 - BeforeMissionBuildings.Count)){
+		if (BeforeMissionBuildings.Count < 3) {
+			foreach(BuildingTemplate b in RandomValues(Game.Me.BuildingTemplates).Take(3 - BeforeMissionBuildings.Count)){
 				BeforeMissionBuildings.Add(b);
 			}
 		}

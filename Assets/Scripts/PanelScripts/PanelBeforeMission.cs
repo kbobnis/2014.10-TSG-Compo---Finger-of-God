@@ -12,11 +12,12 @@ public class PanelBeforeMission : MonoBehaviour {
 	private Mission Mission;
 
 	public void MissionBriefing(Mission m){
+		PanelTopBar.SetActive(false);
 		Mission = m;
 
 		if (m.FailureQueries.Count > 0) {
 			AchievQuery failureQuery = m.FailureQueries[0];
-			TextMissionQuery.GetComponent<Text>().text = "\nLose when " + failureQuery.ScoreType + " " + failureQuery.Sign.Text() + " " + failureQuery.Value;
+			TextMissionQuery.GetComponent<Text>().text = "Mission: " + m.Name + "\n Destroy all buildings before " + failureQuery.ScoreType + " " + failureQuery.Sign.Text() + " " + failureQuery.Value;
 		} else if (m.SuccessQueries.Count > 0) {
 			AchievQuery successQuery = m.SuccessQueries[0];
 			TextMissionQuery.GetComponent<Text>().text = "Win when " + successQuery.ScoreType + " " + successQuery.Sign.Text() + " " + successQuery.Value;
@@ -59,7 +60,9 @@ public class PanelBeforeMission : MonoBehaviour {
 
 		//ButtonStartMission.GetComponentInChildren<Text>().text = "Preparing mission...";
 		PanelMinigame.GetComponent<PanelMinigame>().PrepareGame(m, scoreListeners);
+		PanelTopBar.SetActive(true);
 		yield return null;
+		
 		gameObject.SetActive(false);
 	}
 

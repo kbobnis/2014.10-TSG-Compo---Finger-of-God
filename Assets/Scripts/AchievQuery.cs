@@ -48,25 +48,25 @@ public static class SignMethods {
 	}
 
 	public static string Text(this Sign s1) {
-		string text = "will be ";
+		string text = "";// "/"; //"will be ";
 		switch (s1) {
 			case Sign.BiggerEqual:
-				text += "bigger or equal to";
+				text += ">=";//bigger or equal to";
 				break;
 			case Sign.SmallerEqual:
-				text += "smaller or equal to";
+				text += "<=";//smaller or equal to";
 				break;
 			case Sign.Equal:
-				text += "equal to";
+				text += "=";//equal to";
 				break;
 			case Sign.NoMatter:
 				text += "no matter";
 				break;
 			case Sign.Smaller:
-				text += "smaller than";
+				text += "<";//smaller than";
 				break;
 			case Sign.Bigger:
-				text += "bigger than";
+				text += ">";//bigger than";
 				break;
 			default:
 				throw new UnityException("There is no sign: " + s1);

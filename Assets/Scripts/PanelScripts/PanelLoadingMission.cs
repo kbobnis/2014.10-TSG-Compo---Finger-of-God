@@ -43,8 +43,9 @@ public class PanelLoadingMission : MonoBehaviour {
 		} else {
 
 			try {
+				//Debug.Log("load mission coroutine: " + www.text);
 				JSONNode n = JSONNode.Parse(www.text);
-				int number = n["number"].AsInt;
+				string name = n["missionName"];
 				int round = n["round"].AsInt;
 				string jsonMap = WWW.UnEscapeURL( n["map"]);
 				ButtonContinue.SetActive(true);
@@ -61,7 +62,7 @@ public class PanelLoadingMission : MonoBehaviour {
 					ButtonRestartLevels.SetActive(true);
 				} else {
 					PanelBeforeMission.SetActive(true);
-					PanelBeforeMission.GetComponent<PanelBeforeMission>().MissionBriefing(new Mission(jsonMap, mt, number, round));
+					PanelBeforeMission.GetComponent<PanelBeforeMission>().MissionBriefing(new Mission(jsonMap, mt, name, round));
 					gameObject.SetActive(false);
 				}
 			} catch (System.Exception e) {

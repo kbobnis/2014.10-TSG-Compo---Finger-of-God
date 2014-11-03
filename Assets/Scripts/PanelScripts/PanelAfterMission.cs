@@ -6,7 +6,7 @@ using SimpleJSON;
 
 public class PanelAfterMission : MonoBehaviour {
 
-	public GameObject PanelMainMenu, ButtonMainMenu, ButtonQuickNextMission, TextUsersResults, TextMissionResult, InputFieldYourName, TextFieldYourName, PanelYourName;
+	public GameObject PanelMainMenu, ButtonMainMenu, ButtonQuickNextMission, TextUsersResults, TextMissionResult, InputFieldYourName, TextFieldYourName, PanelYourName, TextYourScore;
 	private int Delay = 1;
 	private float TimeEndMission;
 	private Mission Mission;
@@ -32,6 +32,9 @@ public class PanelAfterMission : MonoBehaviour {
 		Mission = mission;
 		ActualResults = actualResults;
 		StartCoroutine(SaveMissionCoroutine(mission, ActualResults));
+		bool isSucceess = mission.GetStatus(actualResults) == MissionStatus.Success;
+		Game.Me.GetComponent<GoogleAnalyticsV3>().LogEvent("Finished " + mission.MissionType, mission.Name, actualResults[ScoreType.Interventions].Value.ToString(), (long)(actualResults[ScoreType.Time].Value*1000));
+		
 
 		TextUsersResults.GetComponent<Text>().text = "Loading scores";
 		//because i can not access children of inactive gameobject, lol.
@@ -47,6 +50,7 @@ public class PanelAfterMission : MonoBehaviour {
 			case MissionStatus.Success:
 				PanelYourName.SetActive(true);
 				TextMissionResult.GetComponent<Text>().text = "Mission success";
+				TextYourScore.GetComponent<Text>().text = "Interventions: " + actualResults[ScoreType.Interventions].Value + ", time: " + (actualResults[ScoreType.Time].Value.ToString("#.##")) + "s";
 				ButtonQuickNextMission.GetComponentInChildren<Text>().text = mission.MissionType==global::MissionType.Specified?"Next mission":"Next quick game";
 				TimeEndMission = Time.time;
 				break;
@@ -57,6 +61,7 @@ public class PanelAfterMission : MonoBehaviour {
 	private IEnumerator SaveMissionCoroutine(Mission mission, Dictionary<ScoreType, Result> ActualResults) {
 
 		WWW www = mission.SaveGame(ActualResults);
+
 		yield return www;
 		if (mission.GetStatus(ActualResults) == MissionStatus.Success) {
 			UpdateText(www);
@@ -69,12 +74,20 @@ public class PanelAfterMission : MonoBehaviour {
 			if (www.error != null) {
 				text = www.error;
 			} else {
+
 				JSONNode n = JSONNode.Parse(www.text);
+				int i = 0; 
 				foreach (JSONNode tile in n.Childs) {
 					string name = tile["name"];
 					string interv = tile["interventions"];
-					float time = tile["time"].AsInt / 1000;
-					text += name+ ", " + interv + " interv, " + time + "s\n";
+					string time = (tile["time"].AsInt / 1000f).ToString("#.##");
+					if (tile["deviceId"].Value == WebConnector.GetDeviceId()) {
+						text += "---------------------------------\n";
+					}
+					text += (++i) + ". Interv: " + interv + ", time: " + time + "s, name: " + name + "\n";
+					if (tile["deviceId"].Value == WebConnector.GetDeviceId()) {
+						text += "---------------------------------\n";
+					}
 				}
 			}
 			TextUsersResults.GetComponent<Text>().text = text;
