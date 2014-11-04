@@ -31,41 +31,23 @@ public class PanelAfterMission : MonoBehaviour {
 	public void Prepare(Mission mission, Dictionary<ScoreType, Result> actualResults) {
 		Mission = mission;
 		ActualResults = actualResults;
-		StartCoroutine(SaveMissionCoroutine(mission, ActualResults));
-		bool isSucceess = mission.GetStatus(actualResults) == MissionStatus.Success;
-		Game.Me.GetComponent<GoogleAnalyticsV3>().LogEvent("Finished " + mission.MissionType, mission.Name, actualResults[ScoreType.Interventions].Value.ToString(), (long)(actualResults[ScoreType.Time].Value*1000));
-		
+		StartCoroutine(GetResultsCoroutine(mission, ActualResults));
 
 		TextUsersResults.GetComponent<Text>().text = "Loading scores";
 		//because i can not access children of inactive gameobject, lol.
 		ButtonQuickNextMission.SetActive(true);
-		switch(mission.GetStatus(ActualResults)){
-			case MissionStatus.Failure: 
-				TextMissionResult.GetComponent<Text>().text = "Mission failed";
-				ButtonQuickNextMission.GetComponentInChildren<Text>().text = "Repeat mission";
-				TextUsersResults.GetComponent<Text>().text = mission.TipText;
-				PanelYourName.SetActive(false);
-				TimeEndMission = Time.time;
-				break;
-			case MissionStatus.Success:
-				PanelYourName.SetActive(true);
-				TextMissionResult.GetComponent<Text>().text = "Mission success";
-				TextYourScore.GetComponent<Text>().text = "Interventions: " + actualResults[ScoreType.Interventions].Value + ", time: " + (actualResults[ScoreType.Time].Value.ToString("#.##")) + "s";
-				ButtonQuickNextMission.GetComponentInChildren<Text>().text = mission.MissionType==global::MissionType.Specified?"Next mission":"Next quick game";
-				TimeEndMission = Time.time;
-				break;
-		}
+		PanelYourName.SetActive(true);
+		TextMissionResult.GetComponent<Text>().text = "Mission success";
+		TextYourScore.GetComponent<Text>().text = "Interventions: " + actualResults[ScoreType.Interventions].Value + ", time: " + (actualResults[ScoreType.Time].Value.ToString("#.##")) + "s";
+		ButtonQuickNextMission.GetComponentInChildren<Text>().text = mission.MissionType==global::MissionType.Specified?"Next mission":"Next quick game";
+		TimeEndMission = Time.time;
 		ButtonQuickNextMission.SetActive(false);
 	}
 
-	private IEnumerator SaveMissionCoroutine(Mission mission, Dictionary<ScoreType, Result> ActualResults) {
-
-		WWW www = mission.SaveGame(ActualResults);
-
+	private IEnumerator GetResultsCoroutine(Mission mission, Dictionary<ScoreType, Result> ActualResults) {
+		WWW www = WebConnector.GetResults(mission, mission.GetStatus(ActualResults));
 		yield return www;
-		if (mission.GetStatus(ActualResults) == MissionStatus.Success) {
-			UpdateText(www);
-		}
+		UpdateText(www);
 	}
 
 	private void UpdateText(WWW www) {

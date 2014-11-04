@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 public class PanelMinigame : MonoBehaviour, Listener<ScoreType, float> {
 
-	public GameObject PanelAfterMission;
+	public GameObject PanelAfterMission, PanelMissionFailed;
 
 	private Mission Mission;
 	private Dictionary<ScoreType, Result> ActualResults = new Dictionary<ScoreType, Result>();
@@ -49,11 +49,20 @@ public class PanelMinigame : MonoBehaviour, Listener<ScoreType, float> {
 		if (Mission != null) {
 			MissionStatus ms = Mission.GetStatus(ActualResults);
 
-			if (ms == MissionStatus.Failure || ms == MissionStatus.Success) {
-				PanelAfterMission.SetActive(true);
-				PanelAfterMission.GetComponent<PanelAfterMission>().Prepare(Mission, ActualResults);
-				gameObject.SetActive(false);
+			if (ms == MissionStatus.Success || ms == MissionStatus.Failure) {
+				bool isSucceess = Mission.GetStatus(ActualResults) == MissionStatus.Success;
+				Game.Me.GetComponent<GoogleAnalyticsV3>().LogEvent("Finished " + Mission.MissionType, Mission.Name, ActualResults[ScoreType.Interventions].Value.ToString(), (long)(ActualResults[ScoreType.Time].Value * 1000));
+				Mission.SaveGame(ActualResults);
+			
+				if (ms == MissionStatus.Success) {
+					PanelAfterMission.SetActive(true);
+					PanelAfterMission.GetComponent<PanelAfterMission>().Prepare(Mission, ActualResults);
+				} else if (ms == MissionStatus.Failure) {
+					PanelMissionFailed.SetActive(true);
+					PanelMissionFailed.GetComponent<PanelMissionFailed>().Prepare(Mission, ActualResults);
+				}
 				Mission = null;
+				gameObject.SetActive(false);
 			}
 		}
 	}

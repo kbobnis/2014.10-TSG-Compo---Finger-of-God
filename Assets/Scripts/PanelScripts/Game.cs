@@ -4,11 +4,12 @@ using System.Collections.Generic;
 using System.Xml;
 using SimpleJSON;
 using System.Linq;
+using System;
 
 public class Game : MonoBehaviour {
 
 	public static Game Me;
-	public GameObject PanelMainMenu, PanelBeforeMission, PanelAfterMission, PanelLoadingMission, PanelTopBar, PanelLoading;
+	public GameObject PanelMainMenu, PanelBeforeMission, PanelAfterMission, PanelLoadingMission, PanelTopBar, PanelLoading, PanelMissionFailed;
 	public string UserName = "Anonymous";
 	public Dictionary<int, BuildingTemplate> BuildingTemplates = new Dictionary<int, BuildingTemplate>();
 	public List<Element> TouchPowers = new List<Element>();
@@ -34,6 +35,7 @@ public class Game : MonoBehaviour {
 		PanelLoadingMission.SetActive(false);
 		PanelTopBar.SetActive(false);
 		PanelLoading.SetActive(true);
+		PanelMissionFailed.SetActive(false);
 
 		PanelLoading.GetComponent<PanelLoading>().TextTop = "Loading data";
 		PanelLoading.GetComponent<PanelLoading>().TextTap = "";
@@ -41,24 +43,33 @@ public class Game : MonoBehaviour {
 	}
 
 	private IEnumerator LoadData() {
-		WWW www = WebConnector.GetInitialData();
+		WWW www = null;
+		try {
+			 www = WebConnector.GetInitialData();
+		} catch (Exception e) {
+			Debug.Log("exception: " + e);
+		}
 		yield return www;
 
-		if (!string.IsNullOrEmpty( www.error)) {
-			Debug.Log("www error: " + www.error);
+		try {
+			if (!string.IsNullOrEmpty(www.error)) {
+				Debug.Log("www error: " + www.error);
 
-			PanelLoading.GetComponent<PanelLoading>().JustDo = () => { PrepareLoading(); };
-			PanelLoading.GetComponent<PanelLoading>().TextTop = "Internet connection required. (" + www.error + ")";
-			PanelLoading.GetComponent<PanelLoading>().TextTap = "Tap to retry";
-		} else {
-			ParseInitialData(www.text);
-			PanelLoading pl = PanelLoading.GetComponent<PanelLoading>();
-			PanelLoading.SetActive(false);
-			PanelMainMenu.SetActive(true);
-			PanelBeforeMission.SetActive(false);
-			PanelAfterMission.SetActive(false);
-			PanelLoadingMission.SetActive(false);
-			PanelTopBar.SetActive(true);
+				PanelLoading.GetComponent<PanelLoading>().JustDo = () => { PrepareLoading(); };
+				PanelLoading.GetComponent<PanelLoading>().TextTop = "Internet connection required. (" + www.error + ")";
+				PanelLoading.GetComponent<PanelLoading>().TextTap = "Tap to retry";
+			} else {
+				ParseInitialData(www.text);
+				PanelLoading pl = PanelLoading.GetComponent<PanelLoading>();
+				PanelLoading.SetActive(false);
+				PanelMainMenu.SetActive(true);
+				PanelBeforeMission.SetActive(false);
+				PanelAfterMission.SetActive(false);
+				PanelLoadingMission.SetActive(false);
+				PanelTopBar.SetActive(true);
+			}
+		} catch (Exception e) {
+			Debug.Log("Exception: " + e);
 		}
 	}
 

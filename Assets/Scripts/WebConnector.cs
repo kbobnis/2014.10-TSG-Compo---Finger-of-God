@@ -56,6 +56,14 @@ class WebConnector {
 		return CreateWWW("/save", form);
 	}
 
+	internal static WWW GetResults(Mission m, MissionStatus ms) {
+		WWWForm form = new WWWForm();
+		form.AddField("MissionType", m.MissionType.ToString());
+		form.AddField("MissionName", m.Name);
+		form.AddField("MissionStatus", ms.ToString());
+		return CreateWWW("/getResults", form);
+	}
+
 	internal static WWW LoadMission(MissionType mt) {
 		WWWForm form = new WWWForm();
 		form.AddField("MissionType", mt.ToString());
