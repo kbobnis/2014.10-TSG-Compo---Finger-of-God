@@ -6,10 +6,15 @@ using UnityEngine.UI;
 
 public class PanelBeforeMission : MonoBehaviour {
 
-	public GameObject TextInfo, ButtonStartMission, BuildingsList, TextMissionQuery;
-	public GameObject PanelMinigame, PanelTopBar;
+	public GameObject TextInfo, ButtonStartMission, BuildingsList, TextMissionQuery, ButtonBack;
+	public GameObject PanelMinigame, PanelTopBar, PanelMainMenu;
 
 	private Mission Mission;
+
+	public void ReturnToMainMenu() {
+		PanelMainMenu.SetActive(true);
+		gameObject.SetActive(false);
+	}
 
 	public void MissionBriefing(Mission m){
 		PanelTopBar.SetActive(false);
@@ -30,7 +35,7 @@ public class PanelBeforeMission : MonoBehaviour {
 		BuildingsList.GetComponent<ScrollableList>().Build(b, null);
 
 		ButtonStartMission.GetComponent<Button>().onClick.RemoveAllListeners();
-		ButtonStartMission.GetComponent<Button>().onClick.AddListener(() => { StartMinigameListener(m); });
+		ButtonStartMission.GetComponent<Button>().onClick.AddListener(() => {  StartMinigameListener(m); });
 	}
 
 	private void StartMinigameListener(Mission m){
@@ -62,7 +67,6 @@ public class PanelBeforeMission : MonoBehaviour {
 		PanelMinigame.GetComponent<PanelMinigame>().PrepareGame(m, scoreListeners);
 		PanelTopBar.SetActive(true);
 		yield return null;
-		
 		gameObject.SetActive(false);
 	}
 

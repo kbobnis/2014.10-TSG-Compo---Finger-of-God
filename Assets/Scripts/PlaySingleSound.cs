@@ -40,8 +40,8 @@ public class OneSound {
 	private AudioClip AudioClip;
 	private float Volume;
 	public int ActuallyPlaying;
-	private int MaxSimult = 2;
-	private float MinDelay = 0.05f;
+	private int MaxSimult = 5;
+	private float MinDelay = 0.1f;
 	private float LastPlay;
 
 	public OneSound(AudioClip ac, float volume) {
