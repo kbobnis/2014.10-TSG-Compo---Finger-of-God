@@ -18,9 +18,8 @@ public class PanelButtons : MonoBehaviour {
 	internal GameObject CopyMeIn(GameObject parent) {
 		GameObject go = Instantiate(gameObject) as GameObject;
 		go.transform.parent = parent.transform;
-		//go.GetComponent<RectTransform>().position = new Vector3(Screen.width / 2, Screen.height * 1 / 5, 0);
-		go.GetComponent<RectTransform>().offsetMin = new Vector2();
-		go.GetComponent<RectTransform>().offsetMax = new Vector2();
+		go.GetComponent<RectTransform>().offsetMin = new Vector2(); //we want it to fit into anchors exactly as they were set in editor
+		go.GetComponent<RectTransform>().offsetMax = new Vector2(); //we want it to fit into anchors exactly as they were set in editor
 		return go;
 	}
 }

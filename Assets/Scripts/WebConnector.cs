@@ -53,7 +53,8 @@ class WebConnector {
 		form.AddField("Interventions", interventions);
 		form.AddField("Time", ""+ (int)( time*1000) );
 		form.AddField("Round", Round);
-		return CreateWWW("/save", form);
+		WWW www = CreateWWW("/save", form);
+		return www;
 	}
 
 	internal static WWW GetResults(Mission m, MissionStatus ms) {

@@ -1,16 +1,18 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using UnityEngine.UI;
 
 public class PanelMinigame : MonoBehaviour, Listener<ScoreType, float> {
 
-	public GameObject PanelAfterMission, PanelMissionFailed;
+	public GameObject PanelAfterMission, PanelMissionFailed, TextEndMission, CanvasEndMission;
 
 	private Mission Mission;
 	private Dictionary<ScoreType, Result> ActualResults = new Dictionary<ScoreType, Result>();
 	private List<Listener<ScoreType, float>> ScoreTypeListeners;
 
 	public void PrepareGame(Mission m, List<Listener<ScoreType, float>> scoreTypeListeners) {
+		CanvasEndMission.SetActive(false);
 
 		Game.Me.GetComponent<GoogleAnalyticsV3>().LogScreen(m.MissionType.ToString());
 
@@ -43,6 +45,22 @@ public class PanelMinigame : MonoBehaviour, Listener<ScoreType, float> {
 		}
 	}
 
+	private IEnumerator WaitingForResultsCoroutine(WWW www, Mission Mission) {
+
+		yield return www;
+		MissionStatus ms = Mission.GetStatus(ActualResults);
+		if (ms == MissionStatus.Success) {
+			PanelAfterMission.SetActive(true);
+			PanelAfterMission.GetComponent<PanelAfterMission>().Prepare(Mission, ActualResults, www);
+		} else {
+			PanelMissionFailed.SetActive(true);
+			PanelMissionFailed.GetComponent<Image>().enabled = false;
+			PanelMissionFailed.GetComponent<PanelMissionFailed>().Prepare(Mission, ActualResults);
+		}
+		yield return new WaitForSeconds(3);
+		//gameObject.SetActive(false);
+	}
+
 	public void Inform(ScoreType st, float delta) {
 		ActualResults[st].Value += delta;
 
@@ -50,19 +68,13 @@ public class PanelMinigame : MonoBehaviour, Listener<ScoreType, float> {
 			MissionStatus ms = Mission.GetStatus(ActualResults);
 
 			if (ms == MissionStatus.Success || ms == MissionStatus.Failure) {
-				bool isSucceess = Mission.GetStatus(ActualResults) == MissionStatus.Success;
-				Game.Me.GetComponent<GoogleAnalyticsV3>().LogEvent("Finished " + Mission.MissionType + " " + (isSucceess?"Success":"Failure"), Mission.Name, ActualResults[ScoreType.Interventions].Value.ToString(), (long)(ActualResults[ScoreType.Time].Value * 1000));
-				Mission.SaveGame(ActualResults);
-			
-				if (ms == MissionStatus.Success) {
-					PanelAfterMission.SetActive(true);
-					PanelAfterMission.GetComponent<PanelAfterMission>().Prepare(Mission, ActualResults);
-				} else if (ms == MissionStatus.Failure) {
-					PanelMissionFailed.SetActive(true);
-					PanelMissionFailed.GetComponent<PanelMissionFailed>().Prepare(Mission, ActualResults);
-				}
+				//CanvasEndMission.SetActive(true);
+				
+				bool isSuccess = Mission.GetStatus(ActualResults) == MissionStatus.Success;
+				TextEndMission.GetComponent<Text>().text = "Mission " + (isSuccess ? "completed" : "failed");
+				Game.Me.GetComponent<GoogleAnalyticsV3>().LogEvent("Finished " + Mission.MissionType + " " + (isSuccess?"Success":"Failure"), Mission.Name, ActualResults[ScoreType.Interventions].Value.ToString(), (long)(ActualResults[ScoreType.Time].Value * 1000));
+				StartCoroutine(WaitingForResultsCoroutine( Mission.SaveGame(ActualResults), Mission));
 				Mission = null;
-				gameObject.SetActive(false);
 			}
 		}
 	}

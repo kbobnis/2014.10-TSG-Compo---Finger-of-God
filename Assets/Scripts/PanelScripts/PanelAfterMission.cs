@@ -28,13 +28,11 @@ public class PanelAfterMission : MonoBehaviour {
 		}
 	}
 
-	public void Prepare(Mission mission, Dictionary<ScoreType, Result> actualResults) {
+	public void Prepare(Mission mission, Dictionary<ScoreType, Result> actualResults, WWW www) {
 		Mission = mission;
 		ActualResults = actualResults;
-		StartCoroutine(GetResultsCoroutine(mission, ActualResults));
+		UpdateText(www);
 
-		TextUsersResults.GetComponent<Text>().text = "Loading scores";
-		//because i can not access children of inactive gameobject, lol.
 		ButtonQuickNextMission.SetActive(true);
 		PanelYourName.SetActive(true);
 		TextMissionResult.GetComponent<Text>().text = "Mission success";
@@ -42,12 +40,6 @@ public class PanelAfterMission : MonoBehaviour {
 		ButtonQuickNextMission.GetComponentInChildren<Text>().text = mission.MissionType==global::MissionType.Specified?"Next mission":"Next quick game";
 		TimeEndMission = Time.time;
 		ButtonQuickNextMission.SetActive(false);
-	}
-
-	private IEnumerator GetResultsCoroutine(Mission mission, Dictionary<ScoreType, Result> ActualResults) {
-		WWW www = WebConnector.GetResults(mission, mission.GetStatus(ActualResults));
-		yield return www;
-		UpdateText(www);
 	}
 
 	private void UpdateText(WWW www) {

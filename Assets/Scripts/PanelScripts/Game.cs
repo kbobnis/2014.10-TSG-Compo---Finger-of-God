@@ -9,7 +9,7 @@ using System;
 public class Game : MonoBehaviour {
 
 	public static Game Me;
-	public GameObject PanelMainMenu, PanelBeforeMission, PanelAfterMission, PanelLoadingMission, PanelTopBar, PanelLoading, PanelMissionFailed;
+	public GameObject PanelMainMenu, PanelBeforeMission, PanelAfterMission, PanelLoadingMission, PanelTopBar, PanelLoading, PanelMissionFailed, PanelMinigame;
 	public string UserName = "Anonymous";
 	public Dictionary<int, BuildingTemplate> BuildingTemplates = new Dictionary<int, BuildingTemplate>();
 	public List<Element> TouchPowers = new List<Element>();
@@ -36,6 +36,7 @@ public class Game : MonoBehaviour {
 		PanelTopBar.SetActive(false);
 		PanelLoading.SetActive(true);
 		PanelMissionFailed.SetActive(false);
+		PanelMinigame.SetActive(false);
 
 		PanelLoading.GetComponent<PanelLoading>().TextTop = "Loading data";
 		PanelLoading.GetComponent<PanelLoading>().TextTap = "";
