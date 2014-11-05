@@ -6,10 +6,22 @@ using UnityEngine.UI;
 
 public class PanelBeforeMission : MonoBehaviour {
 
-	public GameObject TextInfo, ButtonStartMission, BuildingsList, TextMissionQuery, ButtonBack;
-	public GameObject PanelMinigame, PanelTopBar, PanelMainMenu;
+	public GameObject TextInfo, BuildingsList, TextMissionQuery;
+	public GameObject PanelMinigame, PanelTopBar, PanelMainMenu, PanelButtons;
 
 	private Mission Mission;
+
+	void Awake() {
+		PanelButtons.SetActive(true); // this is a template, don't touch it.
+		GameObject go = PanelButtons.GetComponent<PanelButtons>().CopyMeIn(gameObject);
+		PanelButtons.SetActive(false); // this is a template, don't touch it.
+
+		go.GetComponent<PanelButtons>().ButtonTopText.GetComponent<Text>().text = "Start Mission";
+		go.GetComponent<PanelButtons>().ButtonTop.GetComponent<Button>().onClick.AddListener(() => { StartMinigameListener(); });
+
+		go.GetComponent<PanelButtons>().ButtonBottomText.GetComponent<Text>().text = "Main menu";
+		go.GetComponent<PanelButtons>().ButtonBottom.GetComponent<Button>().onClick.AddListener(() => { ReturnToMainMenu(); });
+	}
 
 	public void ReturnToMainMenu() {
 		PanelMainMenu.SetActive(true);
@@ -34,37 +46,34 @@ public class PanelBeforeMission : MonoBehaviour {
 		b.Add(m.BeforeMissionBuildings);
 		BuildingsList.GetComponent<ScrollableList>().Build(b, null);
 
-		ButtonStartMission.GetComponent<Button>().onClick.RemoveAllListeners();
-		ButtonStartMission.GetComponent<Button>().onClick.AddListener(() => {  StartMinigameListener(m); });
 	}
 
-	private void StartMinigameListener(Mission m){
-		StartCoroutine( StartMinigame(m) );
+	private void StartMinigameListener(){
+		StartCoroutine( StartMinigame() );
 	}
 
-	private IEnumerator StartMinigame(Mission m) {
+	private IEnumerator StartMinigame() {
 
-		gameObject.SetActive(false);
 		PanelMinigame.SetActive(true);
 
 		List<Listener<ScoreType, float>> scoreListeners = new List<Listener<ScoreType, float>>();
 		scoreListeners.Add(PanelTopBar.GetComponent<PanelTopBar>().TextPopulation.GetComponent<NumberShower>());
 		scoreListeners.Add(PanelTopBar.GetComponent<PanelTopBar>().TextInterventions.GetComponent<NumberShower>());
 
-		if (m.FailureQueries.Count > 0) {
+		if (Mission.FailureQueries.Count > 0) {
 			AchievQueryShower failureQuery = PanelTopBar.GetComponent<PanelTopBar>().TextMissionFailure.GetComponent<AchievQueryShower>();
-			failureQuery.AchievQuery = m.FailureQueries[0];
+			failureQuery.AchievQuery = Mission.FailureQueries[0];
 			scoreListeners.Add(failureQuery);
 		}
 
-		if (m.SuccessQueries.Count > 0) {
+		if (Mission.SuccessQueries.Count > 0) {
 			AchievQueryShower successQuery = PanelTopBar.GetComponent<PanelTopBar>().TextMissionSuccess.GetComponent<AchievQueryShower>();
-			successQuery.AchievQuery = m.SuccessQueries[0];
+			successQuery.AchievQuery = Mission.SuccessQueries[0];
 			scoreListeners.Add(successQuery);
 		}
 
 		//ButtonStartMission.GetComponentInChildren<Text>().text = "Preparing mission...";
-		PanelMinigame.GetComponent<PanelMinigame>().PrepareGame(m, scoreListeners);
+		PanelMinigame.GetComponent<PanelMinigame>().PrepareGame(Mission, scoreListeners);
 		PanelTopBar.SetActive(true);
 		yield return null;
 		gameObject.SetActive(false);

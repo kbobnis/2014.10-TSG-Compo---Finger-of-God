@@ -51,7 +51,7 @@ public class PanelMinigame : MonoBehaviour, Listener<ScoreType, float> {
 
 			if (ms == MissionStatus.Success || ms == MissionStatus.Failure) {
 				bool isSucceess = Mission.GetStatus(ActualResults) == MissionStatus.Success;
-				Game.Me.GetComponent<GoogleAnalyticsV3>().LogEvent("Finished " + Mission.MissionType, Mission.Name, ActualResults[ScoreType.Interventions].Value.ToString(), (long)(ActualResults[ScoreType.Time].Value * 1000));
+				Game.Me.GetComponent<GoogleAnalyticsV3>().LogEvent("Finished " + Mission.MissionType + " " + (isSucceess?"Success":"Failure"), Mission.Name, ActualResults[ScoreType.Interventions].Value.ToString(), (long)(ActualResults[ScoreType.Time].Value * 1000));
 				Mission.SaveGame(ActualResults);
 			
 				if (ms == MissionStatus.Success) {
