@@ -15,6 +15,9 @@ public class SpriteManager : MonoBehaviour{
 	private static bool DownloadingNow = false;
 	private static Dictionary<string, Sprite> LoadedSprites = new Dictionary<string, Sprite>();
 
+	public static Sprite MainMenuBg;
+
+
 	void Start() {
 
 		ElementSprites.Add(Element.Fire, Resources.LoadAll<Sprite> ("Images/fire"));
@@ -23,6 +26,7 @@ public class SpriteManager : MonoBehaviour{
 		ElementSprites.Add (Element.Electricity, Resources.LoadAll<Sprite> ("Images/electric"));
 		ElementSprites.Add (Element.Crush, Resources.LoadAll<Sprite> ("Images/explosion"));
 
+		MainMenuBg = Resources.Load<Sprite>("Images/failed/mission_failed_bg_small");
 	}
 
 	public static void LoadAsynchronous(string path, LoadSprite ls) {
@@ -73,4 +77,5 @@ public class SpriteManager : MonoBehaviour{
 
 		DownloadingNow = false;
 	}
+
 }

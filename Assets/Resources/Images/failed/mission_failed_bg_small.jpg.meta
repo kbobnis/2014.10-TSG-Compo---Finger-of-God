@@ -1,8 +1,8 @@
 fileFormatVersion: 2
-guid: e99bd57dd1cc496418e7ff5810c59d90
+guid: 1625665d1a4b7b14fa7f565b81d1236b
 TextureImporter:
   fileIDToRecycleName:
-    21300000: beforeMission
+    21300000: mission_failed_bg_small
   serializedVersion: 2
   mipmaps:
     mipMapMode: 0
@@ -26,9 +26,9 @@ TextureImporter:
   maxTextureSize: 1024
   textureSettings:
     filterMode: 0
-    aniso: -1
+    aniso: 1
     mipBias: -1
-    wrapMode: -1
+    wrapMode: 1
   nPOTScale: 0
   lightmap: 0
   compressionQuality: 50
