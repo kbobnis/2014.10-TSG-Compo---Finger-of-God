@@ -33,6 +33,6 @@ public class NumberShower : MonoBehaviour, Listener<ScoreType, float> {
 	}
 
 	private void Actualize() {
-		GetComponent<Text>().text = Prefix + ": " + Number;
+		GetComponent<Text>().text = Prefix + Number;
 	}
 }

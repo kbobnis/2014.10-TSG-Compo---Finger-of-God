@@ -6,6 +6,7 @@ public class BackgroundHolder : MonoBehaviour {
 
 	private Sprite ActualBg;
 	private float ActualScale;
+	private bool ToUpdateMe = false;
 
 	internal void ScaleChanged(float scale) {
 		ActualScale = scale;
@@ -17,10 +18,20 @@ public class BackgroundHolder : MonoBehaviour {
 		UpdateMe();
 	}
 
+	void Update() {
+		if (ToUpdateMe) {
+			UpdateMe();
+		}
+	}
+
 	private void UpdateMe() {
-		GetComponent<Image>().sprite = ActualBg;
-		RectTransform rt = GetComponent<RectTransform>();
-		rt.offsetMin = new Vector2(-ActualBg.rect.width / 2 * ActualScale, -ActualBg.rect.height / 2 * ActualScale);
-		rt.offsetMax = new Vector2(ActualBg.rect.width / 2 * ActualScale, ActualBg.rect.height / 2 * ActualScale);
+		ToUpdateMe = true;
+		if (ActualBg != null) {
+			GetComponent<Image>().sprite = ActualBg;
+			RectTransform rt = GetComponent<RectTransform>();
+			rt.offsetMin = new Vector2(-ActualBg.rect.width / 2 * ActualScale, -ActualBg.rect.height / 2 * ActualScale);
+			rt.offsetMax = new Vector2(ActualBg.rect.width / 2 * ActualScale, ActualBg.rect.height / 2 * ActualScale);
+			ToUpdateMe = false;
+		}
 	}
 }

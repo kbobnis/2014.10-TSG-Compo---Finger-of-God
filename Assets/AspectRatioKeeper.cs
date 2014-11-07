@@ -3,12 +3,13 @@ using System.Collections;
 
 public class AspectRatioKeeper : MonoBehaviour {
 
-	public int DesiredW, DesiredH;
 	public float ScaleWhenOffsetBiggerThan;
 
+	private int DesiredW, DesiredH;
 	private int LastWidth, LastHeight;
 	private float Aspect;
 	private float _ActualScale;
+	private bool ToSendScaleChanged = false;
 
 	public float ActualScale {
 		get { return _ActualScale; }
@@ -17,6 +18,10 @@ public class AspectRatioKeeper : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
+		//float prefabW = itemPrefab.GetComponent<RectTransform>().rect.width;
+		DesiredW = (int)GetComponent<RectTransform>().rect.width;
+		DesiredH = (int)GetComponent<RectTransform>().rect.height;
+
 		Aspect = DesiredW / (float)DesiredH;
 		FixAspect();
 	}
@@ -24,6 +29,11 @@ public class AspectRatioKeeper : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
 		FixAspect();
+
+		if (ToSendScaleChanged && Game.Me != null && Game.Me.GetComponent<BackgroundHolder>() != null) {
+			ToSendScaleChanged = false;
+			Game.Me.GetComponent<BackgroundHolder>().ScaleChanged(_ActualScale);
+		}
 	}
 
 	private void FixAspect() {
@@ -78,7 +88,8 @@ public class AspectRatioKeeper : MonoBehaviour {
 			
 			rt.offsetMin = new Vector2(-canvasW/2, -canvasH/2);
 			rt.offsetMax = new Vector2(canvasW/2, canvasH/2);
-			Game.Me.GetComponent<BackgroundHolder>().ScaleChanged(scale);
+			ToSendScaleChanged = true;
+			
 		}
 	}
 }

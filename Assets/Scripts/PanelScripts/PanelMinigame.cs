@@ -5,30 +5,48 @@ using UnityEngine.UI;
 
 public class PanelMinigame : MonoBehaviour, Listener<ScoreType, float> {
 
-	public GameObject PanelAfterMission, PanelMissionFailed, TextEndMission, CanvasEndMission;
+	public GameObject PanelAfterMission, PanelMissionFailed, PanelTop;
 
 	private Mission Mission;
 	private Dictionary<ScoreType, Result> ActualResults = new Dictionary<ScoreType, Result>();
-	private List<Listener<ScoreType, float>> ScoreTypeListeners;
+	private List<Listener<ScoreType, float>> ScoreTypeListeners = new List<Listener<ScoreType,float>>();
 
-	public void PrepareGame(Mission m, List<Listener<ScoreType, float>> scoreTypeListeners) {
-		CanvasEndMission.SetActive(false);
-
-		Game.Me.GetComponent<GoogleAnalyticsV3>().LogScreen(m.MissionType.ToString());
-
-		scoreTypeListeners.Add(this);
-		ScoreTypeListeners = scoreTypeListeners;
-		foreach (Listener<ScoreType, float> l in ScoreTypeListeners) {
-			l.Clear(ScoreType.Interventions);
-			l.Clear(ScoreType.Time);
-		}
+	public void PrepareGame(Mission m) {
 
 		ActualResults.Clear();
 		ActualResults.Add(ScoreType.Interventions, new Result(ScoreType.Interventions, 0));
 		ActualResults.Add(ScoreType.Population, new Result(ScoreType.Population, 0)); //buildings will inform about population change
 		ActualResults.Add(ScoreType.Time, new Result(ScoreType.Time, 0));
 
-		GetComponentInChildren<ScrollableList>().Build(m.Buildings, scoreTypeListeners);
+		Game.Me.GetComponent<GoogleAnalyticsV3>().LogScreen(m.MissionType.ToString());
+
+		ScoreTypeListeners.Clear();
+		ScoreTypeListeners.Add(this);
+		this.Clear(ScoreType.Interventions);
+		this.Clear(ScoreType.Time);
+
+		NumberShower nsi = PanelTop.GetComponent<PanelTop>().TextInterventions.GetComponent<NumberShower>();
+
+		int interventions = 0;
+		foreach (AchievQuery aq in m.FailureQueries) {
+			if (aq.ScoreType == ScoreType.Interventions) {
+				interventions = (int)aq.Value;
+			}
+		}
+		nsi.Clear(ScoreType.Interventions);
+		nsi.Inform(ScoreType.Interventions, -interventions);
+		
+		ScoreTypeListeners.Add(nsi);
+
+		NumberShower nsp = PanelTop.GetComponent<PanelTop>().TextPopulation.GetComponent<NumberShower>();
+		nsp.Clear(ScoreType.Population);
+		ScoreTypeListeners.Add(nsp);
+
+
+
+
+
+		GetComponentInChildren<ScrollableList>().Build(m.Buildings, ScoreTypeListeners);
 		
 		Mission = m;
 	}
@@ -54,7 +72,6 @@ public class PanelMinigame : MonoBehaviour, Listener<ScoreType, float> {
 			PanelAfterMission.GetComponent<PanelAfterMission>().Prepare(Mission, ActualResults, www);
 		} else {
 			PanelMissionFailed.SetActive(true);
-			PanelMissionFailed.GetComponent<Image>().enabled = false;
 			PanelMissionFailed.GetComponent<PanelMissionFailed>().Prepare(Mission, ActualResults);
 		}
 		gameObject.SetActive(false);
@@ -70,7 +87,6 @@ public class PanelMinigame : MonoBehaviour, Listener<ScoreType, float> {
 				//CanvasEndMission.SetActive(true);
 				
 				bool isSuccess = Mission.GetStatus(ActualResults) == MissionStatus.Success;
-				TextEndMission.GetComponent<Text>().text = "Mission " + (isSuccess ? "completed" : "failed");
 				Game.Me.GetComponent<GoogleAnalyticsV3>().LogEvent("Finished " + Mission.MissionType + " " + (isSuccess?"Success":"Failure"), Mission.Name, ActualResults[ScoreType.Interventions].Value.ToString(), (long)(ActualResults[ScoreType.Time].Value * 1000));
 				StartCoroutine(WaitingForResultsCoroutine( Mission.SaveGame(ActualResults), Mission));
 				Mission = null;

@@ -9,7 +9,7 @@ using System;
 public class Game : MonoBehaviour {
 
 	public static Game Me;
-	public GameObject PanelMainMenu, PanelBeforeMission, PanelAfterMission, PanelLoadingMission, PanelTopBar, PanelLoading, PanelMissionFailed, PanelMinigame;
+	public GameObject PanelMainMenu, PanelBeforeMission, PanelAfterMission, PanelLoadingMission, PanelLoading, PanelMissionFailed, PanelMinigame;
 	public string UserName = "Anonymous";
 	public Dictionary<int, BuildingTemplate> BuildingTemplates = new Dictionary<int, BuildingTemplate>();
 	public List<Element> TouchPowers = new List<Element>();
@@ -33,7 +33,6 @@ public class Game : MonoBehaviour {
 		PanelBeforeMission.SetActive(false);
 		PanelAfterMission.SetActive(false);
 		PanelLoadingMission.SetActive(false);
-		PanelTopBar.SetActive(false);
 		PanelLoading.SetActive(true);
 		PanelMissionFailed.SetActive(false);
 		PanelMinigame.SetActive(false);
@@ -67,7 +66,6 @@ public class Game : MonoBehaviour {
 				PanelBeforeMission.SetActive(false);
 				PanelAfterMission.SetActive(false);
 				PanelLoadingMission.SetActive(false);
-				PanelTopBar.SetActive(true);
 			}
 		} catch (Exception e) {
 			Debug.Log("Exception: " + e);
