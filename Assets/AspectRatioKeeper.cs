@@ -43,21 +43,22 @@ public class AspectRatioKeeper : MonoBehaviour {
 			//if scale is smaller than 1
 			if (scale == 0) {
 				scale = w / (float)DesiredW;
+				if (scale * DesiredH > Screen.height) {
+					scale = h / (float)DesiredH;
+				}
 			}
 
 			//width scale
 			float offsetW = w / (float)DesiredW - scale;
-			if (offsetW < 0.01) {
-				offsetW = 1;
-			}
 			float offsetH = h / (float)DesiredH - scale;
-			if (offsetH < 0.01) {
-				offsetH = 1;
-			}
-			Debug.Log("scale was: " + scale + " offset is: " + offsetW.ToString("#.##") + " offset h: " + offsetH.ToString("#.##"));
 
 			//if the offset would be too big, then scale is not int
-			if (false && offsetW + offsetH > ScaleWhenOffsetBiggerThan) {
+			float screenPixels = w * h;
+			float actualGamePixels = DesiredW * scale * DesiredH * scale;
+			float notActivePixels = screenPixels - actualGamePixels;
+			float notPlayable = notActivePixels / screenPixels ;
+			
+			if ( notPlayable > ScaleWhenOffsetBiggerThan) {
 				scale = w / (float)DesiredW;
 				if (DesiredW * scale > w) {
 					scale = w / (float)DesiredW;
@@ -65,13 +66,16 @@ public class AspectRatioKeeper : MonoBehaviour {
 				if (DesiredH * scale > h && h / (float)DesiredH < scale) {
 					scale = h / (float)DesiredH;
 				}
-			}
 
+				offsetW = w / (float)DesiredW - scale;
+				offsetH = h / (float)DesiredH - scale;
+
+			}
 			int canvasW = (int)(DesiredW * scale);
 			int canvasH = (int)(DesiredH * scale);
 			
 			_ActualScale = scale;
-			Debug.Log("scale is: " + scale + " offset is: " + offsetW.ToString("#.##") + " offset h: " + offsetH.ToString("#.##"));
+			
 			rt.offsetMin = new Vector2(-canvasW/2, -canvasH/2);
 			rt.offsetMax = new Vector2(canvasW/2, canvasH/2);
 			Game.Me.GetComponent<BackgroundHolder>().ScaleChanged(scale);

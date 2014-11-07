@@ -16,6 +16,7 @@ public class SpriteManager : MonoBehaviour{
 	private static Dictionary<string, Sprite> LoadedSprites = new Dictionary<string, Sprite>();
 
 	public static Sprite MainMenuBg;
+	public static Sprite PanelBeforeMissionBg;
 
 
 	void Start() {
@@ -26,7 +27,8 @@ public class SpriteManager : MonoBehaviour{
 		ElementSprites.Add (Element.Electricity, Resources.LoadAll<Sprite> ("Images/electric"));
 		ElementSprites.Add (Element.Crush, Resources.LoadAll<Sprite> ("Images/explosion"));
 
-		MainMenuBg = Resources.Load<Sprite>("Images/failed/mission_failed_bg_small");
+		MainMenuBg = Resources.Load<Sprite>("Images/failed/mission_failed_bg");
+		PanelBeforeMissionBg = Resources.Load<Sprite>("Images/beforeMission/start_new_mission_bg");
 	}
 
 	public static void LoadAsynchronous(string path, LoadSprite ls) {

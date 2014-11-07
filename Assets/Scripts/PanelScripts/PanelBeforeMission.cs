@@ -23,6 +23,7 @@ public class PanelBeforeMission : MonoBehaviour {
 		go.GetComponent<PanelButtons>().ButtonBottom.GetComponent<Button>().onClick.AddListener(() => { ReturnToMainMenu(); });
 	}
 
+
 	public void ReturnToMainMenu() {
 		PanelMainMenu.SetActive(true);
 		gameObject.SetActive(false);

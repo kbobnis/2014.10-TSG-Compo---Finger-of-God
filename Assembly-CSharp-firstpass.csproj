@@ -64,6 +64,8 @@
      <Compile Include="Assets\plugins\GoogleAnalyticsV3\HitBuilders\TimingHitBuilder.cs" />
      <Compile Include="Assets\plugins\GoogleAnalyticsV3\HitBuilders\TransactionHitBuilder.cs" />
      <Compile Include="Assets\plugins\SimpleJSON.cs" />
+     <None Include="Assets\Resources\Images\gui_minigame\read_me.txt" />
+     <None Include="Assets\Resources\Images\gui_mission_complete\read_me.txt" />
  <Reference Include="UnityEngine.UI">
  <HintPath>C:/Program Files (x86)/Unity/Editor/Data/UnityExtensions/Unity/GUISystem/4.6.0/UnityEngine.UI.dll</HintPath>
  </Reference>

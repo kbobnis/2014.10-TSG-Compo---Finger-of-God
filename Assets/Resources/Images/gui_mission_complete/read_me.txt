@@ -1,0 +1,1 @@
+text mission complete - font size font 60pt/ font color white/ effects - stroke 1px color 2a5f5e drop shadow 4px 2a5f5e 

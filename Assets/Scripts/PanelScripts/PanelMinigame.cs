@@ -57,8 +57,7 @@ public class PanelMinigame : MonoBehaviour, Listener<ScoreType, float> {
 			PanelMissionFailed.GetComponent<Image>().enabled = false;
 			PanelMissionFailed.GetComponent<PanelMissionFailed>().Prepare(Mission, ActualResults);
 		}
-		yield return new WaitForSeconds(3);
-		//gameObject.SetActive(false);
+		gameObject.SetActive(false);
 	}
 
 	public void Inform(ScoreType st, float delta) {

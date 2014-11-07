@@ -1,0 +1,1 @@
+numbers - font size font 40pt/ font color 003333/ effects - drop shadow 1px white

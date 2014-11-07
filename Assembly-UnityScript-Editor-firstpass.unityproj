@@ -47,6 +47,8 @@
   </ItemGroup>
   <ItemGroup>
      <Compile Include="Assets\plugins\Editor\RangedTooltipDrawer.js" />
+     <None Include="Assets\Resources\Images\gui_minigame\read_me.txt" />
+     <None Include="Assets\Resources\Images\gui_mission_complete\read_me.txt" />
  <Reference Include="UnityEngine.UI">
  <HintPath>C:/Program Files (x86)/Unity/Editor/Data/UnityExtensions/Unity/GUISystem/4.6.0/UnityEngine.UI.dll</HintPath>
  </Reference>

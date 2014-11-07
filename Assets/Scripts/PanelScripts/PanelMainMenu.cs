@@ -22,12 +22,6 @@ public class PanelMainMenu : MonoBehaviour {
 		go.GetComponent<PanelButtons>().ButtonBottom.GetComponent<Button>().onClick.AddListener(() => { StartMissionRandom(); });
 	}
 
-	void OnEnable() {
-		Game.Me.GetComponent<BackgroundHolder>().ChangeBg(SpriteManager.MainMenuBg);
-	}
-
-
-
 	public void StartMissionSpecified() {
 		PanelLoadingMission.SetActive(true);
 		PanelLoadingMission.GetComponent<PanelLoadingMission>().LoadMission(MissionType.Specified);
