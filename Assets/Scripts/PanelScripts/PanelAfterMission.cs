@@ -4,70 +4,99 @@ using UnityEngine.UI;
 using System.Collections.Generic;
 using SimpleJSON;
 
+
+
 public class PanelAfterMission : MonoBehaviour {
 
-	public GameObject PanelMainMenu, ButtonMainMenu, ButtonQuickNextMission, TextUsersResults, TextMissionResult, InputFieldYourName, TextFieldYourName, PanelYourName, TextYourScore;
-	private int Delay = 1;
-	private float TimeEndMission;
+	public GameObject PanelMainMenu, TextYourScore, TextLeaderboardNames, TextLeaderboardScores, PanelButtons;
 	private Mission Mission;
 	private Dictionary<ScoreType, Result> ActualResults;
-
-	void OnEnable() {
-		if (Game.Me != null && Game.Me.UserName != null){
-			InputFieldYourName.GetComponent<InputField>().value = TextFieldYourName.GetComponent<Text>().text = Game.Me.UserName;
-		}
-		TimeEndMission = 0;
-		ButtonMainMenu.SetActive(false);
-		ButtonQuickNextMission.SetActive(false);
-	}
-
-	void Update() {
-		if (TimeEndMission > 0 && TimeEndMission < Time.time - Delay) {
-			ButtonMainMenu.SetActive(true);
-			ButtonQuickNextMission.SetActive(true);
-		}
-	}
+	private LevelScore YourScore;
 
 	public void Prepare(Mission mission, Dictionary<ScoreType, Result> actualResults, WWW www) {
 		Mission = mission;
 		ActualResults = actualResults;
-		UpdateText(www);
+		TextLeaderboardNames.GetComponent<Text>().text = "";
+		TextLeaderboardScores.GetComponent<Text>().text = "";
 
-		ButtonQuickNextMission.SetActive(true);
-		PanelYourName.SetActive(true);
-		TextMissionResult.GetComponent<Text>().text = "Mission success";
-		TextYourScore.GetComponent<Text>().text = "Interventions: " + actualResults[ScoreType.Interventions].Value + ", time: " + (actualResults[ScoreType.Time].Value.ToString("#.##")) + "s";
-		ButtonQuickNextMission.GetComponentInChildren<Text>().text = mission.MissionType==global::MissionType.Specified?"Next mission":"Next quick game";
-		TimeEndMission = Time.time;
-		ButtonQuickNextMission.SetActive(false);
+		YourScore = new LevelScore(Game.Me.UserName, (int)actualResults[ScoreType.Interventions].Value, WebConnector.GetDeviceId(), actualResults[ScoreType.Time].Value, -1 );
+		TextYourScore.GetComponent<Text>().text = YourScore.Interventions + " interv - " + (YourScore.Time.ToString("##.##")) + " (your score)";
+
+		UpdateText(www);
+	}
+
+	void Awake() {
+
+		PanelButtons.SetActive(true); // this is a template, don't touch it.
+		GameObject go = PanelButtons.GetComponent<PanelButtons>().CopyMeIn(gameObject);
+		PanelButtons.SetActive(false); // this is a template, don't touch it.
+
+		go.GetComponent<PanelButtons>().ButtonTopText.GetComponent<Text>().text = "Next Mission";
+		go.GetComponent<PanelButtons>().ButtonTop.GetComponent<Button>().onClick.AddListener(() => { QuickNextMission(); });
+
+		go.GetComponent<PanelButtons>().ButtonBottomText.GetComponent<Text>().text = "Main Menu";
+		go.GetComponent<PanelButtons>().ButtonBottom.GetComponent<Button>().onClick.AddListener(() => { ShowMainMenu(); });
 	}
 
 	private void UpdateText(WWW www) {
-		try {
-			string text = "";
-			if (www.error != null) {
-				text = www.error;
-			} else {
+		string text = "";
+		if (www.error != null) {
+			text = www.error;
+		} else {
 
-				JSONNode n = JSONNode.Parse(www.text);
-				int i = 0; 
-				foreach (JSONNode tile in n.Childs) {
-					string name = tile["name"];
-					string interv = tile["interventions"];
-					string time = (tile["time"].AsInt / 1000f).ToString("#.##");
-					if (tile["deviceId"].Value == WebConnector.GetDeviceId()) {
-						text += "---------------------------------\n";
-					}
-					text += (++i) + ". Interv: " + interv + ", time: " + time + "s, name: " + name + "\n";
-					if (tile["deviceId"].Value == WebConnector.GetDeviceId()) {
-						text += "---------------------------------\n";
-					}
+			List<LevelScore> scores =  FilterOnlyYourNeighbours( ParseScores(www.text), WebConnector.GetDeviceId());
+
+			foreach (LevelScore tmp in scores) {
+				if (tmp == null) {
+					TextLeaderboardNames.GetComponent<Text>().text += "---\n";
+					TextLeaderboardScores.GetComponent<Text>().text += "---\n";
+				} else {
+
+					TextLeaderboardNames.GetComponent<Text>().text += tmp.Place + ". " + tmp.Name + "\n";
+					TextLeaderboardScores.GetComponent<Text>().text += "- " + tmp.Interventions + " INTERV " + tmp.Time.ToString("##.##") + "\n";
 				}
 			}
-			TextUsersResults.GetComponent<Text>().text = text;
-		} catch (System.Exception e) {
-			Debug.Log("Exception: " + e);
+
+			string tmp2 = TextLeaderboardNames.GetComponent<Text>().text;
+			TextLeaderboardNames.GetComponent<Text>().text = tmp2.Substring(0, tmp2.Length - 1);
+			tmp2 = TextLeaderboardScores.GetComponent<Text>().text;
+			TextLeaderboardScores.GetComponent<Text>().text = tmp2.Substring(0, tmp2.Length - 1);
+				
 		}
+	}
+
+	private List<LevelScore> FilterOnlyYourNeighbours(List<LevelScore> scores, string yourDeviceId) {
+		List<LevelScore> tmp = new List<LevelScore>();
+		
+		for(int i=0; i < scores.Count; i++){
+			LevelScore actual = scores[i];
+
+			if (actual.DeviceId == yourDeviceId) {
+				tmp.Add(i-2>=0?scores[i-2]:null);
+				tmp.Add(i-1>=0?scores[i-1]:null);
+				tmp.Add(actual);
+				tmp.Add(i+1<scores.Count?scores[i+1]:null);
+				tmp.Add(i+2<scores.Count?scores[i + 2]:null);
+				break;
+			}
+		}
+		return tmp;
+	}
+
+	private List<LevelScore> ParseScores(string jsonText) {
+		List<LevelScore> scores = new List<LevelScore>();
+
+		JSONNode n = JSONNode.Parse(jsonText);
+		int i = 1;
+		foreach (JSONNode tile in n.Childs) {
+			string name = tile["name"];
+			int interv = tile["interventions"].AsInt;
+			float time = tile["time"].AsInt/1000f;
+			string deviceId = tile["deviceId"];
+			scores.Add(new LevelScore(name, interv, deviceId, time, i++));
+		}
+		return scores;
+
 	}
 
 	private IEnumerator UpdateNameCoroutine(string newName) {
@@ -77,12 +106,12 @@ public class PanelAfterMission : MonoBehaviour {
 	}
 
 
-	public void ShowMainMenu() {
+	private void ShowMainMenu() {
 		gameObject.SetActive(false);
 		PanelMainMenu.SetActive(true);
 	}
 
-	public void QuickNextMission() {
+	private void QuickNextMission() {
 		PanelMainMenu.SetActive(true);
 		switch (Mission.MissionType) {
 			case global::MissionType.Specified:
@@ -98,12 +127,49 @@ public class PanelAfterMission : MonoBehaviour {
 
 	public void ChangeName() {
 		try {
-			GameObject ifyn = InputFieldYourName;
-			string text = ifyn.GetComponent<InputField>().value;
+			string text = "fdfasd";
 			string name = text;
 			StartCoroutine(UpdateNameCoroutine(name));
 		} catch (System.Exception e) {
 			Debug.Log("Exception: " + e);
 		}
 	}
+}
+
+class LevelScore {
+
+	int _Place;
+	string _Name;
+	int _Interventions;
+	float _Time;
+	string _DeviceId;
+
+	public string DeviceId {
+		get { return _DeviceId; }
+	}
+
+	public int Place {
+		get { return _Place; }
+	}
+
+	public string Name {
+		get { return _Name; }
+	}
+
+	public int Interventions {
+		get { return _Interventions; }
+	}
+
+	public float Time {
+		get { return _Time; }
+	}
+
+	public LevelScore(string name, int interv, string deviceId, float time, int place) {
+		_Name = name;
+		_Interventions = interv;
+		_DeviceId = deviceId;
+		_Time = time;
+		_Place = place;
+	}
+
 }

@@ -85,6 +85,8 @@ public class ScrollableList : MonoBehaviour
 
 	public void Build(List<List<BuildingTemplate>> Buildings, List<Listener<ScoreType, float>> scoreTypeListeners) {
 
+		bool addedChecker = true;
+
 		foreach (GameObject go in ElementsToPut) {
 			Destroy(go);
 		}
@@ -98,6 +100,10 @@ public class ScrollableList : MonoBehaviour
 			List<Building> buildingsRow = new List<Building>();
 			foreach (BuildingTemplate bt in row) {
 				GameObject newItem = Instantiate(itemPrefab) as GameObject;
+				if (!addedChecker) {
+					addedChecker = true;
+					newItem.AddComponent<UpdateChecker>();
+				}
 
 				Building b = newItem.GetComponent<Building>();
 				b.CreateFromTemplate(bt);

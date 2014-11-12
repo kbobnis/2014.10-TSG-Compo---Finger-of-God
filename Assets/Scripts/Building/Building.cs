@@ -130,6 +130,10 @@ public class Building : MonoBehaviour{
 	}
 
 	void FixedUpdate(){
+
+		if (GetComponent<UpdateChecker>() != null) {
+			GetComponent<UpdateChecker>().UpdateIsNow();
+		}
 		//check if prepared already
 		if (Statuses.Count == 0) {
 			return;
