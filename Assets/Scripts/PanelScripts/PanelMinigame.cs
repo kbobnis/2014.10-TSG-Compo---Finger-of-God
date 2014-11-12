@@ -66,7 +66,7 @@ public class PanelMinigame : MonoBehaviour, Listener<ScoreType, float> {
 		MissionStatus ms = Mission.GetStatus(ActualResults);
 		TextEndGame.GetComponent<Text>().text = "Mission " + (ms == MissionStatus.Success ? "Success" : "Failure") + "\n\n Loading";
 
-		yield return new WaitForSeconds(2f);
+		yield return new WaitForSeconds(1f);
 		yield return www;
 		
 		if (ms == MissionStatus.Success) {
