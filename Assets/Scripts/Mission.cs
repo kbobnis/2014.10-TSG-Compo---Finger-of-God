@@ -76,7 +76,7 @@ public class Mission {
 
 		int interventions = n["properties"]["Interventions"].AsInt;
 		if (interventions > 0){
-			FailureQueries.Add(new AchievQuery(ScoreType.Interventions, Sign.Equal, interventions+1));
+			FailureQueries.Add(new AchievQuery(ScoreType.Interventions, Sign.Bigger, interventions));
 		}
 		
 		BeforeMissionText = WWW.UnEscapeURL( n["properties"]["BeforeText"] );

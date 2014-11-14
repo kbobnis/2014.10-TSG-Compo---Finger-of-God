@@ -281,7 +281,7 @@ public class Building : MonoBehaviour{
 	}
 
 	public void Clicked(BaseEventData b) {
-		if (Listeners != null) {
+		if (Listeners != null && Health > 0) {
 			foreach (Listener<ScoreType, float> l in Listeners) {
 				l.Inform(ScoreType.Interventions, 1f);
 			}

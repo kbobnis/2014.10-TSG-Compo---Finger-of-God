@@ -19,8 +19,9 @@ public class PanelAfterMission : MonoBehaviour {
 		TextLeaderboardNames.GetComponent<Text>().text = "";
 		TextLeaderboardScores.GetComponent<Text>().text = "";
 
-		YourScore = new LevelScore(Game.Me.UserName, (int)actualResults[ScoreType.Interventions].Value, WebConnector.GetDeviceId(), actualResults[ScoreType.Time].Value, -1 );
-		TextYourScore.GetComponent<Text>().text = YourScore.Interventions + " interv - " + (YourScore.Time.ToString("##.##")) + " (your score)";
+		YourScore = new LevelScore();
+		YourScore.AddInfo( Game.Me.UserName, (int)actualResults[ScoreType.Interventions].Value, WebConnector.GetDeviceId(), actualResults[ScoreType.Time].Value, -1);
+		TextYourScore.GetComponent<Text>().text = YourScore.Interventions + " interv, " + (YourScore.Time.ToString("##.##")) + " seconds";
 
 		UpdateText(www);
 	}
@@ -44,16 +45,16 @@ public class PanelAfterMission : MonoBehaviour {
 			text = www.error;
 		} else {
 
-			List<LevelScore> scores =  FilterOnlyYourNeighbours( ParseScores(www.text), WebConnector.GetDeviceId());
+			List<LevelScore> scores = ParseScores(www.text);
 
 			foreach (LevelScore tmp in scores) {
-				if (tmp == null) {
+				if (tmp == null || tmp.DeviceId == null) {
 					TextLeaderboardNames.GetComponent<Text>().text += "---\n";
 					TextLeaderboardScores.GetComponent<Text>().text += "---\n";
 				} else {
 
 					TextLeaderboardNames.GetComponent<Text>().text += tmp.Place + ". " + tmp.Name + "\n";
-					TextLeaderboardScores.GetComponent<Text>().text += "- " + tmp.Interventions + " INTERV " + tmp.Time.ToString("##.##") + "\n";
+					TextLeaderboardScores.GetComponent<Text>().text += "" + tmp.Interventions + " INTERV, " + tmp.Time.ToString("##.##") + " s\n";
 				}
 			}
 
@@ -83,17 +84,43 @@ public class PanelAfterMission : MonoBehaviour {
 		return tmp;
 	}
 
+	private List<LevelScore> FilterTop4(List<LevelScore> scores, string yourDeviceId) {
+		List<LevelScore> tmp = new List<LevelScore>();
+		bool foundYou = false;
+		LevelScore you = null;
+
+		for (int i = 0; i < scores.Count; i++) {
+			LevelScore actual = scores[i];
+
+			if (actual.DeviceId == yourDeviceId) {
+				tmp.Add(i - 2 >= 0 ? scores[i - 2] : null);
+				tmp.Add(i - 1 >= 0 ? scores[i - 1] : null);
+				tmp.Add(actual);
+				tmp.Add(i + 1 < scores.Count ? scores[i + 1] : null);
+				tmp.Add(i + 2 < scores.Count ? scores[i + 2] : null);
+				break;
+			}
+		}
+		return tmp;
+	}
+
 	private List<LevelScore> ParseScores(string jsonText) {
 		List<LevelScore> scores = new List<LevelScore>();
 
 		JSONNode n = JSONNode.Parse(jsonText);
 		int i = 1;
 		foreach (JSONNode tile in n.Childs) {
-			string name = tile["name"];
-			int interv = tile["interventions"].AsInt;
-			float time = tile["time"].AsInt/1000f;
-			string deviceId = tile["deviceId"];
-			scores.Add(new LevelScore(name, interv, deviceId, time, i++));
+			
+			LevelScore ls = new LevelScore();
+			if (tile["deviceId"] != null){
+				string name = tile["name"];
+				int interv = tile["interventions"].AsInt;
+				float time = tile["time"].AsInt/1000f;
+				string deviceId = tile["deviceId"];
+				int place = tile["place"].AsInt;
+				ls.AddInfo(name, interv, deviceId, time, place);
+			}
+			scores.Add(ls);
 		}
 		return scores;
 
@@ -164,7 +191,7 @@ class LevelScore {
 		get { return _Time; }
 	}
 
-	public LevelScore(string name, int interv, string deviceId, float time, int place) {
+	public void AddInfo(string name, int interv, string deviceId, float time, int place) {
 		_Name = name;
 		_Interventions = interv;
 		_DeviceId = deviceId;
