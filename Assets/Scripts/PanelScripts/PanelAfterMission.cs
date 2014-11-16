@@ -56,6 +56,10 @@ public class PanelAfterMission : MonoBehaviour {
 					TextLeaderboardNames.GetComponent<Text>().text += tmp.Place + ". " + tmp.Name + "\n";
 					TextLeaderboardScores.GetComponent<Text>().text += "" + tmp.Interventions + " INTERV, " + tmp.Time.ToString("##.##") + " s\n";
 				}
+
+				if (tmp.DeviceId == WebConnector.GetDeviceId() && tmp.Interventions == YourScore.Interventions && tmp.Time.ToString("##.##") == YourScore.Time.ToString("##.##")) {
+					TextYourScore.GetComponent<Text>().text += " (YOUR RECORD)";
+				}
 			}
 
 			string tmp2 = TextLeaderboardNames.GetComponent<Text>().text;
