@@ -23,6 +23,8 @@ public class PanelLoading : MonoBehaviour {
 	}
 
 	public void Continue() {
-		JustDo();
+		if (JustDo != null) {
+			JustDo();
+		}
 	}
 }

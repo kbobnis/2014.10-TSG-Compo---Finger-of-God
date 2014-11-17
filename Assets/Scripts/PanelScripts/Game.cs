@@ -9,7 +9,7 @@ using System;
 public class Game : MonoBehaviour {
 
 	public static Game Me;
-	public GameObject PanelMainMenu, PanelBeforeMission, PanelAfterMission, PanelLoadingMission, PanelLoading, PanelMissionFailed, PanelMinigame;
+	public GameObject PanelMainMenu, PanelBeforeMission, PanelAfterMission, PanelLoadingMission, PanelLoading, PanelMissionFailed, PanelMinigame, PanelSettings;
 	public string UserName = "Anonymous";
 	public Dictionary<int, BuildingTemplate> BuildingTemplates = new Dictionary<int, BuildingTemplate>();
 	public List<Element> TouchPowers = new List<Element>();
@@ -36,6 +36,7 @@ public class Game : MonoBehaviour {
 		PanelLoading.SetActive(true);
 		PanelMissionFailed.SetActive(false);
 		PanelMinigame.SetActive(false);
+		PanelSettings.SetActive(false);
 
 		PanelLoading.GetComponent<PanelLoading>().TextTop = "Loading data";
 		PanelLoading.GetComponent<PanelLoading>().TextTap = "";
@@ -76,6 +77,7 @@ public class Game : MonoBehaviour {
 		JSONNode n = JSONNode.Parse(initialDataJson);
 
 		XmlDocument model = new XmlDocument();
+		UserName = n["userName"].Value;
 		string modelString = WWW.UnEscapeURL(n["model"]);
 		model.LoadXml(modelString);
 

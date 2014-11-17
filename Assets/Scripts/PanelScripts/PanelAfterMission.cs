@@ -12,6 +12,7 @@ public class PanelAfterMission : MonoBehaviour {
 	private Mission Mission;
 	private Dictionary<ScoreType, Result> ActualResults;
 	private LevelScore YourScore;
+	private WWW LastWWW;
 
 	public void Prepare(Mission mission, Dictionary<ScoreType, Result> actualResults, WWW www) {
 		Mission = mission;
@@ -37,14 +38,18 @@ public class PanelAfterMission : MonoBehaviour {
 
 		go.GetComponent<PanelButtons>().ButtonBottomText.GetComponent<Text>().text = "Main Menu";
 		go.GetComponent<PanelButtons>().ButtonBottom.GetComponent<Button>().onClick.AddListener(() => { ShowMainMenu(); });
+		go.GetComponent<PanelButtons>().AfterSettingsClose = () => { UpdateText(LastWWW); };
 	}
 
 	private void UpdateText(WWW www) {
+		LastWWW = www;
 		string text = "";
 		if (www.error != null) {
 			text = www.error;
 		} else {
-
+			TextYourScore.GetComponent<Text>().text = YourScore.Interventions + " interv, " + (YourScore.Time.ToString("##.##")) + " seconds";
+			TextLeaderboardNames.GetComponent<Text>().text = "";
+			TextLeaderboardScores.GetComponent<Text>().text = "";
 			List<LevelScore> scores = ParseScores(www.text);
 
 			foreach (LevelScore tmp in scores) {
@@ -52,8 +57,12 @@ public class PanelAfterMission : MonoBehaviour {
 					TextLeaderboardNames.GetComponent<Text>().text += "---\n";
 					TextLeaderboardScores.GetComponent<Text>().text += "---\n";
 				} else {
-
-					TextLeaderboardNames.GetComponent<Text>().text += tmp.Place + ". " + tmp.Name + "\n";
+					string name = tmp.Name;
+					//in case we changed the name in settings and want this to apply without another useless server call
+					if (tmp.DeviceId == WebConnector.GetDeviceId()) {
+						name = Game.Me.UserName;
+					}
+					TextLeaderboardNames.GetComponent<Text>().text += tmp.Place + ". " + name + "\n";
 					TextLeaderboardScores.GetComponent<Text>().text += "" + tmp.Interventions + " INTERV, " + tmp.Time.ToString("##.##") + " s\n";
 				}
 
@@ -130,13 +139,6 @@ public class PanelAfterMission : MonoBehaviour {
 
 	}
 
-	private IEnumerator UpdateNameCoroutine(string newName) {
-		WWW www = WebConnector.ChangeName(newName, Mission, ActualResults);
-		yield return www;
-		UpdateText(www);
-	}
-
-
 	private void ShowMainMenu() {
 		gameObject.SetActive(false);
 		PanelMainMenu.SetActive(true);
@@ -156,15 +158,6 @@ public class PanelAfterMission : MonoBehaviour {
 		gameObject.SetActive(false);
 	}
 
-	public void ChangeName() {
-		try {
-			string text = "fdfasd";
-			string name = text;
-			StartCoroutine(UpdateNameCoroutine(name));
-		} catch (System.Exception e) {
-			Debug.Log("Exception: " + e);
-		}
-	}
 }
 
 class LevelScore {

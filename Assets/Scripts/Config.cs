@@ -16,6 +16,4 @@ class Config {
 	public static readonly string IndexPath = "index-test.php?r=site";
 	//*/
 
-	public static readonly bool SoundsOn = false;
-
 }

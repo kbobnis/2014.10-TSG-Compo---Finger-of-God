@@ -71,13 +71,10 @@ class WebConnector {
 		return CreateWWW("/load", form);
 	}
 
-	internal static WWW ChangeName(string name, Mission Mission, Dictionary<ScoreType, Result> ActualResults) {
+	internal static WWW ChangeName(string name) {
 		WWWForm form = new WWWForm();
 		form.AddField("Name", name);
-		form.AddField("MissionName", Mission.Name);
-		form.AddField("MissionStatus", Mission.GetStatus(ActualResults).ToString());
-		form.AddField("MissionType", Mission.MissionType.ToString());
-		return CreateWWW("/changeNameAndGetResults", form);
+		return CreateWWW("/changeName", form);
 	}
 
 	internal static WWW RestartLevels() {

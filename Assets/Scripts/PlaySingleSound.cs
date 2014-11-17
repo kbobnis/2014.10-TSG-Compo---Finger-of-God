@@ -11,7 +11,7 @@ public class PlaySingleSound : MonoBehaviour {
 	public OneSound MySound;
 
 	public static void SpawnSound( AudioClip clip, float pan=0){
-		if (!Config.SoundsOn) {
+		if (!SoundManager.AreSoundsEnabled()) {
 			return;
 		}
 		float volume = 0.5f;

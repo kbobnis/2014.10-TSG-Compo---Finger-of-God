@@ -4,7 +4,10 @@ using UnityEngine.UI;
 
 public class PanelButtons : MonoBehaviour {
 
-	public GameObject ButtonTop, ButtonTopText, ButtonTopClouds, ButtonBottom, ButtonBottomText, ButtonBottomClouds ;
+	public GameObject ButtonTop, ButtonTopText, ButtonTopClouds, ButtonBottom, ButtonBottomText, ButtonBottomClouds, PanelSettings, ButtonSettings;
+	public JustDo AfterSettingsClose;
+
+	private bool IsPanelSettingsActive;
 
 	// Use this for initialization
 	void Start () {
@@ -13,7 +16,13 @@ public class PanelButtons : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-	
+		//sometimes we want an action after settings close
+		if (IsPanelSettingsActive && !PanelSettings.activeSelf) {
+			IsPanelSettingsActive = false;
+			if (AfterSettingsClose != null) {
+				AfterSettingsClose();
+			}
+		}
 	}
 
 	internal GameObject CopyMeIn(GameObject parent) {
@@ -28,5 +37,14 @@ public class PanelButtons : MonoBehaviour {
 		GetComponent<Image>().enabled = enabled;
 		ButtonTopClouds.SetActive(enabled);
 		ButtonBottomClouds.SetActive(enabled);
+	}
+
+	public void ShowSettings() {
+		IsPanelSettingsActive = true;
+		PanelSettings.SetActive(true);
+	}
+
+	public void ShowSettingsButton(bool on) {
+		ButtonSettings.SetActive(on);
 	}
 }
