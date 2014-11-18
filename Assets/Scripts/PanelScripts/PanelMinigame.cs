@@ -61,24 +61,6 @@ public class PanelMinigame : MonoBehaviour, Listener<ScoreType, float> {
 		}
 	}
 
-	private IEnumerator WaitingForResultsCoroutine(WWW www, Mission Mission) {
-		ImageEndGame.SetActive(true);
-		MissionStatus ms = Mission.GetStatus(ActualResults);
-		TextEndGame.GetComponent<Text>().text = "Mission " + (ms == MissionStatus.Success ? "Success" : "Failure") + "\n\n Loading";
-
-		yield return new WaitForSeconds(1f);
-		yield return www;
-		
-		if (ms == MissionStatus.Success) {
-			PanelAfterMission.SetActive(true);
-			PanelAfterMission.GetComponent<PanelAfterMission>().Prepare(Mission, ActualResults, www);
-		} else {
-			PanelMissionFailed.SetActive(true);
-			PanelMissionFailed.GetComponent<PanelMissionFailed>().Prepare(Mission, ActualResults);
-		}
-		gameObject.SetActive(false);
-	}
-
 	public void Inform(ScoreType st, float delta) {
 		ActualResults[st].Value += delta;
 
@@ -90,8 +72,9 @@ public class PanelMinigame : MonoBehaviour, Listener<ScoreType, float> {
 				
 				bool isSuccess = Mission.GetStatus(ActualResults) == MissionStatus.Success;
 				Game.Me.GetComponent<GoogleAnalyticsV3>().LogEvent("Finished " + Mission.MissionType + " " + (isSuccess?"Success":"Failure"), Mission.Name, ActualResults[ScoreType.Interventions].Value.ToString(), (long)(ActualResults[ScoreType.Time].Value * 1000));
-				StartCoroutine(WaitingForResultsCoroutine( Mission.SaveGame(ActualResults), Mission));
+				Game.Me.MinigameFinished(ActualResults, Mission);
 				Mission = null;
+				gameObject.SetActive(false);
 			}
 		}
 	}

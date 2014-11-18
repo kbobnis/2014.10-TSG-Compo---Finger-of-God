@@ -52,24 +52,20 @@ public class Game : MonoBehaviour {
 		}
 		yield return www;
 
-		try {
-			if (!string.IsNullOrEmpty(www.error)) {
-				Debug.Log("www error: " + www.error);
+		if (!string.IsNullOrEmpty(www.error)) {
+			Debug.Log("www error: " + www.error);
 
-				PanelLoading.GetComponent<PanelLoading>().JustDo = () => { PrepareLoading(); };
-				PanelLoading.GetComponent<PanelLoading>().TextTop = "Internet connection required. (" + www.error + ")";
-				PanelLoading.GetComponent<PanelLoading>().TextTap = "Tap to retry";
-			} else {
-				ParseInitialData(www.text);
-				PanelLoading pl = PanelLoading.GetComponent<PanelLoading>();
-				PanelLoading.SetActive(false);
-				PanelMainMenu.SetActive(true);
-				PanelBeforeMission.SetActive(false);
-				PanelAfterMission.SetActive(false);
-				PanelLoadingMission.SetActive(false);
-			}
-		} catch (Exception e) {
-			Debug.Log("Exception: " + e);
+			PanelLoading.GetComponent<PanelLoading>().JustDo = () => { PrepareLoading(); };
+			PanelLoading.GetComponent<PanelLoading>().TextTop = "Internet connection required. (" + www.error + ")";
+			PanelLoading.GetComponent<PanelLoading>().TextTap = "Tap to retry";
+		} else {
+			ParseInitialData(www.text);
+			PanelLoading pl = PanelLoading.GetComponent<PanelLoading>();
+			PanelLoading.SetActive(false);
+			PanelMainMenu.SetActive(true);
+			PanelBeforeMission.SetActive(false);
+			PanelAfterMission.SetActive(false);
+			PanelLoadingMission.SetActive(false);
 		}
 	}
 
@@ -139,4 +135,24 @@ public class Game : MonoBehaviour {
 		return stats;
 	}
 
+
+	internal void MinigameFinished(Dictionary<ScoreType, Result> ActualResults, Mission Mission) {
+		StartCoroutine(WaitingForResultsCoroutine(Mission.SaveGame(ActualResults), Mission, ActualResults));
+	}
+
+	private IEnumerator WaitingForResultsCoroutine(WWW www, Mission Mission, Dictionary<ScoreType, Result> ActualResults) {
+		MissionStatus ms = Mission.GetStatus(ActualResults);
+
+		if (ms == MissionStatus.Success) {
+			PanelAfterMission.SetActive(true);
+			PanelAfterMission.GetComponent<PanelAfterMission>().Prepare(Mission, ActualResults);
+		} else {
+			PanelMissionFailed.SetActive(true);
+			PanelMissionFailed.GetComponent<PanelMissionFailed>().Prepare(Mission, ActualResults);
+		}
+		yield return www;
+		if (ms == MissionStatus.Success) {
+			PanelAfterMission.GetComponent<PanelAfterMission>().UpdateText(www);
+		}
+	}
 }

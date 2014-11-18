@@ -8,13 +8,13 @@ using SimpleJSON;
 
 public class PanelAfterMission : MonoBehaviour {
 
-	public GameObject PanelMainMenu, TextYourScore, TextLeaderboardNames, TextLeaderboardScores, PanelButtons;
+	public GameObject PanelMainMenu, TextYourScore, TextLeaderboardNames, TextLeaderboardScores, PanelButtons, ImageYellowStraw;
 	private Mission Mission;
 	private Dictionary<ScoreType, Result> ActualResults;
 	private LevelScore YourScore;
 	private WWW LastWWW;
 
-	public void Prepare(Mission mission, Dictionary<ScoreType, Result> actualResults, WWW www) {
+	public void Prepare(Mission mission, Dictionary<ScoreType, Result> actualResults) {
 		Mission = mission;
 		ActualResults = actualResults;
 		TextLeaderboardNames.GetComponent<Text>().text = "";
@@ -24,7 +24,9 @@ public class PanelAfterMission : MonoBehaviour {
 		YourScore.AddInfo( Game.Me.UserName, (int)actualResults[ScoreType.Interventions].Value, WebConnector.GetDeviceId(), actualResults[ScoreType.Time].Value, -1);
 		TextYourScore.GetComponent<Text>().text = YourScore.Interventions + " interv, " + (YourScore.Time.ToString("##.##")) + " seconds";
 
-		UpdateText(www);
+		TextLeaderboardNames.GetComponent<Text>().text = "Loading scores";
+		TextLeaderboardScores.GetComponent<Text>().text = "";
+		ImageYellowStraw.SetActive(false);
 	}
 
 	void Awake() {
@@ -41,12 +43,13 @@ public class PanelAfterMission : MonoBehaviour {
 		go.GetComponent<PanelButtons>().AfterSettingsClose = () => { UpdateText(LastWWW); };
 	}
 
-	private void UpdateText(WWW www) {
+	public void UpdateText(WWW www) {
 		LastWWW = www;
 		string text = "";
 		if (www.error != null) {
 			text = www.error;
 		} else {
+			ImageYellowStraw.SetActive(true);
 			TextYourScore.GetComponent<Text>().text = YourScore.Interventions + " interv, " + (YourScore.Time.ToString("##.##")) + " seconds";
 			TextLeaderboardNames.GetComponent<Text>().text = "";
 			TextLeaderboardScores.GetComponent<Text>().text = "";
@@ -75,7 +78,6 @@ public class PanelAfterMission : MonoBehaviour {
 			TextLeaderboardNames.GetComponent<Text>().text = tmp2.Substring(0, tmp2.Length - 1);
 			tmp2 = TextLeaderboardScores.GetComponent<Text>().text;
 			TextLeaderboardScores.GetComponent<Text>().text = tmp2.Substring(0, tmp2.Length - 1);
-				
 		}
 	}
 
