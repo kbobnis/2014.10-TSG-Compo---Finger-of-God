@@ -143,7 +143,7 @@ public class Building : MonoBehaviour{
 		DryElectricityCheck();
 
 		foreach (Element status in Statuses.Keys.ToList()) {
-			Health -= Statuses[status].UpdateAndGetDamage();
+			Health -= Statuses[status].UpdateAndGetDamage(Health>0);
 		}
 
 		foreach (Element e in FillRequirement.Keys.ToList()) {
@@ -276,7 +276,9 @@ public class Building : MonoBehaviour{
 			float strikeDamageF = bt.Stats[StatType.StrikeDamage][e];
 			float effectDamageF = bt.Stats[StatType.EffectDamage][e];
 			float effectTimeF = bt.Stats[StatType.EffectTime][e];
-			Statuses.Add(e, new BuildingStatus(elGo[e], bt.Effects[e], SoundManager.Clips[e], effectDamageF, effectTimeF, strikeDamageF, fillSpeedF));
+
+			Statuses.Add(e, new BuildingStatus(elGo[e], bt.Effects[e], SoundManager.Clips[e], effectDamageF, effectTimeF, strikeDamageF, fillSpeedF, 
+				SpriteManager.ElementPerBuildingSprites[SpriteManager.DefaultEffectPaths[e]]));
 		}
 	}
 

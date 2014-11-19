@@ -10,6 +10,7 @@ public class BuildingStatus {
 	private float _Status;
 	private GameObject GameObject;
 	private Sprite[] Animation;
+	private Sprite[] AnimationWhenDead;
 	private AudioClip Sound;
 	private float EffectDamage;
 	private float EffectTime;
@@ -24,7 +25,7 @@ public class BuildingStatus {
 		get { return Status; }
 	}
 
-	public BuildingStatus(GameObject gameObject, Sprite[] animation, AudioClip sound, float effectDamage, float effectTime, float strikeDamage, float fillSpeed)
+	public BuildingStatus(GameObject gameObject, Sprite[] animation, AudioClip sound, float effectDamage, float effectTime, float strikeDamage, float fillSpeed, Sprite[] animationWhenDead)
     {
 		GameObject = gameObject;
 		Animation = animation;
@@ -33,6 +34,7 @@ public class BuildingStatus {
 		EffectTime = effectTime;
 		StrikeDamage = strikeDamage;
 		FillSpeed = fillSpeed;
+		AnimationWhenDead = animationWhenDead;
     }
 
 	private float Status {
@@ -62,7 +64,7 @@ public class BuildingStatus {
 		return _IsSource;
 	}
 
-	internal float UpdateAndGetDamage() {
+	internal float UpdateAndGetDamage(bool isAlive) {
 
 		if (EffectTime > 0) {
 			Status += -1 / EffectTime * Time.deltaTime;
@@ -81,6 +83,9 @@ public class BuildingStatus {
 
 			Image im = GameObject.GetComponent<Image>();
 			Sprite[] ss = Animation;
+			if (isAlive == false) {
+				ss = AnimationWhenDead;
+			}
 			Sprite s = im.sprite = ss[Mathf.RoundToInt(progress * (ss.Length - 1))];
 
 			Rect before = GameObject.GetComponent<RectTransform>().rect;

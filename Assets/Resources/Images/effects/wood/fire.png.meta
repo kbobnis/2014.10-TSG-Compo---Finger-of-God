@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: 90d8408ea43736e48b788c188046e5c5
+guid: c80d6dd8ab58e3e40b58811d4adc83d4
 TextureImporter:
   fileIDToRecycleName:
     21300000: woodenFire_00000
@@ -45,7 +45,7 @@ TextureImporter:
   textureFormat: -1
   maxTextureSize: 4096
   textureSettings:
-    filterMode: 0
+    filterMode: -1
     aniso: 1
     mipBias: -1
     wrapMode: 1
@@ -71,158 +71,158 @@ TextureImporter:
         y: 412
         width: 64
         height: 98
-      alignment: 2
-      pivot: {x: .5, y: 1}
+      alignment: 0
+      pivot: {x: .5, y: .5}
       border: {x: 0, y: 0, z: 0, w: 0}
     - name: woodenFire_00001
-      rect:
-        serializedVersion: 2
-        x: 68
-        y: 412
-        width: 64
-        height: 98
-      alignment: 2
-      pivot: {x: .5, y: 1}
-      border: {x: 0, y: 0, z: 0, w: 0}
-    - name: woodenFire_00002
-      rect:
-        serializedVersion: 2
-        x: 134
-        y: 412
-        width: 64
-        height: 98
-      alignment: 2
-      pivot: {x: .5, y: 1}
-      border: {x: 0, y: 0, z: 0, w: 0}
-    - name: woodenFire_00003
-      rect:
-        serializedVersion: 2
-        x: 200
-        y: 412
-        width: 64
-        height: 98
-      alignment: 2
-      pivot: {x: .5, y: 1}
-      border: {x: 0, y: 0, z: 0, w: 0}
-    - name: woodenFire_00004
-      rect:
-        serializedVersion: 2
-        x: 266
-        y: 412
-        width: 64
-        height: 98
-      alignment: 2
-      pivot: {x: .5, y: 1}
-      border: {x: 0, y: 0, z: 0, w: 0}
-    - name: woodenFire_00005
-      rect:
-        serializedVersion: 2
-        x: 332
-        y: 412
-        width: 64
-        height: 98
-      alignment: 2
-      pivot: {x: .5, y: 1}
-      border: {x: 0, y: 0, z: 0, w: 0}
-    - name: woodenFire_00006
-      rect:
-        serializedVersion: 2
-        x: 398
-        y: 412
-        width: 64
-        height: 98
-      alignment: 2
-      pivot: {x: .5, y: 1}
-      border: {x: 0, y: 0, z: 0, w: 0}
-    - name: woodenFire_00007
       rect:
         serializedVersion: 2
         x: 2
         y: 312
         width: 64
         height: 98
-      alignment: 2
-      pivot: {x: .5, y: 1}
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: woodenFire_00002
+      rect:
+        serializedVersion: 2
+        x: 2
+        y: 212
+        width: 64
+        height: 98
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: woodenFire_00003
+      rect:
+        serializedVersion: 2
+        x: 2
+        y: 112
+        width: 64
+        height: 98
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: woodenFire_00004
+      rect:
+        serializedVersion: 2
+        x: 2
+        y: 12
+        width: 64
+        height: 98
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: woodenFire_00005
+      rect:
+        serializedVersion: 2
+        x: 68
+        y: 412
+        width: 64
+        height: 98
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: woodenFire_00006
+      rect:
+        serializedVersion: 2
+        x: 68
+        y: 312
+        width: 64
+        height: 98
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: woodenFire_00007
+      rect:
+        serializedVersion: 2
+        x: 68
+        y: 212
+        width: 64
+        height: 98
+      alignment: 0
+      pivot: {x: .5, y: .5}
       border: {x: 0, y: 0, z: 0, w: 0}
     - name: woodenFire_00008
       rect:
         serializedVersion: 2
         x: 68
-        y: 312
+        y: 112
         width: 64
         height: 98
-      alignment: 2
-      pivot: {x: .5, y: 1}
+      alignment: 0
+      pivot: {x: .5, y: .5}
       border: {x: 0, y: 0, z: 0, w: 0}
     - name: woodenFire_00009
+      rect:
+        serializedVersion: 2
+        x: 68
+        y: 12
+        width: 64
+        height: 98
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: woodenFire_00010
+      rect:
+        serializedVersion: 2
+        x: 134
+        y: 412
+        width: 64
+        height: 98
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: woodenFire_00011
+      rect:
+        serializedVersion: 2
+        x: 200
+        y: 412
+        width: 64
+        height: 98
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: woodenFire_00012
+      rect:
+        serializedVersion: 2
+        x: 266
+        y: 412
+        width: 64
+        height: 98
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: woodenFire_00013
+      rect:
+        serializedVersion: 2
+        x: 332
+        y: 412
+        width: 64
+        height: 98
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: woodenFire_00014
+      rect:
+        serializedVersion: 2
+        x: 398
+        y: 412
+        width: 64
+        height: 98
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: woodenFire_00015
       rect:
         serializedVersion: 2
         x: 134
         y: 312
         width: 64
         height: 98
-      alignment: 2
-      pivot: {x: .5, y: 1}
-      border: {x: 0, y: 0, z: 0, w: 0}
-    - name: woodenFire_00010
-      rect:
-        serializedVersion: 2
-        x: 200
-        y: 312
-        width: 64
-        height: 98
-      alignment: 2
-      pivot: {x: .5, y: 1}
-      border: {x: 0, y: 0, z: 0, w: 0}
-    - name: woodenFire_00011
-      rect:
-        serializedVersion: 2
-        x: 266
-        y: 312
-        width: 64
-        height: 98
-      alignment: 2
-      pivot: {x: .5, y: 1}
-      border: {x: 0, y: 0, z: 0, w: 0}
-    - name: woodenFire_00012
-      rect:
-        serializedVersion: 2
-        x: 332
-        y: 312
-        width: 64
-        height: 98
-      alignment: 2
-      pivot: {x: .5, y: 1}
-      border: {x: 0, y: 0, z: 0, w: 0}
-    - name: woodenFire_00013
-      rect:
-        serializedVersion: 2
-        x: 398
-        y: 312
-        width: 64
-        height: 98
-      alignment: 2
-      pivot: {x: .5, y: 1}
-      border: {x: 0, y: 0, z: 0, w: 0}
-    - name: woodenFire_00014
-      rect:
-        serializedVersion: 2
-        x: 2
-        y: 212
-        width: 64
-        height: 98
-      alignment: 2
-      pivot: {x: .5, y: 1}
-      border: {x: 0, y: 0, z: 0, w: 0}
-    - name: woodenFire_00015
-      rect:
-        serializedVersion: 2
-        x: 68
-        y: 212
-        width: 64
-        height: 98
-      alignment: 2
-      pivot: {x: .5, y: 1}
+      alignment: 0
+      pivot: {x: .5, y: .5}
       border: {x: 0, y: 0, z: 0, w: 0}
     - name: woodenFire_00016
       rect:
@@ -231,48 +231,48 @@ TextureImporter:
         y: 212
         width: 64
         height: 98
-      alignment: 2
-      pivot: {x: .5, y: 1}
+      alignment: 0
+      pivot: {x: .5, y: .5}
       border: {x: 0, y: 0, z: 0, w: 0}
     - name: woodenFire_00017
       rect:
         serializedVersion: 2
-        x: 200
-        y: 212
+        x: 134
+        y: 112
         width: 64
         height: 98
-      alignment: 2
-      pivot: {x: .5, y: 1}
+      alignment: 0
+      pivot: {x: .5, y: .5}
       border: {x: 0, y: 0, z: 0, w: 0}
     - name: woodenFire_00018
       rect:
         serializedVersion: 2
-        x: 266
-        y: 212
+        x: 134
+        y: 12
         width: 64
         height: 98
-      alignment: 2
-      pivot: {x: .5, y: 1}
+      alignment: 0
+      pivot: {x: .5, y: .5}
       border: {x: 0, y: 0, z: 0, w: 0}
     - name: woodenFire_00019
       rect:
         serializedVersion: 2
-        x: 332
-        y: 212
+        x: 200
+        y: 312
         width: 64
         height: 98
-      alignment: 2
-      pivot: {x: .5, y: 1}
+      alignment: 0
+      pivot: {x: .5, y: .5}
       border: {x: 0, y: 0, z: 0, w: 0}
     - name: woodenFire_00020
       rect:
         serializedVersion: 2
-        x: 398
-        y: 212
+        x: 266
+        y: 312
         width: 64
         height: 98
-      alignment: 2
-      pivot: {x: .5, y: 1}
+      alignment: 0
+      pivot: {x: .5, y: .5}
       border: {x: 0, y: 0, z: 0, w: 0}
   spritePackingTag: 
   userData: 

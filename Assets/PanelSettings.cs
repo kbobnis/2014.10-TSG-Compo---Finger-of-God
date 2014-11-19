@@ -91,7 +91,7 @@ public class PanelSettings : MonoBehaviour {
 	}
 
 	public void OpenFb() {
-		Application.OpenURL("https://www.facebook.com/pages/Wyspian-Studios/1401979296693711");
+		Application.OpenURL("https://www.facebook.com/pages/Wyspian-Studios/1541988342704621");
 	}
 
 }
