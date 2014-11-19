@@ -8,27 +8,29 @@ public delegate void LoadSprite(Sprite s);
 
 public class SpriteManager : MonoBehaviour{
 
-	public static Dictionary<Element, Sprite[]> ElementSprites = new Dictionary<Element, Sprite[]>();
+	public static Dictionary<string, Sprite[]> ElementPerBuildingSprites = new Dictionary<string, Sprite[]>();
+	public static Dictionary<Element, string> DefaultEffectPaths = new Dictionary<Element, string>();
 
 	private static List<KeyValuePair<string, LoadSprite>> SpritesToLoad = new List<KeyValuePair<string, LoadSprite>>();
 	private static Dictionary<string, int> Retries = new Dictionary<string, int>();
 	private static bool DownloadingNow = false;
 	private static Dictionary<string, Sprite> LoadedSprites = new Dictionary<string, Sprite>();
 
-	public static Sprite MainMenuBg;
-	public static Sprite PanelBeforeMissionBg;
-
-
 	void Start() {
+		DefaultEffectPaths.Add(Element.Fire, "Images/fire");
+		DefaultEffectPaths.Add(Element.SmokeAfterFire, "Images/smokeAfterFire");
+		DefaultEffectPaths.Add(Element.Electricity, "Images/electric");
+		DefaultEffectPaths.Add(Element.Crush, "Images/explosion");
+		DefaultEffectPaths.Add(Element.Water, "Images/water");
 
-		ElementSprites.Add(Element.Fire, Resources.LoadAll<Sprite> ("Images/fire"));
-		ElementSprites.Add (Element.Water, Resources.LoadAll<Sprite> ("Images/water"));
-		ElementSprites.Add (Element.SmokeAfterFire, Resources.LoadAll<Sprite> ("Images/smokeAfterFire"));
-		ElementSprites.Add (Element.Electricity, Resources.LoadAll<Sprite> ("Images/electric"));
-		ElementSprites.Add (Element.Crush, Resources.LoadAll<Sprite> ("Images/explosion"));
 
-		MainMenuBg = Resources.Load<Sprite>("Images/failed/mission_failed_bg");
-		PanelBeforeMissionBg = Resources.Load<Sprite>("Images/beforeMission/start_new_mission_bg");
+		ElementPerBuildingSprites.Add(DefaultEffectPaths[Element.Fire], Resources.LoadAll<Sprite> (DefaultEffectPaths[Element.Fire]));
+		ElementPerBuildingSprites.Add(DefaultEffectPaths[Element.SmokeAfterFire], Resources.LoadAll<Sprite>(DefaultEffectPaths[Element.SmokeAfterFire]));
+		ElementPerBuildingSprites.Add(DefaultEffectPaths[Element.Electricity], Resources.LoadAll<Sprite>(DefaultEffectPaths[Element.Electricity]));
+		ElementPerBuildingSprites.Add(DefaultEffectPaths[Element.Crush], Resources.LoadAll<Sprite>(DefaultEffectPaths[Element.Crush]));
+		ElementPerBuildingSprites.Add(DefaultEffectPaths[Element.Water], Resources.LoadAll<Sprite>(DefaultEffectPaths[Element.Water]));
+		ElementPerBuildingSprites.Add("Images/effects/woodenBuildingFire", Resources.LoadAll<Sprite>("Images/effects/woodenBuildingFire"));
+
 	}
 
 	public static void LoadAsynchronous(string path, LoadSprite ls) {

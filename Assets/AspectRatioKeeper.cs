@@ -8,10 +8,10 @@ public class AspectRatioKeeper : MonoBehaviour {
 	private int DesiredW, DesiredH;
 	private int LastWidth, LastHeight;
 	private float Aspect;
-	private float _ActualScale;
+	private static float _ActualScale;
 	private bool ToSendScaleChanged = false;
 
-	public float ActualScale {
+	public static float ActualScale {
 		get { return _ActualScale; }
 	}
 

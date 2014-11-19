@@ -24,8 +24,8 @@ public class PanelAfterMission : MonoBehaviour {
 		YourScore.AddInfo( Game.Me.UserName, (int)actualResults[ScoreType.Interventions].Value, WebConnector.GetDeviceId(), actualResults[ScoreType.Time].Value, -1);
 		TextYourScore.GetComponent<Text>().text = YourScore.Interventions + " interv, " + (YourScore.Time.ToString("##.##")) + " seconds";
 
-		TextLeaderboardNames.GetComponent<Text>().text = "Loading scores";
-		TextLeaderboardScores.GetComponent<Text>().text = "";
+		TextLeaderboardNames.GetComponent<Text>().text = "Loading";
+		TextLeaderboardScores.GetComponent<Text>().text = "scores";
 		ImageYellowStraw.SetActive(false);
 	}
 

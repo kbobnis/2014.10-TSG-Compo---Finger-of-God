@@ -64,10 +64,16 @@
      <Compile Include="Assets\plugins\GoogleAnalyticsV3\HitBuilders\TimingHitBuilder.cs" />
      <Compile Include="Assets\plugins\GoogleAnalyticsV3\HitBuilders\TransactionHitBuilder.cs" />
      <Compile Include="Assets\plugins\SimpleJSON.cs" />
+     <None Include="Assets\Extensions\TexturePacker\Tutorial\Resources\example_data.txt" />
+     <None Include="Assets\Extensions\TexturePacker\Tutorial\Resources\TutorialAtlas_data.txt" />
      <None Include="Assets\Resources\Images\gui_minigame\read_me.txt" />
+     <None Include="Assets\codeandweb.com\Readme.txt" />
      <None Include="Assets\Resources\Images\gui_mission_complete\read_me.txt" />
  <Reference Include="UnityEngine.UI">
  <HintPath>C:/Program Files (x86)/Unity/Editor/Data/UnityExtensions/Unity/GUISystem/4.6.0/UnityEngine.UI.dll</HintPath>
+ </Reference>
+ <Reference Include="TexturePacker">
+ <HintPath>D:/workspace/godsFinger/Assets/Extensions/TexturePacker/Lib/TexturePacker.dll</HintPath>
  </Reference>
  <Reference Include="ICSharpCode.SharpZipLib">
  <HintPath>D:/workspace/godsFinger/Assets/plugins/ICSharpCode.SharpZipLib.dll</HintPath>

@@ -276,7 +276,7 @@ public class Building : MonoBehaviour{
 			float strikeDamageF = bt.Stats[StatType.StrikeDamage][e];
 			float effectDamageF = bt.Stats[StatType.EffectDamage][e];
 			float effectTimeF = bt.Stats[StatType.EffectTime][e];
-			Statuses.Add(e, new BuildingStatus(elGo[e], SpriteManager.ElementSprites[e], SoundManager.Clips[e], effectDamageF, effectTimeF, strikeDamageF, fillSpeedF));
+			Statuses.Add(e, new BuildingStatus(elGo[e], bt.Effects[e], SoundManager.Clips[e], effectDamageF, effectTimeF, strikeDamageF, fillSpeedF));
 		}
 	}
 

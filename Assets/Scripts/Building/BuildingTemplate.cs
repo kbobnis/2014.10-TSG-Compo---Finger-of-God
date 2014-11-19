@@ -11,10 +11,10 @@ public class BuildingTemplate {
 	public readonly float StartingHealth;
 	private Sprite _Image;
 	private Sprite _ImageDestroyed;
-	
+	public Dictionary<Element, Sprite[]> Effects = new Dictionary<Element,Sprite[]>();
 	public readonly Dictionary<StatType, Dictionary<Element, float>> Stats;
 	
-	public BuildingTemplate(int id, string name, int population, float startingHealth, string imagePath, string imageDPath, Dictionary<StatType, Dictionary<Element, float>> stats) {
+	public BuildingTemplate(int id, string name, int population, float startingHealth, string imagePath, string imageDPath, Dictionary<StatType, Dictionary<Element, float>> stats, Dictionary<Element, Sprite[]> effects) {
 		Id = id;
 		Name = name;
 		Population = population;
@@ -24,6 +24,8 @@ public class BuildingTemplate {
 		SpriteManager.LoadAsynchronous(imageDPath, (Sprite s) => {
 			_ImageDestroyed = s;
 		});
+
+		Effects = effects;
 		Stats = stats;
 		StartingHealth = startingHealth;
 	}

@@ -100,8 +100,24 @@ public class Game : MonoBehaviour {
 			string imagePath = buildingXml.Attributes["image"].Value;
 			string imageDPath = buildingXml.Attributes["imageDestroyed"].Value;
 			float health = float.Parse(buildingXml.Attributes["health"].Value == "" ? "1" : buildingXml.Attributes["health"].Value);
+			
+			Dictionary<Element, Sprite[]> effects = new Dictionary<Element,Sprite[]>();
+			string fireEffectPath = buildingXml.Attributes["fireEffect"].Value == "" ? SpriteManager.DefaultEffectPaths[Element.Fire] : buildingXml.Attributes["fireEffect"].Value;
+			effects.Add(Element.Fire, SpriteManager.ElementPerBuildingSprites[fireEffectPath]);
 
-			BuildingTemplates.Add(id, new BuildingTemplate(id, name, population, health, imagePath, imageDPath, thisStats));
+			string waterEffectPath = buildingXml.Attributes["waterEffect"].Value == "" ? SpriteManager.DefaultEffectPaths[Element.Water] : buildingXml.Attributes["waterEffect"].Value;
+			effects.Add(Element.Water, SpriteManager.ElementPerBuildingSprites[waterEffectPath]);
+
+			string electricityEffectPath = buildingXml.Attributes["electricityEffect"].Value == "" ? SpriteManager.DefaultEffectPaths[Element.Electricity] : buildingXml.Attributes["electricityEffect"].Value;
+			effects.Add(Element.Electricity, SpriteManager.ElementPerBuildingSprites[electricityEffectPath]);
+
+			string smokeAfterFireffectPath = buildingXml.Attributes["smokeAfterFireEffect"].Value == "" ? SpriteManager.DefaultEffectPaths[Element.SmokeAfterFire]: buildingXml.Attributes["smokeAfterFireEffect"].Value;
+			effects.Add(Element.SmokeAfterFire, SpriteManager.ElementPerBuildingSprites[smokeAfterFireffectPath]);
+
+			string crushEffectPath = buildingXml.Attributes["crushEffect"].Value == "" ? SpriteManager.DefaultEffectPaths[Element.Crush] : buildingXml.Attributes["crushEffect"].Value;
+			effects.Add(Element.Crush, SpriteManager.ElementPerBuildingSprites[crushEffectPath]);
+
+			BuildingTemplates.Add(id, new BuildingTemplate(id, name, population, health, imagePath, imageDPath, thisStats, effects));
 		}
 
 		foreach (XmlNode power in model.GetElementsByTagName("power")) {
@@ -155,4 +171,5 @@ public class Game : MonoBehaviour {
 			PanelAfterMission.GetComponent<PanelAfterMission>().UpdateText(www);
 		}
 	}
+
 }
