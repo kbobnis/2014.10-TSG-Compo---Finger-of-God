@@ -23,4 +23,8 @@ public class PanelMainMenu : MonoBehaviour {
 		StartMission(MissionType.Random);
 	}
 
+	public void QuitApplication() {
+		Application.Quit();
+	}
+
 }

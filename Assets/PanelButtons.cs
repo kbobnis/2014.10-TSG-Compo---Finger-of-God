@@ -8,7 +8,7 @@ public class PanelButtons : MonoBehaviour {
 	public JustDo AfterSettingsClose;
 
 	private bool IsPanelSettingsActive;
-
+	private GameObject InvokingPanel;
 	// Use this for initialization
 	void Start () {
 	
@@ -42,9 +42,15 @@ public class PanelButtons : MonoBehaviour {
 	public void ShowSettings() {
 		IsPanelSettingsActive = true;
 		PanelSettings.SetActive(true);
+		PanelSettings.GetComponent<PanelSettings>().SetInvokingPanel(InvokingPanel);
+		InvokingPanel.SetActive(false);
 	}
 
 	public void ShowSettingsButton(bool on) {
 		ButtonSettings.SetActive(on);
+	}
+
+	internal void SetInvokingPanel(GameObject gameObject) {
+		InvokingPanel = gameObject;
 	}
 }

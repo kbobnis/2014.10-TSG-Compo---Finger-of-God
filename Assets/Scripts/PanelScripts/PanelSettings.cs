@@ -9,6 +9,8 @@ public class PanelSettings : MonoBehaviour {
 	
 	public Sprite SpriteOn, SpriteOff;
 
+	private GameObject InvokingPanel;
+
 
 	void Awake() {
 
@@ -71,6 +73,7 @@ public class PanelSettings : MonoBehaviour {
 	}
 
 	public void Back() {
+		InvokingPanel.SetActive(true);
 		gameObject.SetActive(false);
 	}
 
@@ -78,4 +81,8 @@ public class PanelSettings : MonoBehaviour {
 		Application.OpenURL("https://www.facebook.com/pages/Wyspian-Studios/1541988342704621");
 	}
 
+
+	internal void SetInvokingPanel(GameObject invokingPanel) {
+		InvokingPanel = invokingPanel;
+	}
 }

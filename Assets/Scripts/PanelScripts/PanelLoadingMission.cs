@@ -7,33 +7,27 @@ public class PanelLoadingMission : MonoBehaviour {
 
 	public GameObject PanelMainMenu, PanelBeforeMission, TextInfo, PanelButtons;
 	private MissionType MissionType;
-	private GameObject MyPanelButtons;
 
 	void Start () {
 		TextInfo.GetComponent<Text>().text = "Loading mission";
+		GetComponent<ButtonsInCloud>().ClonedPanelButtons.SetActive(false);
 	}
 
-	void Awake() {
-
-		PanelButtons.SetActive(true); // this is a template, don't touch it.
-		GameObject go = PanelButtons.GetComponent<PanelButtons>().CopyMeIn(gameObject);
-		MyPanelButtons = go;
-		PanelButtons.SetActive(false); // this is a template, don't touch it.
-
-		go.GetComponent<PanelButtons>().ButtonTopText.GetComponent<Text>().text = "Restart Levels";
-		go.GetComponent<PanelButtons>().ButtonTop.GetComponent<Button>().onClick.AddListener(() => { StartCoroutine(RestartLevelsCoroutine()); });
-
-		go.GetComponent<PanelButtons>().ButtonBottomText.GetComponent<Text>().text = "Main Menu";
-		go.GetComponent<PanelButtons>().ButtonBottom.GetComponent<Button>().onClick.AddListener(() => { PanelMainMenu.SetActive(true); gameObject.SetActive(false); });
-		go.SetActive(false);
+	public void RestartLevels() {
+		StartCoroutine(RestartLevelsCoroutine());
 	}
 	
 	internal void LoadMission(MissionType mt) {
 		StartCoroutine(LoadMissionCoroutine(mt));
 	}
 
+	public void ReturnToMainMenu() {
+		PanelMainMenu.SetActive(true); 
+		gameObject.SetActive(false); 
+	}
+
 	private IEnumerator RestartLevelsCoroutine() {
-		MyPanelButtons.SetActive(false);
+		GetComponent<ButtonsInCloud>().ClonedPanelButtons.SetActive(false);
 		TextInfo.GetComponent<Text>().text = "Restarting levels...";
 		yield return new WaitForSeconds(1f);
 		yield return WebConnector.RestartLevels();
@@ -47,8 +41,8 @@ public class PanelLoadingMission : MonoBehaviour {
 		if (www.error != null) {
 			Debug.Log("Some errors occured: " + www.error);
 			TextInfo.GetComponent<Text>().text = "Internet connection required: " + www.error;
-			MyPanelButtons.SetActive(true);
-			MyPanelButtons.GetComponent<PanelButtons>().ButtonTop.SetActive(false);
+			GetComponent<ButtonsInCloud>().ClonedPanelButtons.SetActive(true);
+			GetComponent<ButtonsInCloud>().ClonedPanelButtons.GetComponent<PanelButtons>().ButtonTop.SetActive(false);
 		} else {
 			try {
 				JSONNode n = JSONNode.Parse(www.text);
@@ -58,7 +52,7 @@ public class PanelLoadingMission : MonoBehaviour {
 				Game.Me.UserName = WWW.UnEscapeURL(n["name"]);
 				if (jsonMap == null || jsonMap == "" || jsonMap == "null") {
 					TextInfo.GetComponent<Text>().text = "There are no more missions. \n\nVisit fb page for updates.";
-					MyPanelButtons.SetActive(true);
+					GetComponent<ButtonsInCloud>().ClonedPanelButtons.SetActive(true);
 				} else {
 					PanelBeforeMission.SetActive(true);
 					PanelBeforeMission.GetComponent<PanelBeforeMission>().MissionBriefing(new Mission(jsonMap, mt, name, round));
