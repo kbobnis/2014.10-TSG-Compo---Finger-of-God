@@ -5,28 +5,12 @@ using System.Text.RegularExpressions;
 
 public class PanelSettings : MonoBehaviour {
 
-	public GameObject PanelButtons, InputFieldTextName, ButtonMusic, ButtonSounds, TextVibrations, ButtonVibrations;
-	//public Button.ButtonClickedEvent BackAc;
-	private GameObject MyPanelButtons;
-
+	public GameObject InputFieldTextName, ButtonMusic, ButtonSounds, TextVibrations, ButtonVibrations;
+	
 	public Sprite SpriteOn, SpriteOff;
 
 
 	void Awake() {
-
-		PanelButtons.SetActive(true); // this is a template, don't touch it.
-		GameObject go = PanelButtons.GetComponent<PanelButtons>().CopyMeIn(gameObject);
-		PanelButtons.SetActive(false); // this is a template, don't touch it.
-
-		go.GetComponent<PanelButtons>().ButtonTopText.GetComponent<Text>().text = "Save name";
-		go.GetComponent<PanelButtons>().ButtonTop.GetComponent<Button>().onClick.AddListener(() => { SaveSettings(); });
-		go.GetComponent<PanelButtons>().ButtonTop.SetActive(false);
-
-		go.GetComponent<PanelButtons>().ButtonBottomText.GetComponent<Text>().text = "Back";
-		go.GetComponent<PanelButtons>().ButtonBottom.GetComponent<Button>().onClick.AddListener(() => { Back(); });
-		go.GetComponent<PanelButtons>().ShowClouds(false);
-		go.GetComponent<PanelButtons>().ShowSettingsButton(false);
-		MyPanelButtons = go;
 
 		ButtonMusic.GetComponent<Toggle>().onValueChanged.RemoveAllListeners();
 		ButtonMusic.GetComponent<Toggle>().onValueChanged.AddListener((bool on) => { 
@@ -55,10 +39,10 @@ public class PanelSettings : MonoBehaviour {
 	}
 
 	void Update() {
-		MyPanelButtons.GetComponent<PanelButtons>().ButtonTop.SetActive(Game.Me.UserName != InputFieldTextName.GetComponent<InputField>().value);
+		GetComponent<ButtonsInCloud>().ClonedPanelButtons.GetComponent<PanelButtons>().ButtonTop.SetActive(Game.Me.UserName != InputFieldTextName.GetComponent<InputField>().value);
 	}
 
-	private void SaveSettings() {
+	public void SaveSettings() {
 		StartCoroutine(SaveSettingsCoroutine());
 	}
 
@@ -86,7 +70,7 @@ public class PanelSettings : MonoBehaviour {
 		Game.Me.PanelLoading.SetActive(false);
 	}
 
-	private void Back() {
+	public void Back() {
 		gameObject.SetActive(false);
 	}
 

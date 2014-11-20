@@ -7,22 +7,9 @@ using UnityEngine.UI;
 public class PanelBeforeMission : MonoBehaviour {
 
 	public GameObject TextInfo, BuildingsList, TextMissionQuery;
-	public GameObject PanelMinigame, PanelMainMenu, PanelButtons;
+	public GameObject PanelMinigame, PanelMainMenu;
 
 	private Mission Mission;
-
-	void Awake() {
-		PanelButtons.SetActive(true); // this is a template, don't touch it.
-		GameObject go = PanelButtons.GetComponent<PanelButtons>().CopyMeIn(gameObject);
-		PanelButtons.SetActive(false); // this is a template, don't touch it.
-
-		go.GetComponent<PanelButtons>().ButtonTopText.GetComponent<Text>().text = "Start Mission";
-		go.GetComponent<PanelButtons>().ButtonTop.GetComponent<Button>().onClick.AddListener(() => { StartMinigameListener(); });
-
-		go.GetComponent<PanelButtons>().ButtonBottomText.GetComponent<Text>().text = "Main menu";
-		go.GetComponent<PanelButtons>().ButtonBottom.GetComponent<Button>().onClick.AddListener(() => { ReturnToMainMenu(); });
-	}
-
 
 	public void ReturnToMainMenu() {
 		PanelMainMenu.SetActive(true);
@@ -47,7 +34,7 @@ public class PanelBeforeMission : MonoBehaviour {
 		BuildingsList.GetComponent<ScrollableList>().Build(b, null);
 	}
 
-	private void StartMinigameListener(){
+	public void StartMinigameListener(){
 		StartCoroutine( StartMinigame() );
 	}
 

@@ -8,7 +8,7 @@ using SimpleJSON;
 
 public class PanelAfterMission : MonoBehaviour {
 
-	public GameObject PanelMainMenu, TextYourScore, TextLeaderboardNames, TextLeaderboardScores, PanelButtons, ImageYellowStraw;
+	public GameObject PanelMainMenu, TextYourScore, TextLeaderboardNames, TextLeaderboardScores, ImageYellowStraw;
 	private Mission Mission;
 	private Dictionary<ScoreType, Result> ActualResults;
 	private LevelScore YourScore;
@@ -27,20 +27,6 @@ public class PanelAfterMission : MonoBehaviour {
 		TextLeaderboardNames.GetComponent<Text>().text = "Loading";
 		TextLeaderboardScores.GetComponent<Text>().text = "scores";
 		ImageYellowStraw.SetActive(false);
-	}
-
-	void Awake() {
-
-		PanelButtons.SetActive(true); // this is a template, don't touch it.
-		GameObject go = PanelButtons.GetComponent<PanelButtons>().CopyMeIn(gameObject);
-		PanelButtons.SetActive(false); // this is a template, don't touch it.
-
-		go.GetComponent<PanelButtons>().ButtonTopText.GetComponent<Text>().text = "Next Mission";
-		go.GetComponent<PanelButtons>().ButtonTop.GetComponent<Button>().onClick.AddListener(() => { QuickNextMission(); });
-
-		go.GetComponent<PanelButtons>().ButtonBottomText.GetComponent<Text>().text = "Main Menu";
-		go.GetComponent<PanelButtons>().ButtonBottom.GetComponent<Button>().onClick.AddListener(() => { ShowMainMenu(); });
-		go.GetComponent<PanelButtons>().AfterSettingsClose = () => { UpdateText(LastWWW); };
 	}
 
 	public void UpdateText(WWW www) {
@@ -141,12 +127,12 @@ public class PanelAfterMission : MonoBehaviour {
 
 	}
 
-	private void ShowMainMenu() {
+	public void ShowMainMenu() {
 		gameObject.SetActive(false);
 		PanelMainMenu.SetActive(true);
 	}
 
-	private void QuickNextMission() {
+	public void QuickNextMission() {
 		PanelMainMenu.SetActive(true);
 		switch (Mission.MissionType) {
 			case global::MissionType.Specified:
