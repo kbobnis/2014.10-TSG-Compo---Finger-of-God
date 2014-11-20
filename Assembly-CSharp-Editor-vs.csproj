@@ -46,6 +46,11 @@
 	</Reference>
   </ItemGroup>
   <ItemGroup>
+     <Compile Include="Assets\Editor\BundleVersionChecker\AbstractBundleVersionGenerator.cs" />
+     <Compile Include="Assets\Editor\BundleVersionChecker\BundleVersionChecker.cs" />
+     <Compile Include="Assets\Editor\BundleVersionChecker\ConfigBundleVersionChecker.cs" />
+     <Compile Include="Assets\Editor\BundleVersionChecker\SimpleBundleVersionGenerator.cs" />
+     <Compile Include="Assets\Editor\BundleVersionChecker\TrackedBundleVersionGenerator.cs" />
      <Compile Include="Assets\Extensions\TexturePacker\TPCore\Editor\Components\TPBaseAnimationEditor.cs" />
      <Compile Include="Assets\Extensions\TexturePacker\TPCore\Editor\Components\TPHelperEditor.cs" />
      <Compile Include="Assets\Extensions\TexturePacker\TPCore\Editor\Components\TPMeshAnimationEditor.cs" />
@@ -66,6 +71,7 @@
      <Compile Include="Assets\Extensions\TexturePacker\TPCore\Editor\TexturePackerEditor\TexturePackerMenuItem.cs" />
      <Compile Include="Assets\codeandweb.com\Editor\TexturePackerImporter.cs" />
      <None Include="Assets\Extensions\TexturePacker\Tutorial\Resources\example_data.txt" />
+     <None Include="Assets\Editor\BundleVersionChecker\TrackedBundleVersionInfo.txt" />
      <None Include="Assets\Extensions\TexturePacker\Tutorial\Resources\TutorialAtlas_data.txt" />
      <None Include="Assets\Resources\Images\gui_minigame\read_me.txt" />
      <None Include="Assets\codeandweb.com\Readme.txt" />

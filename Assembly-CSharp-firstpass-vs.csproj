@@ -65,6 +65,7 @@
      <Compile Include="Assets\plugins\GoogleAnalyticsV3\HitBuilders\TransactionHitBuilder.cs" />
      <Compile Include="Assets\plugins\SimpleJSON.cs" />
      <None Include="Assets\Extensions\TexturePacker\Tutorial\Resources\example_data.txt" />
+     <None Include="Assets\Editor\BundleVersionChecker\TrackedBundleVersionInfo.txt" />
      <None Include="Assets\Extensions\TexturePacker\Tutorial\Resources\TutorialAtlas_data.txt" />
      <None Include="Assets\Resources\Images\gui_minigame\read_me.txt" />
      <None Include="Assets\codeandweb.com\Readme.txt" />

@@ -16,6 +16,8 @@ public class Game : MonoBehaviour {
 	
 	void Awake () {
 		Me = this;
+		//https://github.com/kayy/BundleVersionChecker
+		GetComponent<GoogleAnalyticsV3>().bundleVersion = new TrackedBundleVersion().current.version;
 		Game.Me.GetComponent<GoogleAnalyticsV3>().StartSession();
 		PrepareLoading();
 	}
@@ -73,9 +75,8 @@ public class Game : MonoBehaviour {
 	}
 
 	private bool HasGoodVersion(JSONNode n) {
-		float appBundleVersion = float.Parse( GetComponent<GoogleAnalyticsV3>().bundleVersion );
+		float appBundleVersion = float.Parse( new TrackedBundleVersion().current.version );
 		float backendRequiresVersion = float.Parse(n["requiredVersion"].Value);
-		Debug.Log("app bundle version: " + appBundleVersion + ", backend requires: " + backendRequiresVersion);
 		return appBundleVersion >= backendRequiresVersion;
 	}
 

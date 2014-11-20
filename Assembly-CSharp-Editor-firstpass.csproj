@@ -48,6 +48,7 @@
   <ItemGroup>
      <Compile Include="Assets\plugins\Editor\TooltipDrawer.cs" />
      <None Include="Assets\Extensions\TexturePacker\Tutorial\Resources\example_data.txt" />
+     <None Include="Assets\Editor\BundleVersionChecker\TrackedBundleVersionInfo.txt" />
      <None Include="Assets\Extensions\TexturePacker\Tutorial\Resources\TutorialAtlas_data.txt" />
      <None Include="Assets\Resources\Images\gui_minigame\read_me.txt" />
      <None Include="Assets\codeandweb.com\Readme.txt" />
