@@ -49,13 +49,19 @@ public class PanelLoadingMission : MonoBehaviour {
 				string name = n["missionName"];
 				int round = n["round"].AsInt;
 				string jsonMap = WWW.UnEscapeURL( n["map"]);
+
 				Game.Me.UserName = WWW.UnEscapeURL(n["name"]);
+				JSONNode myResultsJson = n["results"][3];
+				LevelScore ls = new LevelScore();
+				if (myResultsJson["deviceId"] != null) {
+					ls.AddInfo(Game.Me.UserName, myResultsJson["interventions"].AsInt, WebConnector.GetDeviceId(), myResultsJson["time"].AsInt / 1000f, myResultsJson["place"].AsInt);
+				}
 				if (jsonMap == null || jsonMap == "" || jsonMap == "null") {
 					TextInfo.GetComponent<Text>().text = "There are no more missions. \n\nVisit fb page for updates.";
 					GetComponent<ButtonsInCloud>().ClonedPanelButtons.SetActive(true);
 				} else {
 					PanelBeforeMission.SetActive(true);
-					PanelBeforeMission.GetComponent<PanelBeforeMission>().MissionBriefing(new Mission(jsonMap, mt, name, round));
+					PanelBeforeMission.GetComponent<PanelBeforeMission>().MissionBriefing(new Mission(jsonMap, mt, name, round, ls));
 					gameObject.SetActive(false);
 				}
 			} catch (System.Exception e) {

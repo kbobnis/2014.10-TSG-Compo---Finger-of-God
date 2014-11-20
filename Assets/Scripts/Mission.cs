@@ -21,6 +21,7 @@ public class Mission {
 	public string BeforeMissionText = "";
 	public string TipText = "";
 	public List<BuildingTemplate> BeforeMissionBuildings = new List<BuildingTemplate>();
+	public LevelScore YourBest;
 
 	private string _Name;
 	private MissionType _MissionType;
@@ -63,10 +64,11 @@ public class Mission {
 		return MissionStatus.NotYetDetermined;
 	}
 
-	public Mission(string json, MissionType mt, string name, int round) {
+	public Mission(string json, MissionType mt, string name, int round, LevelScore yourBest) {
 		_MissionType = mt;
 		_Name = name;
 		_Round = round;
+		YourBest = yourBest;
 
 		JSONNode n = JSONNode.Parse(json);
 		JSONNode buildingsLayerJson = n["layers"].Childs.ElementAt(0);

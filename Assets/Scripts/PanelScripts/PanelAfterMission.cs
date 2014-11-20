@@ -27,7 +27,31 @@ public class PanelAfterMission : MonoBehaviour {
 
 		YourScore = new LevelScore();
 		YourScore.AddInfo( Game.Me.UserName, (int)actualResults[ScoreType.Interventions].Value, WebConnector.GetDeviceId(), actualResults[ScoreType.Time].Value, -1);
+		LevelScore yourPrevious = mission.YourBest;
 		TextYourScore.GetComponent<Text>().text = YourScore.Interventions + " interv, " + (YourScore.Time.ToString("##.##")) + " seconds";
+		
+		int interventionDelta = yourPrevious.Interventions - YourScore.Interventions;
+		float timeDelta = yourPrevious.Time - YourScore.Time ;
+		if (yourPrevious.Interventions == 0 || YourScore.Interventions < yourPrevious.Interventions || (YourScore.Interventions == yourPrevious.Interventions && YourScore.Time < yourPrevious.Time)) {
+			TextYourScore.GetComponent<Text>().text += "\n (YOUR RECORD";
+			if (yourPrevious.Interventions == 0) {
+				TextYourScore.GetComponent<Text>().text += ", first try"; 
+			} else {
+				if (interventionDelta > 0) {
+					TextYourScore.GetComponent<Text>().text += " by " + interventionDelta + " interv";
+				} else {
+					TextYourScore.GetComponent<Text>().text += " by " +timeDelta.ToString("##.##") + " seconds";
+				}
+			} 
+			TextYourScore.GetComponent<Text>().text += ")";
+		} else {
+			TextYourScore.GetComponent<Text>().text += "\n WORSE THAN YOUR RECORD BY ";
+			if (interventionDelta < 0) {
+				TextYourScore.GetComponent<Text>().text += -interventionDelta + " interv";
+			} else {
+				TextYourScore.GetComponent<Text>().text += (-timeDelta).ToString("##.##") + " seconds";
+			}
+		}
 
 		TextLeaderboardNames.GetComponent<Text>().text = "Loading";
 		TextLeaderboardScores.GetComponent<Text>().text = "scores";
@@ -48,7 +72,6 @@ public class PanelAfterMission : MonoBehaviour {
 			text = www.error;
 		} else {
 			ImageYellowStraw.SetActive(true);
-			TextYourScore.GetComponent<Text>().text = YourScore.Interventions + " interv, " + (YourScore.Time.ToString("##.##")) + " seconds";
 			TextLeaderboardNames.GetComponent<Text>().text = "";
 			TextLeaderboardScores.GetComponent<Text>().text = "";
 			List<LevelScore> scores = ParseScores(www.text);
@@ -67,9 +90,6 @@ public class PanelAfterMission : MonoBehaviour {
 					TextLeaderboardScores.GetComponent<Text>().text += "" + tmp.Interventions + " INTERV, " + tmp.Time.ToString("##.##") + " s\n";
 				}
 
-				if (tmp.DeviceId == WebConnector.GetDeviceId() && tmp.Interventions == YourScore.Interventions && tmp.Time.ToString("##.##") == YourScore.Time.ToString("##.##")) {
-					TextYourScore.GetComponent<Text>().text += " (YOUR RECORD)";
-				}
 			}
 
 			string tmp2 = TextLeaderboardNames.GetComponent<Text>().text;
@@ -160,7 +180,7 @@ public class PanelAfterMission : MonoBehaviour {
 
 }
 
-class LevelScore {
+public class LevelScore {
 
 	int _Place;
 	string _Name;
