@@ -40,10 +40,10 @@ public class Game : MonoBehaviour {
 
 		PanelLoading.GetComponent<PanelLoading>().TextTop = "Loading data";
 		PanelLoading.GetComponent<PanelLoading>().TextTap = "";
-		StartCoroutine(LoadData());
+		StartCoroutine(LoadDataCoroutine());
 	}
 
-	private IEnumerator LoadData() {
+	private IEnumerator LoadDataCoroutine() {
 		WWW www = null;
 		try {
 			 www = WebConnector.GetInitialData();
@@ -59,22 +59,31 @@ public class Game : MonoBehaviour {
 			PanelLoading.GetComponent<PanelLoading>().TextTop = "Internet connection required. (" + www.error + ")";
 			PanelLoading.GetComponent<PanelLoading>().TextTap = "Tap to retry";
 		} else {
-			ParseInitialData(www.text);
-			PanelLoading pl = PanelLoading.GetComponent<PanelLoading>();
-			PanelLoading.SetActive(false);
-			PanelMainMenu.SetActive(true);
-			PanelBeforeMission.SetActive(false);
-			PanelAfterMission.SetActive(false);
-			PanelLoadingMission.SetActive(false);
+			JSONNode n = JSONNode.Parse(www.text);
+
+			if (HasGoodVersion(n)) {
+				ParseInitialData(n);
+			} else {
+				PanelLoading.GetComponent<PanelLoading>().JustDo = () => { Application.OpenURL("https://play.google.com/store/apps/details?id=com.kprojekt.fingerofgod"); };
+				string headlines = n["thisVersionHeadlines"].Value;
+				PanelLoading.GetComponent<PanelLoading>().TextTop = "There is new version with: " + headlines;
+				PanelLoading.GetComponent<PanelLoading>().TextTap = "Tap to update";
+			}
 		}
 	}
 
-	private void ParseInitialData(string initialDataJson) {
-		JSONNode n = JSONNode.Parse(initialDataJson);
+	private bool HasGoodVersion(JSONNode n) {
+		float appBundleVersion = float.Parse( GetComponent<GoogleAnalyticsV3>().bundleVersion );
+		float backendRequiresVersion = float.Parse(n["requiredVersion"].Value);
+		Debug.Log("app bundle version: " + appBundleVersion + ", backend requires: " + backendRequiresVersion);
+		return appBundleVersion >= backendRequiresVersion;
+	}
 
+	private void ParseInitialData(JSONNode n) {
 		XmlDocument model = new XmlDocument();
 		UserName = n["userName"].Value;
 		string modelString = WWW.UnEscapeURL(n["model"]);
+
 		model.LoadXml(modelString);
 
 		XmlNode defaultsXml = model.GetElementsByTagName("defaults")[0];
@@ -123,6 +132,13 @@ public class Game : MonoBehaviour {
 		foreach (XmlNode power in model.GetElementsByTagName("power")) {
 			TouchPowers.Add((Element)power.Attributes["elId"].Value);
 		}
+
+		PanelLoading pl = PanelLoading.GetComponent<PanelLoading>();
+		PanelLoading.SetActive(false);
+		PanelMainMenu.SetActive(true);
+		PanelBeforeMission.SetActive(false);
+		PanelAfterMission.SetActive(false);
+		PanelLoadingMission.SetActive(false);
 	}
 
 	private Dictionary<StatType, Dictionary<Element, float>> ParseStats(XmlNodeList statsXml) {

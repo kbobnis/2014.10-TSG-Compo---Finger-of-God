@@ -20,15 +20,8 @@ public class PanelMissionFailed : MonoBehaviour {
 
 	public void RepeatMission() {
 		PanelMainMenu.SetActive(true);
-		switch (Mission.MissionType) {
-			case global::MissionType.Specified:
-				PanelMainMenu.GetComponent<PanelMainMenu>().StartMissionSpecified();
-				break;
-			case global::MissionType.Random:
-				PanelMainMenu.GetComponent<PanelMainMenu>().StartMissionRandom();
-				break;
-			default: throw new UnityEngine.UnityException("There is no button for mission type: " + Mission.MissionType);
-		}
+		//it is a backend thing. we don't want to repeat the last successfull mission. we want to do the next one
+		PanelMainMenu.GetComponent<PanelMainMenu>().StartMission(Mission.MissionType, false);
 		gameObject.SetActive(false);
 	}
 }
