@@ -17,8 +17,8 @@ public class PanelLoadingMission : MonoBehaviour {
 		StartCoroutine(RestartLevelsCoroutine());
 	}
 	
-	internal void LoadMission(MissionType mt) {
-		StartCoroutine(LoadMissionCoroutine(mt));
+	internal void LoadMission(MissionType mt, bool toRepeat) {
+		StartCoroutine(LoadMissionCoroutine(mt, toRepeat));
 	}
 
 	public void ReturnToMainMenu() {
@@ -31,11 +31,11 @@ public class PanelLoadingMission : MonoBehaviour {
 		TextInfo.GetComponent<Text>().text = "Restarting levels...";
 		yield return new WaitForSeconds(1f);
 		yield return WebConnector.RestartLevels();
-		StartCoroutine(LoadMissionCoroutine(MissionType.Specified));
+		StartCoroutine(LoadMissionCoroutine(MissionType.Specified, false));
 	}
 
-	private IEnumerator LoadMissionCoroutine(MissionType mt) {
-		WWW www = WebConnector.LoadMission(mt);
+	private IEnumerator LoadMissionCoroutine(MissionType mt, bool toRepeat) {
+		WWW www = WebConnector.LoadMission(mt, toRepeat);
 		yield return www;
 
 		if (www.error != null) {

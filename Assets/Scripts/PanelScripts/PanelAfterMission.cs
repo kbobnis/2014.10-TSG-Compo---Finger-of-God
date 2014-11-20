@@ -8,7 +8,7 @@ using SimpleJSON;
 
 public class PanelAfterMission : MonoBehaviour {
 
-	public GameObject PanelMainMenu, TextYourScore, TextLeaderboardNames, TextLeaderboardScores, ImageYellowStraw;
+	public GameObject PanelMainMenu, TextYourScore, TextLeaderboardNames, TextLeaderboardScores, ImageYellowStraw, ButtonRepeat;
 	private Mission Mission;
 	private Dictionary<ScoreType, Result> ActualResults;
 	private LevelScore YourScore;
@@ -16,6 +16,11 @@ public class PanelAfterMission : MonoBehaviour {
 
 	public void Prepare(Mission mission, Dictionary<ScoreType, Result> actualResults) {
 		Mission = mission;
+		//you can only repeat specified missions (i have no time to do backend search for last random mission)
+		ButtonRepeat.SetActive(mission.MissionType == MissionType.Specified);
+		if (mission.MissionType == MissionType.Random) {
+			GetComponent<ButtonsInCloud>().ButtonTopText = "Quick Mission";
+		}
 		ActualResults = actualResults;
 		TextLeaderboardNames.GetComponent<Text>().text = "";
 		TextLeaderboardScores.GetComponent<Text>().text = "";
@@ -27,6 +32,13 @@ public class PanelAfterMission : MonoBehaviour {
 		TextLeaderboardNames.GetComponent<Text>().text = "Loading";
 		TextLeaderboardScores.GetComponent<Text>().text = "scores";
 		ImageYellowStraw.SetActive(false);
+	}
+
+	public void RepeatLevel() {
+		PanelMainMenu.SetActive(true);
+		PanelMainMenu.GetComponent<PanelMainMenu>().StartMission(Mission.MissionType, true);
+		gameObject.SetActive(false);
+
 	}
 
 	public void UpdateText(WWW www) {

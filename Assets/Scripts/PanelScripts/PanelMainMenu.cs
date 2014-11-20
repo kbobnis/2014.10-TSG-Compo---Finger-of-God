@@ -10,21 +10,22 @@ public class PanelMainMenu : MonoBehaviour {
 	public GameObject PanelLoadingMission;
 
 	public void StartMissionSpecified() {
-		StartMission(MissionType.Specified);
+		StartMission(MissionType.Specified, false);
 	}
 
-	public void StartMission(MissionType mt) {
+	public void StartMission(MissionType mt, bool toRepeat) {
 		PanelLoadingMission.SetActive(true);
-		PanelLoadingMission.GetComponent<PanelLoadingMission>().LoadMission(mt);
+		PanelLoadingMission.GetComponent<PanelLoadingMission>().LoadMission(mt, toRepeat);
 		gameObject.SetActive(false);
 	}
 
 	public void StartMissionRandom() {
-		StartMission(MissionType.Random);
+		StartMission(MissionType.Random, false);
 	}
 
 	public void QuitApplication() {
 		Application.Quit();
 	}
+
 
 }

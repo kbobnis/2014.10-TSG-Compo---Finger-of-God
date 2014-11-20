@@ -65,9 +65,10 @@ class WebConnector {
 		return CreateWWW("/getResults", form);
 	}
 
-	internal static WWW LoadMission(MissionType mt) {
+	internal static WWW LoadMission(MissionType mt, bool toRepeat) {
 		WWWForm form = new WWWForm();
 		form.AddField("MissionType", mt.ToString());
+		form.AddField("ToRepeat", toRepeat ? 1 : 0);
 		return CreateWWW("/load", form);
 	}
 

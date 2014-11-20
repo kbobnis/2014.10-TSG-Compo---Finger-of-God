@@ -10,12 +10,15 @@ public class ButtonsInCloud : MonoBehaviour {
 	//I don't want to show this attribute in inspector
 	private GameObject _ClonedPanelButtons;
 
-	public string ButtonTopText, ButtonBottomText;
+	//this is underlined, because i want to have an option to set in the inspector
+	public string _ButtonTopText, ButtonBottomText;
 	public bool HideClouds;
 	public bool HideSettingsButton;
 	public Button.ButtonClickedEvent ButtonTopAction, ButtonBottomAction;
 
-
+	public string ButtonTopText {
+		set { _ButtonTopText = value; UpdateInfo(); }
+	}
 	public GameObject ClonedPanelButtons {
 		get { return _ClonedPanelButtons;  }
 	}
@@ -28,18 +31,22 @@ public class ButtonsInCloud : MonoBehaviour {
 		_ClonedPanelButtons = go;
 		PanelButtons.SetActive(false); // this is a template, don't touch it.
 
-		go.GetComponent<PanelButtons>().SetInvokingPanel( gameObject );
-		go.GetComponent<PanelButtons>().ButtonTopText.GetComponent<Text>().text = ButtonTopText;
-		go.GetComponent<PanelButtons>().ButtonTop.GetComponent<Button>().onClick = ButtonTopAction;
-
-		go.GetComponent<PanelButtons>().ButtonBottomText.GetComponent<Text>().text = ButtonBottomText;
-		go.GetComponent<PanelButtons>().ButtonBottom.GetComponent<Button>().onClick = ButtonBottomAction;
-		go.GetComponent<PanelButtons>().ShowClouds(!HideClouds);
-		go.GetComponent<PanelButtons>().ShowSettingsButton(!HideSettingsButton);
+		UpdateInfo();
 	}
 	
 	// Update is called once per frame
 	void Update () {
 	
+	}
+
+	public void UpdateInfo() {
+		_ClonedPanelButtons.GetComponent<PanelButtons>().SetInvokingPanel(gameObject);
+		_ClonedPanelButtons.GetComponent<PanelButtons>().ButtonTopText.GetComponent<Text>().text = _ButtonTopText;
+		_ClonedPanelButtons.GetComponent<PanelButtons>().ButtonTop.GetComponent<Button>().onClick = ButtonTopAction;
+
+		_ClonedPanelButtons.GetComponent<PanelButtons>().ButtonBottomText.GetComponent<Text>().text = ButtonBottomText;
+		_ClonedPanelButtons.GetComponent<PanelButtons>().ButtonBottom.GetComponent<Button>().onClick = ButtonBottomAction;
+		_ClonedPanelButtons.GetComponent<PanelButtons>().ShowClouds(!HideClouds);
+		_ClonedPanelButtons.GetComponent<PanelButtons>().ShowSettingsButton(!HideSettingsButton);
 	}
 }
