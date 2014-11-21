@@ -73,8 +73,9 @@ public class PanelMinigame : MonoBehaviour, Listener<ScoreType, float> {
 				bool isSuccess = Mission.GetStatus(ActualResults) == MissionStatus.Success;
 				Game.Me.GetComponent<GoogleAnalyticsV3>().LogEvent("Finished " + Mission.MissionType + " " + (isSuccess?"Success":"Failure"), Mission.Name, ActualResults[ScoreType.Interventions].Value.ToString(), (long)(ActualResults[ScoreType.Time].Value * 1000));
 				Game.Me.MinigameFinished(ActualResults, Mission);
+				ImageEndGame.SetActive(true);
+				TextEndGame.GetComponent<Text>().text = "Mission " + (isSuccess ? "Success" : "Failure") + "\n";
 				Mission = null;
-				gameObject.SetActive(false);
 			}
 		}
 	}

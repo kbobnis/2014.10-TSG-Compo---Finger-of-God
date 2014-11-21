@@ -179,6 +179,7 @@ public class Game : MonoBehaviour {
 	private IEnumerator WaitingForResultsCoroutine(WWW www, Mission Mission, Dictionary<ScoreType, Result> ActualResults) {
 		MissionStatus ms = Mission.GetStatus(ActualResults);
 
+		yield return new WaitForSeconds(2f);
 		if (ms == MissionStatus.Success) {
 			PanelAfterMission.SetActive(true);
 			PanelAfterMission.GetComponent<PanelAfterMission>().Prepare(Mission, ActualResults);
@@ -186,6 +187,7 @@ public class Game : MonoBehaviour {
 			PanelMissionFailed.SetActive(true);
 			PanelMissionFailed.GetComponent<PanelMissionFailed>().Prepare(Mission, ActualResults);
 		}
+		PanelMinigame.SetActive(false);
 		yield return www;
 		if (ms == MissionStatus.Success) {
 			PanelAfterMission.GetComponent<PanelAfterMission>().UpdateText(www);
