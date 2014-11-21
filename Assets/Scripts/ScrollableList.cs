@@ -98,6 +98,7 @@ public class ScrollableList : MonoBehaviour
 
 		foreach (List<BuildingTemplate> row in Buildings) {
 			List<Building> buildingsRow = new List<Building>();
+			int actualRow = 0;
 			foreach (BuildingTemplate bt in row) {
 				GameObject newItem = Instantiate(itemPrefab) as GameObject;
 				if (!addedChecker) {
@@ -106,12 +107,14 @@ public class ScrollableList : MonoBehaviour
 				}
 
 				Building b = newItem.GetComponent<Building>();
-				b.CreateFromTemplate(bt);
+				float pan = (actualRow - ((columnCount-1)/2f))/((columnCount-1)/2f);
+				b.CreateFromTemplate(bt, pan);
 				b.Listeners = scoreTypeListeners;
 				b.InformListeners();
 
 				ElementsToPut.Add(newItem);
 				buildingsRow.Add(b);
+				actualRow++;
 			}
 			buildings.Add(buildingsRow);
 		}

@@ -201,7 +201,7 @@ public class Building : MonoBehaviour{
 		}
 	}
 
-	internal void CreateFromTemplate(BuildingTemplate bt) {
+	internal void CreateFromTemplate(BuildingTemplate bt, float pan) {
 
 		Template = bt;
 		StartingPopulation = _Population = Template.Population;
@@ -288,7 +288,7 @@ public class Building : MonoBehaviour{
 			bool resizeFromDownTmp = resizeFromDown[e];
 
 			Statuses.Add(e, new BuildingStatus(elGo[e], bt.Effects[e], SoundManager.Clips[e], effectDamageF, effectTimeF, strikeDamageF, fillSpeedF, 
-				SpriteManager.ElementPerBuildingSprites[SpriteManager.DefaultEffectPaths[e]], resizeFromDownTmp));
+				SpriteManager.ElementPerBuildingSprites[SpriteManager.DefaultEffectPaths[e]], resizeFromDownTmp, pan));
 		}
 	}
 

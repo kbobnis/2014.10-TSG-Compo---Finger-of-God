@@ -19,6 +19,7 @@ public class BuildingStatus {
 	private float StrikeDamageWaiting;
 	private float FillSpeed;
 	private bool ResizeFromDown;
+	private float Pan;
 
 	private bool _IsSource;
 
@@ -26,7 +27,7 @@ public class BuildingStatus {
 		get { return Status; }
 	}
 
-	public BuildingStatus(GameObject gameObject, Sprite[] animation, AudioClip sound, float effectDamage, float effectTime, float strikeDamage, float fillSpeed, Sprite[] animationWhenDead, bool resizeFromDown)
+	public BuildingStatus(GameObject gameObject, Sprite[] animation, AudioClip sound, float effectDamage, float effectTime, float strikeDamage, float fillSpeed, Sprite[] animationWhenDead, bool resizeFromDown, float pan)
     {
 		GameObject = gameObject;
 		Animation = animation;
@@ -37,6 +38,7 @@ public class BuildingStatus {
 		FillSpeed = fillSpeed;
 		AnimationWhenDead = animationWhenDead;
 		ResizeFromDown = resizeFromDown;
+		Pan = pan;
     }
 
 	private float Status {
@@ -51,7 +53,7 @@ public class BuildingStatus {
 
 	internal float Add(float startingValue, bool triggerPower) {
 
-		PlaySingleSound.SpawnSound(Sound);
+		PlaySingleSound.SpawnSound(Sound, Pan);
 	
 		if (startingValue > Status){
 			Status  = startingValue;
