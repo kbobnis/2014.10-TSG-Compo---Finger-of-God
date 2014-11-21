@@ -6,7 +6,7 @@ using UnityEngine.UI;
 
 public class PanelBeforeMission : MonoBehaviour {
 
-	public GameObject TextInfo, BuildingsList, TextMissionQuery;
+	public GameObject TextInfo, BuildingsList;
 	public GameObject PanelMinigame, PanelMainMenu;
 
 	private Mission Mission;
@@ -18,14 +18,6 @@ public class PanelBeforeMission : MonoBehaviour {
 
 	public void MissionBriefing(Mission m){
 		Mission = m;
-
-		if (m.FailureQueries.Count > 0) {
-			AchievQuery failureQuery = m.FailureQueries[0];
-			TextMissionQuery.GetComponent<Text>().text = "Mission: " + m.Name + "\n Destroy all buildings before " + failureQuery.ScoreType + " " + failureQuery.Sign.Text() + " " + failureQuery.Value;
-		} else if (m.SuccessQueries.Count > 0) {
-			AchievQuery successQuery = m.SuccessQueries[0];
-			TextMissionQuery.GetComponent<Text>().text = "Win when " + successQuery.ScoreType + " " + successQuery.Sign.Text() + " " + successQuery.Value;
-		}
 
 		TextInfo.GetComponent<Text>().text = m.BeforeMissionText == "" ? m.BeforeMissionBuildings[1].Description : m.BeforeMissionText;
 		
