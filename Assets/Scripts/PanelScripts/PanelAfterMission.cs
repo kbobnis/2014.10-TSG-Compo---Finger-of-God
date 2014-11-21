@@ -56,6 +56,34 @@ public class PanelAfterMission : MonoBehaviour {
 		TextLeaderboardNames.GetComponent<Text>().text = "Loading";
 		TextLeaderboardScores.GetComponent<Text>().text = "scores";
 		ImageYellowStraw.SetActive(false);
+		UpdateText(Mission.BestScores);
+	}
+
+	private void UpdateText(List<LevelScore> scores) {
+		ImageYellowStraw.SetActive(true);
+		TextLeaderboardNames.GetComponent<Text>().text = "";
+		TextLeaderboardScores.GetComponent<Text>().text = "";
+
+		foreach (LevelScore tmp in scores) {
+			if (tmp == null || tmp.DeviceId == null) {
+				TextLeaderboardNames.GetComponent<Text>().text += "---\n";
+				TextLeaderboardScores.GetComponent<Text>().text += "---\n";
+			} else {
+				string name = tmp.Name;
+				//in case we changed the name in settings and want this to apply without another useless server call
+				if (tmp.DeviceId == WebConnector.GetDeviceId()) {
+					name = Game.Me.UserName;
+				}
+				TextLeaderboardNames.GetComponent<Text>().text += tmp.Place + ". " + name + "\n";
+				TextLeaderboardScores.GetComponent<Text>().text += "" + tmp.Interventions + " INTERV, " + tmp.Time.ToString("##.##") + " s\n";
+			}
+
+		}
+
+		string tmp2 = TextLeaderboardNames.GetComponent<Text>().text;
+		TextLeaderboardNames.GetComponent<Text>().text = tmp2.Substring(0, tmp2.Length - 1);
+		tmp2 = TextLeaderboardScores.GetComponent<Text>().text;
+		TextLeaderboardScores.GetComponent<Text>().text = tmp2.Substring(0, tmp2.Length - 1);
 	}
 
 	public void RepeatLevel() {
@@ -71,31 +99,11 @@ public class PanelAfterMission : MonoBehaviour {
 		if (www.error != null) {
 			text = www.error;
 		} else {
-			ImageYellowStraw.SetActive(true);
-			TextLeaderboardNames.GetComponent<Text>().text = "";
-			TextLeaderboardScores.GetComponent<Text>().text = "";
-			List<LevelScore> scores = ParseScores(www.text);
-
-			foreach (LevelScore tmp in scores) {
-				if (tmp == null || tmp.DeviceId == null) {
-					TextLeaderboardNames.GetComponent<Text>().text += "---\n";
-					TextLeaderboardScores.GetComponent<Text>().text += "---\n";
-				} else {
-					string name = tmp.Name;
-					//in case we changed the name in settings and want this to apply without another useless server call
-					if (tmp.DeviceId == WebConnector.GetDeviceId()) {
-						name = Game.Me.UserName;
-					}
-					TextLeaderboardNames.GetComponent<Text>().text += tmp.Place + ". " + name + "\n";
-					TextLeaderboardScores.GetComponent<Text>().text += "" + tmp.Interventions + " INTERV, " + tmp.Time.ToString("##.##") + " s\n";
-				}
-
+			JSONNode n = JSONNode.Parse(www.text);
+			if (n["resultsHere"].AsBool) {
+				List<LevelScore> scores = ParseScores(n["results"]);
+				UpdateText(scores);
 			}
-
-			string tmp2 = TextLeaderboardNames.GetComponent<Text>().text;
-			TextLeaderboardNames.GetComponent<Text>().text = tmp2.Substring(0, tmp2.Length - 1);
-			tmp2 = TextLeaderboardScores.GetComponent<Text>().text;
-			TextLeaderboardScores.GetComponent<Text>().text = tmp2.Substring(0, tmp2.Length - 1);
 		}
 	}
 
@@ -137,10 +145,10 @@ public class PanelAfterMission : MonoBehaviour {
 		return tmp;
 	}
 
-	private List<LevelScore> ParseScores(string jsonText) {
+	private List<LevelScore> ParseScores(JSONNode n) {
 		List<LevelScore> scores = new List<LevelScore>();
 
-		JSONNode n = JSONNode.Parse(jsonText);
+		
 		int i = 1;
 		foreach (JSONNode tile in n.Childs) {
 			

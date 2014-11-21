@@ -43,7 +43,7 @@ class WebConnector {
 		return sBuilder.ToString();
 	}
 
-	internal static WWW SendMissionAccomplished(MissionType MissionType, string MissionName, int Round, MissionStatus ms, Dictionary<ScoreType, Result> actualResults) {
+	internal static WWW SendMissionAccomplished(MissionType MissionType, string MissionName, int Round, MissionStatus ms, Dictionary<ScoreType, Result> actualResults, bool getScores) {
 		int interventions = (int)actualResults[ScoreType.Interventions].Value;
 		float time = actualResults[ScoreType.Time].Value;
 		WWWForm form = new WWWForm();
@@ -53,6 +53,7 @@ class WebConnector {
 		form.AddField("Interventions", interventions);
 		form.AddField("Time", ""+ (int)( time*1000) );
 		form.AddField("Round", Round);
+		form.AddField("GetScores", getScores ? 1 : 0);
 		WWW www = CreateWWW("/save", form);
 		return www;
 	}

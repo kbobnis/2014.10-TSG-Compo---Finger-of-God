@@ -26,7 +26,11 @@ public class Mission {
 	private string _Name;
 	private MissionType _MissionType;
 	private int _Round;
+	private List<LevelScore> _BestScores;
 
+	public List<LevelScore> BestScores {
+		get { return _BestScores; }
+	}
 	public MissionType MissionType {
 		get { return _MissionType;  }
 	}
@@ -36,7 +40,12 @@ public class Mission {
 	}
 
 	public WWW SaveGame(Dictionary<ScoreType, Result> actualResults) {
-		return WebConnector.SendMissionAccomplished(_MissionType, _Name, _Round, GetStatus(actualResults), actualResults);
+		int intervetions = (int)actualResults[ScoreType.Interventions].Value;
+		float time = actualResults[ScoreType.Time].Value;
+		bool isRecord = intervetions < YourBest.Interventions || (intervetions == YourBest.Interventions && time < YourBest.Time);
+		bool getScores = isRecord;
+		WWW www = WebConnector.SendMissionAccomplished(_MissionType, _Name, _Round, GetStatus(actualResults), actualResults, getScores);
+		return www;
 	}
 
 	public MissionStatus GetStatus(Dictionary<ScoreType, Result> results) {
@@ -64,11 +73,12 @@ public class Mission {
 		return MissionStatus.NotYetDetermined;
 	}
 
-	public Mission(string json, MissionType mt, string name, int round, LevelScore yourBest) {
+	public Mission(string json, MissionType mt, string name, int round, LevelScore yourBest, List<LevelScore> bestScores) {
 		_MissionType = mt;
 		_Name = name;
 		_Round = round;
 		YourBest = yourBest;
+		_BestScores = bestScores;
 
 		JSONNode n = JSONNode.Parse(json);
 		JSONNode buildingsLayerJson = n["layers"].Childs.ElementAt(0);
