@@ -1,0 +1,212 @@
+fileFormatVersion: 2
+guid: 754727a0b68e37048866e9b7760b5034
+TextureImporter:
+  fileIDToRecycleName:
+    21300000: shockwave001
+    21300002: shockwave002
+    21300004: shockwave003
+    21300006: shockwave004
+    21300008: shockwave005
+    21300010: shockwave006
+    21300012: shockwave007
+    21300014: shockwave008
+    21300016: shockwave009
+    21300018: shockwave010
+    21300020: shockwave011
+    21300022: shockwave012
+    21300024: shockwave013
+    21300026: shockwave014
+    21300028: shockwave015
+  serializedVersion: 2
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    linearTexture: 0
+    correctGamma: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: .25
+    normalMapFilter: 0
+  isReadable: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 0
+  seamlessCubemap: 0
+  textureFormat: -1
+  maxTextureSize: 4096
+  textureSettings:
+    filterMode: -1
+    aniso: 1
+    mipBias: -1
+    wrapMode: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: .5, y: .5}
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spritePixelsToUnits: 100
+  alphaIsTransparency: 1
+  textureType: 8
+  buildTargetSettings: []
+  spriteSheet:
+    sprites:
+    - name: shockwave001
+      rect:
+        serializedVersion: 2
+        x: 2
+        y: 894
+        width: 128
+        height: 128
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: shockwave002
+      rect:
+        serializedVersion: 2
+        x: 132
+        y: 894
+        width: 128
+        height: 128
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: shockwave003
+      rect:
+        serializedVersion: 2
+        x: 262
+        y: 894
+        width: 128
+        height: 128
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: shockwave004
+      rect:
+        serializedVersion: 2
+        x: 2
+        y: 764
+        width: 128
+        height: 128
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: shockwave005
+      rect:
+        serializedVersion: 2
+        x: 132
+        y: 764
+        width: 128
+        height: 128
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: shockwave006
+      rect:
+        serializedVersion: 2
+        x: 262
+        y: 764
+        width: 128
+        height: 128
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: shockwave007
+      rect:
+        serializedVersion: 2
+        x: 2
+        y: 634
+        width: 128
+        height: 128
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: shockwave008
+      rect:
+        serializedVersion: 2
+        x: 132
+        y: 634
+        width: 128
+        height: 128
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: shockwave009
+      rect:
+        serializedVersion: 2
+        x: 262
+        y: 634
+        width: 128
+        height: 128
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: shockwave010
+      rect:
+        serializedVersion: 2
+        x: 2
+        y: 504
+        width: 128
+        height: 128
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: shockwave011
+      rect:
+        serializedVersion: 2
+        x: 132
+        y: 504
+        width: 128
+        height: 128
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: shockwave012
+      rect:
+        serializedVersion: 2
+        x: 262
+        y: 504
+        width: 128
+        height: 128
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: shockwave013
+      rect:
+        serializedVersion: 2
+        x: 2
+        y: 374
+        width: 128
+        height: 128
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: shockwave014
+      rect:
+        serializedVersion: 2
+        x: 2
+        y: 244
+        width: 128
+        height: 128
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: shockwave015
+      rect:
+        serializedVersion: 2
+        x: 2
+        y: 114
+        width: 128
+        height: 128
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+  spritePackingTag: 
+  userData: 

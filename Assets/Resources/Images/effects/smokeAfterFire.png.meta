@@ -1,0 +1,168 @@
+fileFormatVersion: 2
+guid: b7785da02daf8db4da892fdfa344226a
+TextureImporter:
+  fileIDToRecycleName:
+    21300000: steam001
+    21300002: steam002
+    21300004: steam003
+    21300006: steam004
+    21300008: steam005
+    21300010: steam006
+    21300012: steam007
+    21300014: steam008
+    21300016: steam009
+    21300018: steam010
+    21300020: steam011
+  serializedVersion: 2
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    linearTexture: 0
+    correctGamma: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: .25
+    normalMapFilter: 0
+  isReadable: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 0
+  seamlessCubemap: 0
+  textureFormat: -1
+  maxTextureSize: 4096
+  textureSettings:
+    filterMode: 0
+    aniso: 1
+    mipBias: -1
+    wrapMode: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: .5, y: .5}
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spritePixelsToUnits: 100
+  alphaIsTransparency: 1
+  textureType: 8
+  buildTargetSettings: []
+  spriteSheet:
+    sprites:
+    - name: steam001
+      rect:
+        serializedVersion: 2
+        x: 2
+        y: 894
+        width: 128
+        height: 128
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: steam002
+      rect:
+        serializedVersion: 2
+        x: 132
+        y: 894
+        width: 128
+        height: 128
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: steam003
+      rect:
+        serializedVersion: 2
+        x: 262
+        y: 894
+        width: 128
+        height: 128
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: steam004
+      rect:
+        serializedVersion: 2
+        x: 2
+        y: 764
+        width: 128
+        height: 128
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: steam005
+      rect:
+        serializedVersion: 2
+        x: 132
+        y: 764
+        width: 128
+        height: 128
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: steam006
+      rect:
+        serializedVersion: 2
+        x: 262
+        y: 764
+        width: 128
+        height: 128
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: steam007
+      rect:
+        serializedVersion: 2
+        x: 2
+        y: 634
+        width: 128
+        height: 128
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: steam008
+      rect:
+        serializedVersion: 2
+        x: 132
+        y: 634
+        width: 128
+        height: 128
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: steam009
+      rect:
+        serializedVersion: 2
+        x: 262
+        y: 634
+        width: 128
+        height: 128
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: steam010
+      rect:
+        serializedVersion: 2
+        x: 2
+        y: 504
+        width: 128
+        height: 128
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: steam011
+      rect:
+        serializedVersion: 2
+        x: 132
+        y: 504
+        width: 128
+        height: 128
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+  spritePackingTag: 
+  userData: 

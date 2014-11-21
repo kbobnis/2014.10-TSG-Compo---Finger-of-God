@@ -1,0 +1,25 @@
+#
+# Sprite sheet data for Unity.
+#
+# To import these sprites into your Unity project, download "TexturePackerImporter":
+# http://www.codeandweb.com/texturepacker/unity
+#
+# Sprite sheet: crush.png (512 x 1024)
+# $TexturePacker:SmartUpdate:7f6c898bcaff83639570ebdf5ba671be:2d9f0c00f0fb57c13eb8f3f368c6f29e:3087d7edf20b0a4178a7300dd137e075$
+#
+
+shockwave001;2;894;128;128;0.5;0.5
+shockwave002;132;894;128;128;0.5;0.5
+shockwave003;262;894;128;128;0.5;0.5
+shockwave004;2;764;128;128;0.5;0.5
+shockwave005;132;764;128;128;0.5;0.5
+shockwave006;262;764;128;128;0.5;0.5
+shockwave007;2;634;128;128;0.5;0.5
+shockwave008;132;634;128;128;0.5;0.5
+shockwave009;262;634;128;128;0.5;0.5
+shockwave010;2;504;128;128;0.5;0.5
+shockwave011;132;504;128;128;0.5;0.5
+shockwave012;262;504;128;128;0.5;0.5
+shockwave013;2;374;128;128;0.5;0.5
+shockwave014;2;244;128;128;0.5;0.5
+shockwave015;2;114;128;128;0.5;0.5

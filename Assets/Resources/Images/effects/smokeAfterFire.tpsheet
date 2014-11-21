@@ -1,0 +1,21 @@
+#
+# Sprite sheet data for Unity.
+#
+# To import these sprites into your Unity project, download "TexturePackerImporter":
+# http://www.codeandweb.com/texturepacker/unity
+#
+# Sprite sheet: smokeAfterFire.png (512 x 1024)
+# $TexturePacker:SmartUpdate:03694a42f25070f89dc98a3f3c3cbf74:bcd0db92cda836016d6816fa8c658cc9:0181da6f90c9fb8f35183a422e480c56$
+#
+
+steam001;2;894;128;128;0.5;0.5
+steam002;132;894;128;128;0.5;0.5
+steam003;262;894;128;128;0.5;0.5
+steam004;2;764;128;128;0.5;0.5
+steam005;132;764;128;128;0.5;0.5
+steam006;262;764;128;128;0.5;0.5
+steam007;2;634;128;128;0.5;0.5
+steam008;132;634;128;128;0.5;0.5
+steam009;262;634;128;128;0.5;0.5
+steam010;2;504;128;128;0.5;0.5
+steam011;132;504;128;128;0.5;0.5

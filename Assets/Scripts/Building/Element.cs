@@ -12,6 +12,7 @@ public sealed class Element {
 	public static readonly Element Electricity = new Element("electricity");
 	public static readonly Element Fire = new Element("fire");
 	public static readonly Element SmokeAfterFire = new Element("smokeAfterFire");
+	public static readonly Element Die = new Element("die");
 
 	private Element(string name) {
 		Name = name;
@@ -33,6 +34,8 @@ public sealed class Element {
 			return Fire;
 		} else if (el == Element.SmokeAfterFire.Name){
 			return SmokeAfterFire;
+		} else if (el == Element.Die.Name) {
+			return Die;
 		}
 		throw new Exception("There is no element for name: " + el);
 	}

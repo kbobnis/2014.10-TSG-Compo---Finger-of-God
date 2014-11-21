@@ -1,0 +1,25 @@
+#
+# Sprite sheet data for Unity.
+#
+# To import these sprites into your Unity project, download "TexturePackerImporter":
+# http://www.codeandweb.com/texturepacker/unity
+#
+# Sprite sheet: die.png (512 x 1024)
+# $TexturePacker:SmartUpdate:7c42b6e11add7ddc2ce7351439690035:4527e5fd8f8aba7a2b6ac16d5d6ffda0:93e73a4f04398e2f99615511f0cfadcb$
+#
+
+explosion001;2;894;128;128;0.5;0.5
+explosion002;132;894;128;128;0.5;0.5
+explosion003;262;894;128;128;0.5;0.5
+explosion004;2;764;128;128;0.5;0.5
+explosion005;132;764;128;128;0.5;0.5
+explosion006;262;764;128;128;0.5;0.5
+explosion007;2;634;128;128;0.5;0.5
+explosion008;132;634;128;128;0.5;0.5
+explosion009;262;634;128;128;0.5;0.5
+explosion010;2;504;128;128;0.5;0.5
+explosion011;132;504;128;128;0.5;0.5
+explosion012;262;504;128;128;0.5;0.5
+explosion013;2;374;128;128;0.5;0.5
+explosion014;2;244;128;128;0.5;0.5
+explosion015;2;114;128;128;0.5;0.5

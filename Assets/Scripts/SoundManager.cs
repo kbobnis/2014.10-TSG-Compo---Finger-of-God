@@ -5,7 +5,6 @@ using System.Collections.Generic;
 public class SoundManager : MonoBehaviour{
 
 	public static Dictionary<Element, AudioClip> Clips = new Dictionary<Element, AudioClip> ();
-	public static AudioClip BuildingDown;
 	public static AudioClip Ambient;
 
 	private static bool SoundsEnabled;
@@ -15,8 +14,8 @@ public class SoundManager : MonoBehaviour{
 		Clips.Add (Element.Crush, null);//Resources.Load<AudioClip> ("Sounds/budynek"));
 		Clips.Add (Element.Fire, Resources.Load<AudioClip> ("Sounds/ogien"));
 		Clips.Add (Element.Water, Resources.Load<AudioClip> ("Sounds/water"));
+		Clips.Add (Element.Die, Resources.Load<AudioClip> ("Sounds/building_down_short"));
 		Clips.Add (Element.SmokeAfterFire, Resources.Load<AudioClip> ("Sounds/extinguishFire"));
-		BuildingDown = Resources.Load<AudioClip> ("Sounds/building_down_short");
 
 		Ambient = Resources.Load<AudioClip> ("Sounds/muzyczka");
 		Game.Me.GetComponent<AudioSource>().enabled = PlayerPrefs.GetInt("MusicOn", 1)==1;

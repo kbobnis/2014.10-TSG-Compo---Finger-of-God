@@ -19,19 +19,20 @@ public class SpriteManager : MonoBehaviour{
 	void Start() {
 		
 		DefaultEffectPaths.Add(Element.Fire, "Images/effects/wood/fire");
-		DefaultEffectPaths.Add(Element.SmokeAfterFire, "Images/smokeAfterFire");
+		DefaultEffectPaths.Add(Element.SmokeAfterFire, "Images/effects/smokeAfterFire");
 		DefaultEffectPaths.Add(Element.Electricity, "Images/electric");
-		DefaultEffectPaths.Add(Element.Crush, "Images/explosion");
+		DefaultEffectPaths.Add(Element.Crush, "Images/effects/crush");
 		DefaultEffectPaths.Add(Element.Water, "Images/water");
+		DefaultEffectPaths.Add(Element.Die, "Images/effects/gasStation/die");
 
 		ElementPerBuildingSprites.Add(DefaultEffectPaths[Element.Fire], Resources.LoadAll<Sprite> (DefaultEffectPaths[Element.Fire]));
 		ElementPerBuildingSprites.Add(DefaultEffectPaths[Element.SmokeAfterFire], Resources.LoadAll<Sprite>(DefaultEffectPaths[Element.SmokeAfterFire]));
 		ElementPerBuildingSprites.Add(DefaultEffectPaths[Element.Electricity], Resources.LoadAll<Sprite>(DefaultEffectPaths[Element.Electricity]));
 		ElementPerBuildingSprites.Add(DefaultEffectPaths[Element.Crush], Resources.LoadAll<Sprite>(DefaultEffectPaths[Element.Crush]));
 		ElementPerBuildingSprites.Add(DefaultEffectPaths[Element.Water], Resources.LoadAll<Sprite>(DefaultEffectPaths[Element.Water]));
-		//it's the same as default
-		//ElementPerBuildingSprites.Add("Images/effects/wood/fire", Resources.LoadAll<Sprite>("Images/effects/wood/fire"));
+
 		ElementPerBuildingSprites.Add("Images/effects/wood/electricity", Resources.LoadAll<Sprite>("Images/effects/wood/electricity"));
+		ElementPerBuildingSprites.Add("Images/effects/gasStation/die", Resources.LoadAll<Sprite>("Images/effects/gasStation/die"));
 
 	}
 

@@ -18,6 +18,7 @@ public class BuildingStatus {
 	private float StrikeDamage;
 	private float StrikeDamageWaiting;
 	private float FillSpeed;
+	private bool ResizeFromDown;
 
 	private bool _IsSource;
 
@@ -25,7 +26,7 @@ public class BuildingStatus {
 		get { return Status; }
 	}
 
-	public BuildingStatus(GameObject gameObject, Sprite[] animation, AudioClip sound, float effectDamage, float effectTime, float strikeDamage, float fillSpeed, Sprite[] animationWhenDead)
+	public BuildingStatus(GameObject gameObject, Sprite[] animation, AudioClip sound, float effectDamage, float effectTime, float strikeDamage, float fillSpeed, Sprite[] animationWhenDead, bool resizeFromDown)
     {
 		GameObject = gameObject;
 		Animation = animation;
@@ -35,6 +36,7 @@ public class BuildingStatus {
 		StrikeDamage = strikeDamage;
 		FillSpeed = fillSpeed;
 		AnimationWhenDead = animationWhenDead;
+		ResizeFromDown = resizeFromDown;
     }
 
 	private float Status {
@@ -87,12 +89,13 @@ public class BuildingStatus {
 				ss = AnimationWhenDead;
 			}
 			Sprite s = im.sprite = ss[Mathf.RoundToInt(progress * (ss.Length - 1))];
-
-			Rect before = GameObject.GetComponent<RectTransform>().rect;
-			float scale = before.width / s.rect.width;
-			float targetHeight = scale * s.rect.height;
-			Vector2 oldOffsetMax = GameObject.GetComponent<RectTransform>().offsetMax;
-			GameObject.GetComponent<RectTransform>().offsetMax = new Vector2(oldOffsetMax.x, targetHeight);
+			if (ResizeFromDown) {
+				Rect before = GameObject.GetComponent<RectTransform>().rect;
+				float scale = before.width / s.rect.width;
+				float targetHeight = scale * s.rect.height;
+				Vector2 oldOffsetMax = GameObject.GetComponent<RectTransform>().offsetMax;
+				GameObject.GetComponent<RectTransform>().offsetMax = new Vector2(oldOffsetMax.x, targetHeight);
+			}
 		}
 
 		float damage = (Status > 0 ?( EffectDamage * Time.deltaTime): 0) + StrikeDamageWaiting;

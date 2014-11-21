@@ -127,6 +127,9 @@ public class Game : MonoBehaviour {
 			string crushEffectPath = buildingXml.Attributes["crushEffect"].Value == "" ? SpriteManager.DefaultEffectPaths[Element.Crush] : buildingXml.Attributes["crushEffect"].Value;
 			effects.Add(Element.Crush, SpriteManager.ElementPerBuildingSprites[crushEffectPath]);
 
+			string dieEffectPath = buildingXml.Attributes["dieEffect"].Value == "" ? SpriteManager.DefaultEffectPaths[Element.Die] : buildingXml.Attributes["dieEffect"].Value;
+			effects.Add(Element.Die, SpriteManager.ElementPerBuildingSprites[dieEffectPath]);
+
 			BuildingTemplates.Add(id, new BuildingTemplate(id, name, population, health, imagePath, imageDPath, thisStats, effects));
 		}
 

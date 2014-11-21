@@ -25,7 +25,7 @@ public class Building : MonoBehaviour{
 	public List<Listener<ScoreType, float>> Listeners;
 
  
-	public GameObject GameObjectBuilding, GameObjectFire, GameObjectWaterLevel, GameObjectSmokeAfterFire, GameObjectElectricity, GameObjectCrush, GameObjectHealthBar;
+	public GameObject GameObjectBuilding, GameObjectFire, GameObjectWaterLevel, GameObjectSmokeAfterFire, GameObjectElectricity, GameObjectCrush, GameObjectHealthBar, GameObjectDie;
 
 	private static Building GetNeighbour(Building b, Side s) {
 		if (s == Side.Center) {
@@ -96,8 +96,7 @@ public class Building : MonoBehaviour{
 
 	private void Die(){
 		//int middleRow = 
-		PlaySingleSound.SpawnSound(SoundManager.BuildingDown);
-
+		Statuses[Element.Die].Add(1, false);
 
 		TreatYourselfWithYourPower();
 		
@@ -269,16 +268,27 @@ public class Building : MonoBehaviour{
 		elGo.Add(Element.SmokeAfterFire, GameObjectSmokeAfterFire);
 		elGo.Add(Element.Electricity, GameObjectElectricity);
 		elGo.Add(Element.Crush, GameObjectCrush);
+		elGo.Add(Element.Die, GameObjectDie);
+
+		//this is telling the sprite how to resize
+		Dictionary<Element, bool> resizeFromDown = new Dictionary<Element, bool>();
+		resizeFromDown.Add(Element.Fire, true);
+		resizeFromDown.Add(Element.Water, false);
+		resizeFromDown.Add(Element.SmokeAfterFire, false);
+		resizeFromDown.Add(Element.Electricity, true);
+		resizeFromDown.Add(Element.Crush, false);
+		resizeFromDown.Add(Element.Die, false);
 
 		//initializing statuses
-		foreach (Element e in new Element[] { Element.Fire, Element.Water, Element.SmokeAfterFire, Element.Electricity, Element.Crush }) {
+		foreach (Element e in new Element[] { Element.Fire, Element.Water, Element.SmokeAfterFire, Element.Electricity, Element.Crush, Element.Die }) {
 			float fillSpeedF = bt.Stats[StatType.FillSpeed][e];
 			float strikeDamageF = bt.Stats[StatType.StrikeDamage][e];
 			float effectDamageF = bt.Stats[StatType.EffectDamage][e];
 			float effectTimeF = bt.Stats[StatType.EffectTime][e];
+			bool resizeFromDownTmp = resizeFromDown[e];
 
 			Statuses.Add(e, new BuildingStatus(elGo[e], bt.Effects[e], SoundManager.Clips[e], effectDamageF, effectTimeF, strikeDamageF, fillSpeedF, 
-				SpriteManager.ElementPerBuildingSprites[SpriteManager.DefaultEffectPaths[e]]));
+				SpriteManager.ElementPerBuildingSprites[SpriteManager.DefaultEffectPaths[e]], resizeFromDownTmp));
 		}
 	}
 
