@@ -1,8 +1,8 @@
 fileFormatVersion: 2
-guid: b1c67b89982959043a5254c641fd0e06
+guid: ef8ead304384f4b45b53f416f73e3086
 TextureImporter:
   fileIDToRecycleName:
-    21300000: mission_objective_top_middle
+    21300000: gui_minigame_game_end_info (1)
   serializedVersion: 2
   mipmaps:
     mipMapMode: 0

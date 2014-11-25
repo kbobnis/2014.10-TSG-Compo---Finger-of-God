@@ -1,8 +1,8 @@
 fileFormatVersion: 2
-guid: a4cbe38b257f26848b78b4a170344e04
+guid: 8e7abd719ccf2ca40a09b6509beab618
 TextureImporter:
   fileIDToRecycleName:
-    21300000: mission_objective_top_bottom
+    21300000: mission_objective_middle
   serializedVersion: 2
   mipmaps:
     mipMapMode: 0
@@ -26,9 +26,9 @@ TextureImporter:
   maxTextureSize: 1024
   textureSettings:
     filterMode: 0
-    aniso: 1
+    aniso: -1
     mipBias: -1
-    wrapMode: 1
+    wrapMode: -1
   nPOTScale: 0
   lightmap: 0
   compressionQuality: 50
@@ -37,7 +37,7 @@ TextureImporter:
   spriteMeshType: 1
   alignment: 0
   spritePivot: {x: .5, y: .5}
-  spriteBorder: {x: 7, y: 3, z: 9, w: 0}
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
   spritePixelsToUnits: 100
   alphaIsTransparency: 1
   textureType: 8
