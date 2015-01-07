@@ -5,6 +5,7 @@ using UnityEngine.UI;
 public class BackgroundHolder : MonoBehaviour {
 
 	private Sprite ActualBg;
+	private bool LittleTransparent;
 	private float ActualScale;
 	private bool ToUpdateMe = false;
 
@@ -13,7 +14,8 @@ public class BackgroundHolder : MonoBehaviour {
 		UpdateMe();
 	}
 
-	internal void ChangeBg(Sprite newBg) {
+	internal void ChangeBg(Sprite newBg, bool littleTransparent) {
+		LittleTransparent = littleTransparent;
 		ActualBg = newBg;
 		UpdateMe();
 	}
@@ -28,6 +30,8 @@ public class BackgroundHolder : MonoBehaviour {
 		ToUpdateMe = true;
 		if (ActualBg != null) {
 			GetComponent<Image>().sprite = ActualBg;
+			Color old = GetComponent<Image>().color;
+			GetComponent<Image>().color = new Color(old.r, old.g, old.b, LittleTransparent ? 0.05f : 1f);
 			RectTransform rt = GetComponent<RectTransform>();
 			rt.offsetMin = new Vector2(-ActualBg.rect.width / 2 * ActualScale, -ActualBg.rect.height / 2 * ActualScale);
 			rt.offsetMax = new Vector2(ActualBg.rect.width / 2 * ActualScale, ActualBg.rect.height / 2 * ActualScale);

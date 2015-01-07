@@ -18,9 +18,7 @@ public class PanelAfterMission : MonoBehaviour {
 		Mission = mission;
 		//you can only repeat specified missions (i have no time to do backend search for last random mission)
 		ButtonRepeat.SetActive(mission.MissionType == MissionType.Specified);
-		if (mission.MissionType == MissionType.Random) {
-			GetComponent<ButtonsInCloud>().ButtonTopText = "Quick Mission";
-		}
+		//GetComponent<ButtonsInCloud>().ButtonTopText = mission.MissionType == MissionType.Random?"Quick Mission":"Next mission";
 		ActualResults = actualResults;
 		TextLeaderboardNames.GetComponent<Text>().text = "";
 		TextLeaderboardScores.GetComponent<Text>().text = "";

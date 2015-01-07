@@ -16,6 +16,7 @@ public class PanelMainMenu : MonoBehaviour {
 	public void StartMission(MissionType mt, bool toRepeat) {
 		PanelLoadingMission.SetActive(true);
 		PanelLoadingMission.GetComponent<PanelLoadingMission>().LoadMission(mt, toRepeat);
+		Game.Me.PanelAfterMission.SetActive(false);
 		gameObject.SetActive(false);
 	}
 

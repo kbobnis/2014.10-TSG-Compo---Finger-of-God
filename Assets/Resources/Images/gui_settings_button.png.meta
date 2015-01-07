@@ -1,9 +1,8 @@
 fileFormatVersion: 2
-guid: ec61ec4ee33d4bf4fbc160726409b6bd
+guid: 3d1b30e52249e294b90907eda6d1fa09
 TextureImporter:
   fileIDToRecycleName:
-    21300000: button_back_clouds 1
-    21300002: button_back_clouds
+    21300000: gui_settings_button
   serializedVersion: 2
   mipmaps:
     mipMapMode: 0
@@ -27,9 +26,9 @@ TextureImporter:
   maxTextureSize: 1024
   textureSettings:
     filterMode: 0
-    aniso: 1
+    aniso: -1
     mipBias: -1
-    wrapMode: 1
+    wrapMode: -1
   nPOTScale: 0
   lightmap: 0
   compressionQuality: 50
