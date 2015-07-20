@@ -28,7 +28,7 @@ public class PlaySingleSound : MonoBehaviour {
 		if (SoundStart == 0f && MySound != null) {
 			SoundStart = Time.realtimeSinceStartup;
 		}
-		if (audio != null && Time.realtimeSinceStartup - SoundStart > audio.clip.length) {
+		if (GetComponent<AudioSource>() != null && Time.realtimeSinceStartup - SoundStart > GetComponent<AudioSource>().clip.length) {
 			MySound.ActuallyPlaying--;
 			GameObject.Destroy(gameObject);
 		}
@@ -56,9 +56,9 @@ public class OneSound {
 			GameObject go = new GameObject("sound clip: " + AudioClip.name);
 			AudioSource audio = go.AddComponent<AudioSource>();
 			audio.volume = Volume;// -(Volume / MaxSimult * ActuallyPlaying);
-			audio.pan = pan==0?Random.Range(-1, 1):pan;
+			audio.panStereo = pan==0?Random.Range(-1, 1):pan;
 			audio.clip = AudioClip;
-			audio.panLevel = -1f;
+			audio.spatialBlend = -1f;
 			audio.Play();
 			PlaySingleSound playSound = go.AddComponent<PlaySingleSound>();
 			playSound.MySound = this;

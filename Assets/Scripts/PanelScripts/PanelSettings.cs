@@ -37,11 +37,11 @@ public class PanelSettings : MonoBehaviour {
 	}
 
 	void Start() {
-		InputFieldTextName.GetComponent<InputField>().value = Game.Me.UserName;
+		InputFieldTextName.GetComponent<InputField>().text = Game.Me.UserName;
 	}
 
 	void Update() {
-		GetComponent<ButtonsInCloud>().ClonedPanelButtons.GetComponent<PanelButtons>().ButtonTop.SetActive(Game.Me.UserName != InputFieldTextName.GetComponent<InputField>().value);
+		GetComponent<ButtonsInCloud>().ClonedPanelButtons.GetComponent<PanelButtons>().ButtonTop.SetActive(Game.Me.UserName != InputFieldTextName.GetComponent<InputField>().text);
 	}
 
 	public void SaveSettings() {
@@ -53,7 +53,7 @@ public class PanelSettings : MonoBehaviour {
 		Game.Me.PanelLoading.GetComponent<PanelLoading>().TextTop = "Saving name...";
 
 		WWW www = null;
-		string newName = InputFieldTextName.GetComponent<InputField>().value;
+		string newName = InputFieldTextName.GetComponent<InputField>().text;
 		if (newName.Length == 0) {
 			newName = "Empty";
 		}
@@ -61,7 +61,7 @@ public class PanelSettings : MonoBehaviour {
 			newName = newName.Substring(0, 9);
 		}
 		newName = Regex.Replace(newName, "\\W", "");
-		InputFieldTextName.GetComponent<InputField>().value = newName;
+		InputFieldTextName.GetComponent<InputField>().text = newName;
 		if (newName != Game.Me.UserName) {
 			www = WebConnector.ChangeName(newName);
 			Game.Me.UserName = newName; 
