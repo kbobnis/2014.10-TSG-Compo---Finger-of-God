@@ -1,5 +1,7 @@
 # README #
 
+Update 2020. As of right now the backend is down and this is not playable.
+
 Unity. Just open and play.
 
 How to make maps.
