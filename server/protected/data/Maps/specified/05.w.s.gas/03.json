@@ -1,0 +1,43 @@
+{ "height":7,
+ "layers":[
+        {
+         "data":[6, 7, 7, 7, 7, 1, 7, 7, 7, 7, 6, 2, 6, 1, 6, 1, 7, 2, 7, 1, 6, 2, 6, 7, 6, 1, 7, 1, 7, 1, 6, 1, 6, 7, 7],
+         "height":7,
+         "name":"buildings",
+         "opacity":1,
+         "type":"tilelayer",
+         "visible":true,
+         "width":5,
+         "x":0,
+         "y":0
+        }],
+ "orientation":"orthogonal",
+ "properties":
+    {
+     "BeforeImage":"6,1,7,7",
+     "BeforeText":"What catches the fire and what has to be destroyed? You may think.",
+     "Interventions":"9",
+     "TipText":"Flawless levels are perfect. Tap the stone when its on fire. Hopefully it will spread and destroy to wood."
+    },
+ "renderorder":"right-down",
+ "tileheight":32,
+ "tilesets":[
+        {
+         "firstgid":1,
+         "image":"..\/..\/buildings.png",
+         "imageheight":32,
+         "imagewidth":224,
+         "margin":0,
+         "name":"buildings",
+         "properties":
+            {
+
+            },
+         "spacing":0,
+         "tileheight":32,
+         "tilewidth":32
+        }],
+ "tilewidth":32,
+ "version":1,
+ "width":5
+}

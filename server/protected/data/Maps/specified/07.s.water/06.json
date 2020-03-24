@@ -1,0 +1,43 @@
+{ "height":7,
+ "layers":[
+        {
+         "data":[4, 2, 2, 2, 4, 2, 7, 7, 7, 2, 7, 2, 2, 2, 7, 7, 2, 4, 2, 7, 7, 2, 2, 2, 7, 2, 7, 7, 7, 2, 4, 2, 2, 2, 4],
+         "height":7,
+         "name":"Tile Layer 1",
+         "opacity":1,
+         "type":"tilelayer",
+         "visible":true,
+         "width":5,
+         "x":0,
+         "y":0
+        }],
+ "orientation":"orthogonal",
+ "properties":
+    {
+     "BeforeImage":"4,2,7,2",
+     "BeforeText":"The \"boss\" map",
+     "Interventions":"10",
+     "TipText":"This is just hard."
+    },
+ "renderorder":"right-down",
+ "tileheight":32,
+ "tilesets":[
+        {
+         "firstgid":1,
+         "image":"..\/..\/buildings.png",
+         "imageheight":32,
+         "imagewidth":224,
+         "margin":0,
+         "name":"buildings",
+         "properties":
+            {
+
+            },
+         "spacing":0,
+         "tileheight":32,
+         "tilewidth":32
+        }],
+ "tilewidth":32,
+ "version":1,
+ "width":5
+}

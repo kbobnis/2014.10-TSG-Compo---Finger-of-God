@@ -1,0 +1,43 @@
+{ "height":7,
+ "layers":[
+        {
+         "data":[7, 5, 6, 5, 7, 7, 1, 1, 1, 7, 5, 6, 6, 6, 5, 5, 2, 2, 2, 5, 5, 5, 5, 5, 5, 1, 1, 1, 1, 1, 1, 6, 6, 6, 1],
+         "height":7,
+         "name":"Tile Layer 1",
+         "opacity":1,
+         "type":"tilelayer",
+         "visible":true,
+         "width":5,
+         "x":0,
+         "y":0
+        }],
+ "orientation":"orthogonal",
+ "properties":
+    {
+     "BeforeImage":"1,2,5,6",
+     "BeforeText":"How to approach it? You have only one chance, you have 15 interventions.",
+     "Interventions":"15",
+     "TipText":"Do it slowly. See what spreads the fire. Some building you'll have to destroy with intervention."
+    },
+ "renderorder":"right-down",
+ "tileheight":32,
+ "tilesets":[
+        {
+         "firstgid":1,
+         "image":"..\/..\/buildings.png",
+         "imageheight":32,
+         "imagewidth":224,
+         "margin":0,
+         "name":"buildings",
+         "properties":
+            {
+
+            },
+         "spacing":0,
+         "tileheight":32,
+         "tilewidth":32
+        }],
+ "tilewidth":32,
+ "version":1,
+ "width":5
+}

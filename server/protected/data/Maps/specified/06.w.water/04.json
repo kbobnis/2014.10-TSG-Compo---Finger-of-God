@@ -1,0 +1,43 @@
+{ "height":7,
+ "layers":[
+        {
+         "data":[4, 7, 7, 7, 4, 7, 7, 1, 7, 7, 1, 1, 4, 1, 7, 7, 7, 1, 7, 7, 7, 7, 7, 7, 4, 4, 1, 1, 1, 1, 1, 7, 7, 7, 4],
+         "height":7,
+         "name":"Tile Layer 1",
+         "opacity":1,
+         "type":"tilelayer",
+         "visible":true,
+         "width":5,
+         "x":0,
+         "y":0
+        }],
+ "orientation":"orthogonal",
+ "properties":
+    {
+     "BeforeImage":"1,4,1,7",
+     "BeforeText":"You don't have to think, you have a lot of interventions to work with.",
+     "Interventions":"14",
+     "TipText":"Destroy some blocking buildings before starting the flood"
+    },
+ "renderorder":"right-down",
+ "tileheight":32,
+ "tilesets":[
+        {
+         "firstgid":1,
+         "image":"..\/..\/buildings.png",
+         "imageheight":32,
+         "imagewidth":224,
+         "margin":0,
+         "name":"buildings",
+         "properties":
+            {
+
+            },
+         "spacing":0,
+         "tileheight":32,
+         "tilewidth":32
+        }],
+ "tilewidth":32,
+ "version":1,
+ "width":5
+}

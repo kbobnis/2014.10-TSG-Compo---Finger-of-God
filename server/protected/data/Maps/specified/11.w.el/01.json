@@ -1,0 +1,43 @@
+{ "height":7,
+ "layers":[
+        {
+         "data":[7, 7, 7, 7, 7, 5, 7, 7, 7, 7, 7, 7, 7, 7, 7, 5, 1, 7, 7, 7, 7, 7, 7, 7, 7, 5, 1, 5, 1, 5, 7, 7, 7, 7, 7],
+         "height":7,
+         "name":"Tile Layer 1",
+         "opacity":1,
+         "type":"tilelayer",
+         "visible":true,
+         "width":5,
+         "x":0,
+         "y":0
+        }],
+ "orientation":"orthogonal",
+ "properties":
+    {
+     "BeforeImage":"1,2,4,6",
+     "BeforeText":"Electricity tower. Population 0. Causes electric shock on itself. Electricity catches on fire righ away.",
+     "Interventions":"4",
+     "TipText":"Don't use all special buildings"
+    },
+ "renderorder":"right-down",
+ "tileheight":32,
+ "tilesets":[
+        {
+         "firstgid":1,
+         "image":"..\/..\/buildings.png",
+         "imageheight":32,
+         "imagewidth":224,
+         "margin":0,
+         "name":"buildings",
+         "properties":
+            {
+
+            },
+         "spacing":0,
+         "tileheight":32,
+         "tilewidth":32
+        }],
+ "tilewidth":32,
+ "version":1,
+ "width":5
+}

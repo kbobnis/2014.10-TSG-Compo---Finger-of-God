@@ -1,0 +1,50 @@
+{ "height":7,
+ "layers":[
+        {
+         "data":[4, 7, 1, 1, 1, 4, 7, 7, 5, 7, 4, 7, 5, 1, 7, 4, 1, 1, 1, 7, 4, 7, 5, 1, 7, 4, 7, 7, 5, 7, 4, 7, 1, 1, 1],
+         "height":7,
+         "name":"Tile Layer 1",
+         "opacity":1,
+         "type":"tilelayer",
+         "visible":true,
+         "width":5,
+         "x":0,
+         "y":0
+        }],
+ "orientation":"orthogonal",
+ "properties":
+    {
+     "BeforeImage":"1,7,5,4",
+     "BeforeText":"Thank God for the borders.",
+     "Interventions":"9",
+     "TipText":"Don't use all the water towers."
+    },
+ "renderorder":"right-down",
+ "tileheight":32,
+ "tilesets":[
+        {
+         "firstgid":1,
+         "image":"..\/..\/buildings.png",
+         "imageheight":32,
+         "imagewidth":224,
+         "margin":0,
+         "name":"budyli",
+         "properties":
+            {
+
+            },
+         "spacing":0,
+         "tileheight":32,
+         "tileproperties":
+            {
+             "3":
+                {
+                 "Interventions 4":""
+                }
+            },
+         "tilewidth":32
+        }],
+ "tilewidth":32,
+ "version":1,
+ "width":5
+}

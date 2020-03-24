@@ -1,0 +1,43 @@
+{ "height":7,
+ "layers":[
+        {
+         "data":[5, 2, 7, 7, 7, 1, 5, 7, 7, 7, 5, 1, 7, 7, 7, 7, 7, 1, 7, 7, 7, 2, 5, 2, 7, 7, 5, 5, 5, 7, 7, 7, 7, 7, 7],
+         "height":7,
+         "name":"Tile Layer 1",
+         "opacity":1,
+         "type":"tilelayer",
+         "visible":true,
+         "width":5,
+         "x":0,
+         "y":0
+        }],
+ "orientation":"orthogonal",
+ "properties":
+    {
+     "BeforeImage":"2,2,5,1",
+     "BeforeText":"Fire likes wood and stone not so much",
+     "Interventions":"5",
+     "TipText":"Use only a little electric towers."
+    },
+ "renderorder":"right-down",
+ "tileheight":32,
+ "tilesets":[
+        {
+         "firstgid":1,
+         "image":"..\/..\/buildings.png",
+         "imageheight":32,
+         "imagewidth":224,
+         "margin":0,
+         "name":"buildings",
+         "properties":
+            {
+
+            },
+         "spacing":0,
+         "tileheight":32,
+         "tilewidth":32
+        }],
+ "tilewidth":32,
+ "version":1,
+ "width":5
+}

@@ -1,0 +1,140 @@
+<root>
+
+	<!-- this part is to self check on the id of elements. -->
+	<elements>
+		<element id="fire" />
+		<element id="water" />
+		<element id="electricity" />
+		<!-- sheer force -->
+		<element id="crush" />
+		<!-- occurs when fire is extinguished by water -->
+		<element id="smokeAfterFire" />
+		<element id="die" />
+	</elements>
+	
+	<stats>
+		<stat id="effectDamage" />
+		<!-- value are be seconds -->
+		<stat id="effectTime" />
+		<!-- if building dies, contaminateDelta will spread its statuses to sorrounding buildings with value bigger than his given in contaminateDelta -->
+		<stat id="contaminateDelta" />
+		<!-- damage dealt, when stat first hits a building -->
+		<stat id="strikeDamage" />
+		<!-- when element has fillSpeed and status, then this status will be spread to neighbours after some time -->
+		<stat id="fillSpeed" />
+		<!-- after death elements will show in buildings tile after it dies -->
+		<stat id="afterDeath" />
+	</stats>
+	<!-- self checking end -->
+
+	<touch>
+		<power elId="crush"/>
+	</touch>
+	
+	<buildings>
+		<defaults>
+			<!-- those values are for all buildings, every building can override this value -->
+			<!-- every building has the same health: 1 -->
+			<stat type="contaminateDelta" elId="fire" value="0.1" />
+			<stat type="contaminateDelta" elId="water" value="0" />
+			<stat type="contaminateDelta" elId="electricity" value="0" />
+			<stat type="contaminateDelta" elId="crush" value="0" />
+			<stat type="contaminateDelta" elId="smokeAfterFire" value="0" />
+			<stat type="contaminateDelta" elId="die" value="0" />
+			
+			<stat type="strikeDamage" elId="crush" value="0.1" />
+			<stat type="strikeDamage" elId="fire" value="0" />
+			<stat type="strikeDamage" elId="water" value="0" />
+			<stat type="strikeDamage" elId="electricity" value="0" />
+			<stat type="strikeDamage" elId="smokeAfterFire" value="0" />
+			<stat type="strikeDamage" elId="die" value="0" />
+			
+			<stat type="effectDamage" elId="crush" value="0" />
+			<stat type="effectDamage" elId="smokeAfterFire" value="0" />
+			<stat type="effectDamage" elId="water" value="0" />
+			<stat type="effectDamage" elId="electricity" value="0" />
+			<stat type="effectDamage" elId="fire" value="0" />
+			<stat type="effectDamage" elId="die" value="0" />
+			
+			<stat type="effectTime" elId="smokeAfterFire" value="0.5" />
+			<stat type="effectTime" elId="crush" value="1" />
+			<stat type="effectTime" elId="electricity" value="1.25" />
+			<stat type="effectTime" elId="water" value="4.5" />
+			<stat type="effectTime" elId="fire" value="2.5" />
+			<stat type="effectTime" elId="die" value="0.5" />
+			
+			<stat type="fillSpeed" elId="electricity" value="0.09" />
+			<stat type="fillSpeed" elId="water" value="0.19" />
+			<stat type="fillSpeed" elId="fire" value="0" />
+			<stat type="fillSpeed" elId="crush" value="0" />
+			<stat type="fillSpeed" elId="smokeAfterFire" value="0" />
+			<stat type="fillSpeed" elId="die" value="0" />
+
+			<stat type="afterDeath" elId="electricity" value="0" />
+			<stat type="afterDeath" elId="water" value="0" />
+			<stat type="afterDeath" elId="fire" value="0" />
+			<stat type="afterDeath" elId="crush" value="0" />
+			<stat type="afterDeath" elId="smokeAfterFire" value="0" />
+			<stat type="afterDeath" elId="die" value="0" />
+		</defaults>
+	
+		<!-- id corresponds to what is in map editor -->
+		<!-- effects are stored inside the application, are not downloaded -->
+		<building id="1" name="Wood" population="1000" image="assets/Images/wood.png" imageDestroyed="assets/Images/woodD.png" health="1"
+			fireEffect="Images/effects/wood/fire" waterEffect="" electricityEffect="Images/effects/wood/electricity" smokeAfterFireEffect="" crushEffect="" dieEffect="" >
+			
+			<stat type="strikeDamage" elId="crush" value="1" />
+			<stat type="effectDamage" elId="fire" value="0.6"/>
+			<stat type="effectDamage" elId="water" value="0.13"/>
+			<stat type="effectDamage" elId="electricity" value="0.5"/>
+		</building>
+		
+		<building id="2" name="Stone" population="1000" image="assets/Images/stone.png" imageDestroyed="assets/Images/stoneD.png" health="1"
+			fireEffect="" waterEffect="" electricityEffect="" smokeAfterFireEffect="" crushEffect="" dieEffect="" >
+			<stat type="strikeDamage" elId="crush" value="1" />
+			<stat type="effectDamage" elId="fire" value="0.25"/>
+			<stat type="effectDamage" elId="water" value="0.26"/>
+			<stat type="effectDamage" elId="electricity" value="0.6"/>
+		</building>
+		
+		<!-- i don't want this block building right now
+		<building id="3" name="Block" population="0" image="assets/Images/stone.png" imageDestroyed="assets/Images/stoneD.png" health="1">
+			<stat type="effectDamage" elId="fire" value="0.75"/>
+			<stat type="effectDamage" elId="water" value="0.1"/>
+		</building>-->
+		
+		<building id="4" name="WaterTower" population="0" image="assets/Images/waterTower.png" imageDestroyed="assets/Images/waterTowerD.png" health="1"
+			fireEffect="" waterEffect="" electricityEffect="" smokeAfterFireEffect="" crushEffect="" dieEffect="" >
+			<stat type="strikeDamage" elId="crush" value="1" />
+			<stat type="effectDamage" elId="fire" value="0.6"/>
+			<stat type="effectDamage" elId="water" value="0.11"/>
+			<stat type="effectDamage" elId="electricity" value="0.1"/>
+			<stat type="afterDeath" elId="water" value="1" />
+		</building>
+		
+		<building id="5" name="ElectricTower" population="0" image="assets/Images/electricTower.png" imageDestroyed="assets/Images/electricTowerD.png" health="1"
+			fireEffect="" waterEffect="" electricityEffect="" smokeAfterFireEffect="" crushEffect="" dieEffect="" >
+			<stat type="effectDamage" elId="fire" value="0.65"/>
+			<stat type="effectDamage" elId="water" value="0.1"/>
+			<stat type="effectDamage" elId="electricity" value="0.1"/>
+			<stat type="afterDeath" elId="electricity" value="1" />		
+		</building>
+		
+		<building id="6" name="GasStation" population="0" image="assets/Images/gasStation.png" imageDestroyed="assets/Images/gasStationD.png" health="1"
+			fireEffect="" waterEffect="" electricityEffect="" smokeAfterFireEffect="" crushEffect="" dieEffect="Images/effects/gasStation/die" >
+			<stat type="effectDamage" elId="fire" value="2"/>
+			<stat type="effectDamage" elId="water" value="0.08"/>
+			<stat type="effectDamage" elId="electricity" value="0.1"/>
+			<stat type="effectTime" elId="fire" value="1.2" />
+			<stat type="afterDeath" elId="fire" value="1" />
+			<stat type="contaminateDelta" elId="fire" value="1" />
+		</building>
+		
+		<building id="7" name="Destroyed" population="0" image="assets/Images/stoneD.png" imageDestroyed="assets/Images/stoneD.png" health="0"
+			fireEffect="" waterEffect="" electricityEffect="" smokeAfterFireEffect="" crushEffect="" dieEffect="" >
+		</building>
+		
+	</buildings>
+
+	
+</root>

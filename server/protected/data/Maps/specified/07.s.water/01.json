@@ -1,0 +1,52 @@
+{ "height":7,
+ "layers":[
+        {
+         "data":[2, 7, 7, 7, 2, 2, 7, 4, 7, 2, 2, 7, 7, 4, 2, 2, 7, 4, 7, 2, 2, 7, 7, 7, 2, 2, 7, 4, 7, 2, 2, 7, 7, 7, 2],
+         "height":7,
+         "name":"Tile Layer 1",
+         "opacity":1,
+         "type":"tilelayer",
+         "visible":true,
+         "width":5,
+         "x":0,
+         "y":0
+        }],
+ "orientation":"orthogonal",
+ "properties":
+    {
+     "BeforeImage":"4,2,2",
+     "BeforeText":"Two waters don't double the effect!",
+     "Interventions":"10",
+     "TipText":"Wait until one flood settles down before creating another. See the difference on different buildings."
+    },
+ "renderorder":"right-down",
+ "tileheight":32,
+ "tilesets":[
+        {
+         "firstgid":1,
+         "image":"..\/..\/buildings.png",
+         "imageheight":32,
+         "imagewidth":224,
+         "margin":0,
+         "name":"building",
+         "properties":
+            {
+
+            },
+         "spacing":0,
+         "tileheight":32,
+         "tileproperties":
+            {
+             "6":
+                {
+                 "BeforeImage":"4",
+                 "BeforeText":"This is water tower. After destroyed will flood all empty spaces and neighbours with water. Two waters don't double the effect!",
+                 "Interventions":"2"
+                }
+            },
+         "tilewidth":32
+        }],
+ "tilewidth":32,
+ "version":1,
+ "width":5
+}
